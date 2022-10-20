@@ -1,5 +1,5 @@
-# PersonalFME - Gateway linking analog radio selcalls to internet communication services
-# Copyright(C) 2010-2021 Ralf Rettig (www.personalfme.de)
+# CMake file for ALGLIB
+# Copyright(C) 2010-2022 Ralf Rettig
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 set( ${PROJECT_NAME}_VERSION_MAJOR 3 ) 		# Adjust here the version number manually
 set( ${PROJECT_NAME}_VERSION_MINOR 17 ) 	# Adjust here the version number manually
 set( ${PROJECT_NAME}_VERSION_PATCH 0 ) 		# Adjust here the version number manually
-set( ${PROJECT_NAME}_DATE "Dec 29 2020" )
+set( ${PROJECT_NAME}_DATE "Dec 29 2020" )       # Adjust here the release date of ALGLIB manually
 
 add_definitions( -DUNICODE -D_UNICODE )
 add_definitions( /DAE_CPU=AE_INTEL )
