@@ -31,7 +31,7 @@ Now *ALGLIB* can be included in this module, e.g.:
 ```
 
 
-Optionally compiler optimizations can be enabled
+Optionally compiler optimizations can be enabled:
 
 ```CMake
   # enable SSE-optimizations for the Alglib-library on the supported platforms
