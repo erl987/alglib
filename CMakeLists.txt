@@ -14,10 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.If not, see <http://www.gnu.org/licenses/>
 
-set( ${PROJECT_NAME}_VERSION_MAJOR 3 ) 		# Adjust here the version number manually
-set( ${PROJECT_NAME}_VERSION_MINOR 17 ) 	# Adjust here the version number manually
-set( ${PROJECT_NAME}_VERSION_PATCH 0 ) 		# Adjust here the version number manually
-set( ${PROJECT_NAME}_DATE "Dec 29 2020" )       # Adjust here the release date of ALGLIB manually
+set( Alglib_VERSION_MAJOR 3 ) 		# Adjust here the version number manually
+set( Alglib_VERSION_MINOR 17 ) 		# Adjust here the version number manually
+set( Alglib_VERSION_PATCH 0 ) 		# Adjust here the version number manually
+set( Alglib_DATE "Dec 29 2020" )      	# Adjust here the release date of ALGLIB manually
 
 add_definitions( -DUNICODE -D_UNICODE )
 add_definitions( /DAE_CPU=AE_INTEL )
