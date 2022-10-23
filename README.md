@@ -18,11 +18,18 @@ Now add this subdirectory in the `CMakeLists.txt` file in the project root direc
   add_subdirectory(libraries/Alglib)
 ```
 
-Link it in the `CMakeLists.txt` file where ALGLIB is used:
+Link it in the `CMakeLists.txt` file where *ALGLIB* is used:
 
 ```CMake
   target_link_libraries(project PUBLIC Alglib) 
 ```
+
+Now *ALGLIB* can be included in this module, .e.g.:
+
+```cpp
+#include "libalglib/fasttransforms.h"
+```
+
 
 Optionally compiler optimizations can be enabled
 
