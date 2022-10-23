@@ -24,7 +24,7 @@ Link it in the `CMakeLists.txt` file where *ALGLIB* is used:
   target_link_libraries(project PUBLIC Alglib) 
 ```
 
-Now *ALGLIB* can be included in this module, .e.g.:
+Now *ALGLIB* can be included in this module, e.g.:
 
 ```cpp
 #include "libalglib/fasttransforms.h"
