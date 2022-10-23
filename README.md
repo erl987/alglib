@@ -11,7 +11,6 @@ The integration of *ALGLIB* into a code base using this repository can be done l
   git submodule add https://github.com/erl987/alglib.git libraries/Alglib
 ```
 
-
 Now add this subdirectory in the `CMakeLists.txt` file in the project root directory:
 
 ```CMake
@@ -29,7 +28,6 @@ Now *ALGLIB* can be included in this module, e.g.:
 ```cpp
 #include "libalglib/fasttransforms.h"
 ```
-
 
 Optionally compiler optimizations can be enabled:
 
