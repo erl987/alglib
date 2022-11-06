@@ -15,9 +15,11 @@
 # along with this program.If not, see <http://www.gnu.org/licenses/>
 
 set( Alglib_VERSION_MAJOR 3 ) 		# Adjust here the version number manually
-set( Alglib_VERSION_MINOR 17 ) 		# Adjust here the version number manually
+set( Alglib_VERSION_MINOR 19 ) 		# Adjust here the version number 
+manually
 set( Alglib_VERSION_PATCH 0 ) 		# Adjust here the version number manually
-set( Alglib_DATE "Dec 29 2020" )      	# Adjust here the release date of ALGLIB manually
+set( Alglib_DATE "Jun 13 2022" )      	# Adjust here the release date of 
+ALGLIB manually
 
 add_definitions( -DUNICODE -D_UNICODE )
 add_definitions( /DAE_CPU=AE_INTEL )
@@ -43,7 +45,10 @@ set( HEADERS
 	libalglib/specialfunctions.h
 	libalglib/statistics.h
 	libalglib/alglibversion.h
-	libalglib/stdafx.h	
+	libalglib/stdafx.h
+	libalglib/kernels_avx2.h
+	libalglib/kernels_fma.h
+	libalglib/kernels_sse2.h
 )
 
 set( SOURCE
@@ -60,6 +65,9 @@ set( SOURCE
 	libalglib/solvers.cpp
 	libalglib/specialfunctions.cpp
 	libalglib/statistics.cpp
+	libalglib/kernels_avx2.cpp
+	libalglib/kernels_fma.cpp
+	libalglib/kernels_sse2.cpp
 )
 
 add_library( Alglib STATIC ${SOURCE} ${HEADERS} )

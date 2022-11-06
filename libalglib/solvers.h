@@ -1,5 +1,5 @@
 /*************************************************************************
-ALGLIB 3.17.0 (source code generated 2020-12-27)
+ALGLIB 3.19.0 (source code generated 2022-06-07)
 Copyright (c) Sergey Bochkanov (ALGLIB project).
 
 >>> SOURCE LICENSE >>>
@@ -31,6 +31,12 @@ http://www.fsf.org/licensing/licenses
 /////////////////////////////////////////////////////////////////////////
 namespace alglib_impl
 {
+#if defined(AE_COMPILE_POLYNOMIALSOLVER) || !defined(AE_PARTIAL_BUILD)
+typedef struct
+{
+    double maxerr;
+} polynomialsolverreport;
+#endif
 #if defined(AE_COMPILE_DIRECTDENSESOLVERS) || !defined(AE_PARTIAL_BUILD)
 typedef struct
 {
@@ -44,6 +50,91 @@ typedef struct
     ae_int_t n;
     ae_int_t k;
 } densesolverlsreport;
+#endif
+#if defined(AE_COMPILE_DIRECTSPARSESOLVERS) || !defined(AE_PARTIAL_BUILD)
+typedef struct
+{
+    ae_int_t terminationtype;
+    ae_int_t nmv;
+    ae_int_t iterationscount;
+    double r2;
+} sparsesolverreport;
+#endif
+#if defined(AE_COMPILE_ITERATIVESPARSE) || !defined(AE_PARTIAL_BUILD)
+typedef struct
+{
+    ae_int_t n;
+    ae_vector x0;
+    double epsf;
+    ae_int_t maxits;
+    ae_int_t algotype;
+    ae_int_t gmresk;
+    ae_bool xrep;
+    ae_bool running;
+    ae_bool userterminationneeded;
+    ae_vector b;
+    ae_vector xf;
+    ae_int_t repiterationscount;
+    ae_int_t repnmv;
+    ae_int_t repterminationtype;
+    double repr2;
+    ae_int_t requesttype;
+    ae_vector x;
+    ae_vector ax;
+    double reply1;
+    ae_vector wrkb;
+    sparsematrix convbuf;
+    fblsgmresstate gmressolver;
+    rcommstate rstate;
+} sparsesolverstate;
+#endif
+#if defined(AE_COMPILE_LINCG) || !defined(AE_PARTIAL_BUILD)
+typedef struct
+{
+    ae_vector rx;
+    ae_vector b;
+    ae_int_t n;
+    ae_int_t prectype;
+    ae_vector cx;
+    ae_vector cr;
+    ae_vector cz;
+    ae_vector p;
+    ae_vector r;
+    ae_vector z;
+    double alpha;
+    double beta;
+    double r2;
+    double meritfunction;
+    ae_vector x;
+    ae_vector mv;
+    ae_vector pv;
+    double vmv;
+    ae_vector startx;
+    double epsf;
+    ae_int_t maxits;
+    ae_int_t itsbeforerestart;
+    ae_int_t itsbeforerupdate;
+    ae_bool xrep;
+    ae_bool xupdated;
+    ae_bool needmv;
+    ae_bool needmtv;
+    ae_bool needmv2;
+    ae_bool needvmv;
+    ae_bool needprec;
+    ae_int_t repiterationscount;
+    ae_int_t repnmv;
+    ae_int_t repterminationtype;
+    ae_bool running;
+    ae_vector tmpd;
+    rcommstate rstate;
+} lincgstate;
+typedef struct
+{
+    ae_int_t iterationscount;
+    ae_int_t nmv;
+    ae_int_t terminationtype;
+    double r2;
+} lincgreport;
 #endif
 #if defined(AE_COMPILE_LINLSQR) || !defined(AE_PARTIAL_BUILD)
 typedef struct
@@ -109,12 +200,6 @@ typedef struct
     ae_int_t terminationtype;
 } linlsqrreport;
 #endif
-#if defined(AE_COMPILE_POLYNOMIALSOLVER) || !defined(AE_PARTIAL_BUILD)
-typedef struct
-{
-    double maxerr;
-} polynomialsolverreport;
-#endif
 #if defined(AE_COMPILE_NLEQ) || !defined(AE_PARTIAL_BUILD)
 typedef struct
 {
@@ -151,60 +236,6 @@ typedef struct
     ae_int_t terminationtype;
 } nleqreport;
 #endif
-#if defined(AE_COMPILE_DIRECTSPARSESOLVERS) || !defined(AE_PARTIAL_BUILD)
-typedef struct
-{
-    ae_int_t terminationtype;
-} sparsesolverreport;
-#endif
-#if defined(AE_COMPILE_LINCG) || !defined(AE_PARTIAL_BUILD)
-typedef struct
-{
-    ae_vector rx;
-    ae_vector b;
-    ae_int_t n;
-    ae_int_t prectype;
-    ae_vector cx;
-    ae_vector cr;
-    ae_vector cz;
-    ae_vector p;
-    ae_vector r;
-    ae_vector z;
-    double alpha;
-    double beta;
-    double r2;
-    double meritfunction;
-    ae_vector x;
-    ae_vector mv;
-    ae_vector pv;
-    double vmv;
-    ae_vector startx;
-    double epsf;
-    ae_int_t maxits;
-    ae_int_t itsbeforerestart;
-    ae_int_t itsbeforerupdate;
-    ae_bool xrep;
-    ae_bool xupdated;
-    ae_bool needmv;
-    ae_bool needmtv;
-    ae_bool needmv2;
-    ae_bool needvmv;
-    ae_bool needprec;
-    ae_int_t repiterationscount;
-    ae_int_t repnmv;
-    ae_int_t repterminationtype;
-    ae_bool running;
-    ae_vector tmpd;
-    rcommstate rstate;
-} lincgstate;
-typedef struct
-{
-    ae_int_t iterationscount;
-    ae_int_t nmv;
-    ae_int_t terminationtype;
-    double r2;
-} lincgreport;
-#endif
 
 }
 
@@ -215,6 +246,34 @@ typedef struct
 /////////////////////////////////////////////////////////////////////////
 namespace alglib
 {
+
+#if defined(AE_COMPILE_POLYNOMIALSOLVER) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+
+*************************************************************************/
+class _polynomialsolverreport_owner
+{
+public:
+    _polynomialsolverreport_owner();
+    _polynomialsolverreport_owner(const _polynomialsolverreport_owner &rhs);
+    _polynomialsolverreport_owner& operator=(const _polynomialsolverreport_owner &rhs);
+    virtual ~_polynomialsolverreport_owner();
+    alglib_impl::polynomialsolverreport* c_ptr();
+    alglib_impl::polynomialsolverreport* c_ptr() const;
+protected:
+    alglib_impl::polynomialsolverreport *p_struct;
+};
+class polynomialsolverreport : public _polynomialsolverreport_owner
+{
+public:
+    polynomialsolverreport();
+    polynomialsolverreport(const polynomialsolverreport &rhs);
+    polynomialsolverreport& operator=(const polynomialsolverreport &rhs);
+    virtual ~polynomialsolverreport();
+    double &maxerr;
+
+};
+#endif
 
 #if defined(AE_COMPILE_DIRECTDENSESOLVERS) || !defined(AE_PARTIAL_BUILD)
 /*************************************************************************
@@ -275,6 +334,136 @@ public:
 };
 #endif
 
+#if defined(AE_COMPILE_DIRECTSPARSESOLVERS) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+This structure is a sparse solver report (both direct and iterative solvers
+use this structure).
+
+Following fields can be accessed by users:
+* TerminationType (specific error codes depend on the solver  being  used,
+  with positive values ALWAYS signaling  that something useful is returned
+  in X, and negative values ALWAYS meaning critical failures.
+* NMV - number of matrix-vector products performed (0 for direct solvers)
+* IterationsCount - inner iterations count (0 for direct solvers)
+* R2 - squared residual
+*************************************************************************/
+class _sparsesolverreport_owner
+{
+public:
+    _sparsesolverreport_owner();
+    _sparsesolverreport_owner(const _sparsesolverreport_owner &rhs);
+    _sparsesolverreport_owner& operator=(const _sparsesolverreport_owner &rhs);
+    virtual ~_sparsesolverreport_owner();
+    alglib_impl::sparsesolverreport* c_ptr();
+    alglib_impl::sparsesolverreport* c_ptr() const;
+protected:
+    alglib_impl::sparsesolverreport *p_struct;
+};
+class sparsesolverreport : public _sparsesolverreport_owner
+{
+public:
+    sparsesolverreport();
+    sparsesolverreport(const sparsesolverreport &rhs);
+    sparsesolverreport& operator=(const sparsesolverreport &rhs);
+    virtual ~sparsesolverreport();
+    ae_int_t &terminationtype;
+    ae_int_t &nmv;
+    ae_int_t &iterationscount;
+    double &r2;
+
+};
+#endif
+
+#if defined(AE_COMPILE_ITERATIVESPARSE) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+This object stores state of the sparse linear solver object.
+
+You should use ALGLIB functions to work with this object.
+Never try to access its fields directly!
+*************************************************************************/
+class _sparsesolverstate_owner
+{
+public:
+    _sparsesolverstate_owner();
+    _sparsesolverstate_owner(const _sparsesolverstate_owner &rhs);
+    _sparsesolverstate_owner& operator=(const _sparsesolverstate_owner &rhs);
+    virtual ~_sparsesolverstate_owner();
+    alglib_impl::sparsesolverstate* c_ptr();
+    alglib_impl::sparsesolverstate* c_ptr() const;
+protected:
+    alglib_impl::sparsesolverstate *p_struct;
+};
+class sparsesolverstate : public _sparsesolverstate_owner
+{
+public:
+    sparsesolverstate();
+    sparsesolverstate(const sparsesolverstate &rhs);
+    sparsesolverstate& operator=(const sparsesolverstate &rhs);
+    virtual ~sparsesolverstate();
+
+};
+#endif
+
+#if defined(AE_COMPILE_LINCG) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+This object stores state of the linear CG method.
+
+You should use ALGLIB functions to work with this object.
+Never try to access its fields directly!
+*************************************************************************/
+class _lincgstate_owner
+{
+public:
+    _lincgstate_owner();
+    _lincgstate_owner(const _lincgstate_owner &rhs);
+    _lincgstate_owner& operator=(const _lincgstate_owner &rhs);
+    virtual ~_lincgstate_owner();
+    alglib_impl::lincgstate* c_ptr();
+    alglib_impl::lincgstate* c_ptr() const;
+protected:
+    alglib_impl::lincgstate *p_struct;
+};
+class lincgstate : public _lincgstate_owner
+{
+public:
+    lincgstate();
+    lincgstate(const lincgstate &rhs);
+    lincgstate& operator=(const lincgstate &rhs);
+    virtual ~lincgstate();
+
+};
+
+
+/*************************************************************************
+
+*************************************************************************/
+class _lincgreport_owner
+{
+public:
+    _lincgreport_owner();
+    _lincgreport_owner(const _lincgreport_owner &rhs);
+    _lincgreport_owner& operator=(const _lincgreport_owner &rhs);
+    virtual ~_lincgreport_owner();
+    alglib_impl::lincgreport* c_ptr();
+    alglib_impl::lincgreport* c_ptr() const;
+protected:
+    alglib_impl::lincgreport *p_struct;
+};
+class lincgreport : public _lincgreport_owner
+{
+public:
+    lincgreport();
+    lincgreport(const lincgreport &rhs);
+    lincgreport& operator=(const lincgreport &rhs);
+    virtual ~lincgreport();
+    ae_int_t &iterationscount;
+    ae_int_t &nmv;
+    ae_int_t &terminationtype;
+    double &r2;
+
+};
+#endif
+
 #if defined(AE_COMPILE_LINLSQR) || !defined(AE_PARTIAL_BUILD)
 /*************************************************************************
 This object stores state of the LinLSQR method.
@@ -329,34 +518,6 @@ public:
     ae_int_t &iterationscount;
     ae_int_t &nmv;
     ae_int_t &terminationtype;
-
-};
-#endif
-
-#if defined(AE_COMPILE_POLYNOMIALSOLVER) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-
-*************************************************************************/
-class _polynomialsolverreport_owner
-{
-public:
-    _polynomialsolverreport_owner();
-    _polynomialsolverreport_owner(const _polynomialsolverreport_owner &rhs);
-    _polynomialsolverreport_owner& operator=(const _polynomialsolverreport_owner &rhs);
-    virtual ~_polynomialsolverreport_owner();
-    alglib_impl::polynomialsolverreport* c_ptr();
-    alglib_impl::polynomialsolverreport* c_ptr() const;
-protected:
-    alglib_impl::polynomialsolverreport *p_struct;
-};
-class polynomialsolverreport : public _polynomialsolverreport_owner
-{
-public:
-    polynomialsolverreport();
-    polynomialsolverreport(const polynomialsolverreport &rhs);
-    polynomialsolverreport& operator=(const polynomialsolverreport &rhs);
-    virtual ~polynomialsolverreport();
-    double &maxerr;
 
 };
 #endif
@@ -425,94 +586,48 @@ public:
 };
 #endif
 
-#if defined(AE_COMPILE_DIRECTSPARSESOLVERS) || !defined(AE_PARTIAL_BUILD)
+#if defined(AE_COMPILE_POLYNOMIALSOLVER) || !defined(AE_PARTIAL_BUILD)
 /*************************************************************************
-This structure is a sparse solver report.
+Polynomial root finding.
 
-Following fields can be accessed by users:
+This function returns all roots of the polynomial
+    P(x) = a0 + a1*x + a2*x^2 + ... + an*x^n
+Both real and complex roots are returned (see below).
+
+INPUT PARAMETERS:
+    A       -   array[N+1], polynomial coefficients:
+                * A[0] is constant term
+                * A[N] is a coefficient of X^N
+    N       -   polynomial degree
+
+OUTPUT PARAMETERS:
+    X       -   array of complex roots:
+                * for isolated real root, X[I] is strictly real: IMAGE(X[I])=0
+                * complex roots are always returned in pairs - roots occupy
+                  positions I and I+1, with:
+                  * X[I+1]=Conj(X[I])
+                  * IMAGE(X[I]) > 0
+                  * IMAGE(X[I+1]) = -IMAGE(X[I]) < 0
+                * multiple real roots may have non-zero imaginary part due
+                  to roundoff errors. There is no reliable way to distinguish
+                  real root of multiplicity 2 from two  complex  roots  in
+                  the presence of roundoff errors.
+    Rep     -   report, additional information, following fields are set:
+                * Rep.MaxErr - max( |P(xi)| )  for  i=0..N-1.  This  field
+                  allows to quickly estimate "quality" of the roots  being
+                  returned.
+
+NOTE:   this function uses companion matrix method to find roots. In  case
+        internal EVD  solver  fails  do  find  eigenvalues,  exception  is
+        generated.
+
+NOTE:   roots are not "polished" and  no  matrix  balancing  is  performed
+        for them.
+
+  -- ALGLIB --
+     Copyright 24.02.2014 by Bochkanov Sergey
 *************************************************************************/
-class _sparsesolverreport_owner
-{
-public:
-    _sparsesolverreport_owner();
-    _sparsesolverreport_owner(const _sparsesolverreport_owner &rhs);
-    _sparsesolverreport_owner& operator=(const _sparsesolverreport_owner &rhs);
-    virtual ~_sparsesolverreport_owner();
-    alglib_impl::sparsesolverreport* c_ptr();
-    alglib_impl::sparsesolverreport* c_ptr() const;
-protected:
-    alglib_impl::sparsesolverreport *p_struct;
-};
-class sparsesolverreport : public _sparsesolverreport_owner
-{
-public:
-    sparsesolverreport();
-    sparsesolverreport(const sparsesolverreport &rhs);
-    sparsesolverreport& operator=(const sparsesolverreport &rhs);
-    virtual ~sparsesolverreport();
-    ae_int_t &terminationtype;
-
-};
-#endif
-
-#if defined(AE_COMPILE_LINCG) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-This object stores state of the linear CG method.
-
-You should use ALGLIB functions to work with this object.
-Never try to access its fields directly!
-*************************************************************************/
-class _lincgstate_owner
-{
-public:
-    _lincgstate_owner();
-    _lincgstate_owner(const _lincgstate_owner &rhs);
-    _lincgstate_owner& operator=(const _lincgstate_owner &rhs);
-    virtual ~_lincgstate_owner();
-    alglib_impl::lincgstate* c_ptr();
-    alglib_impl::lincgstate* c_ptr() const;
-protected:
-    alglib_impl::lincgstate *p_struct;
-};
-class lincgstate : public _lincgstate_owner
-{
-public:
-    lincgstate();
-    lincgstate(const lincgstate &rhs);
-    lincgstate& operator=(const lincgstate &rhs);
-    virtual ~lincgstate();
-
-};
-
-
-/*************************************************************************
-
-*************************************************************************/
-class _lincgreport_owner
-{
-public:
-    _lincgreport_owner();
-    _lincgreport_owner(const _lincgreport_owner &rhs);
-    _lincgreport_owner& operator=(const _lincgreport_owner &rhs);
-    virtual ~_lincgreport_owner();
-    alglib_impl::lincgreport* c_ptr();
-    alglib_impl::lincgreport* c_ptr() const;
-protected:
-    alglib_impl::lincgreport *p_struct;
-};
-class lincgreport : public _lincgreport_owner
-{
-public:
-    lincgreport();
-    lincgreport(const lincgreport &rhs);
-    lincgreport& operator=(const lincgreport &rhs);
-    virtual ~lincgreport();
-    ae_int_t &iterationscount;
-    ae_int_t &nmv;
-    ae_int_t &terminationtype;
-    double &r2;
-
-};
+void polynomialsolve(const real_1d_array &a, const ae_int_t n, complex_1d_array &x, polynomialsolverreport &rep, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_DIRECTDENSESOLVERS) || !defined(AE_PARTIAL_BUILD)
@@ -543,19 +658,6 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
            ! that your system is well conditioned, we  strongly  recommend
            ! you to use faster solver, RMatrixSolveFast() function.
 
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
 INPUT PARAMETERS
     A       -   array[0..N-1,0..N-1], system matrix
     N       -   size of A
@@ -573,6 +675,30 @@ OUTPUT PARAMETERS
     X       -   array[N], it contains:
                 * info>0    =>  solution
                 * info=-3   =>  filled by zeros
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
@@ -595,19 +721,6 @@ Algorithm features:
 If you need condition number estimation or iterative refinement, use  more
 feature-rich version - RMatrixSolve().
 
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
 INPUT PARAMETERS
     A       -   array[0..N-1,0..N-1], system matrix
     N       -   size of A
@@ -622,6 +735,30 @@ OUTPUT PARAMETERS
     B       -   array[N]:
                 * info>0    =>  overwritten by solution
                 * info=-3   =>  filled by zeros
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
   -- ALGLIB --
      Copyright 16.03.2015 by Bochkanov Sergey
@@ -659,19 +796,6 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
            ! that your system is well conditioned, we  strongly  recommend
            ! you to use faster solver, RMatrixSolveMFast() function.
 
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
 INPUT PARAMETERS
     A       -   array[0..N-1,0..N-1], system matrix
     N       -   size of A
@@ -697,6 +821,29 @@ OUTPUT PARAMETERS
                 * info>0    =>  solution
                 * info=-3   =>  filled by zeros
 
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
@@ -715,19 +862,6 @@ iterative refinement.
 Algorithm features:
 * O(N^3+M*N^2) complexity
 * no additional functionality, highest performance
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS
     A       -   array[0..N-1,0..N-1], system matrix
@@ -754,6 +888,29 @@ OUTPUT PARAMETERS
                 * info>0    =>  overwritten by solution
                 * info=-3   =>  filled by zeros
 
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
@@ -885,19 +1042,6 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
            ! In such cases we strongly recommend you to use faster solver,
            ! RMatrixLUSolveMFast() function.
 
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
 INPUT PARAMETERS
     LUA     -   array[N,N], LU decomposition, RMatrixLU result
     P       -   array[N], pivots array, RMatrixLU result
@@ -919,6 +1063,29 @@ OUTPUT PARAMETERS
                 * info>0    =>  solution
                 * info=-3   =>  filled by zeros
 
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
@@ -939,19 +1106,6 @@ Algorithm features:
 * O(M*N^2) complexity
 * fast algorithm without ANY additional checks, just triangular solver
 
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
 INPUT PARAMETERS:
     LUA     -   array[0..N-1,0..N-1], LU decomposition, RMatrixLU result
     P       -   array[0..N-1], pivots array, RMatrixLU result
@@ -968,6 +1122,30 @@ OUTPUT PARAMETERS:
     B       -   array[N,M]:
                 * info>0    =>  overwritten by solution
                 * info=-3   =>  filled by zeros
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
   -- ALGLIB --
      Copyright 18.03.2015 by Bochkanov Sergey
@@ -1081,19 +1259,6 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
            ! that your system is well conditioned, we  strongly  recommend
            ! you to use faster solver, CMatrixSolveMFast() function.
 
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
 INPUT PARAMETERS
     A       -   array[0..N-1,0..N-1], system matrix
     N       -   size of A
@@ -1119,6 +1284,30 @@ OUTPUT PARAMETERS
                 * info>0    =>  solution
                 * info=-3   =>  filled by zeros
 
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
@@ -1135,19 +1324,6 @@ Algorithm features:
 * O(N^3+M*N^2) complexity
 * no additional time consuming functions
 
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
 INPUT PARAMETERS
     A       -   array[0..N-1,0..N-1], system matrix
     N       -   size of A
@@ -1163,6 +1339,30 @@ OUTPUT PARAMETERS:
     B       -   array[N,M]:
                 * info>0    =>  overwritten by solution
                 * info=-3   =>  filled by zeros
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
   -- ALGLIB --
      Copyright 16.03.2015 by Bochkanov Sergey
@@ -1196,19 +1396,6 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
            ! that your system is well conditioned, we  strongly  recommend
            ! you to use faster solver, CMatrixSolveFast() function.
 
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
 INPUT PARAMETERS
     A       -   array[0..N-1,0..N-1], system matrix
     N       -   size of A
@@ -1227,19 +1414,16 @@ OUTPUT PARAMETERS
                 * info>0    =>  solution
                 * info=-3   =>  filled by zeros
 
-  -- ALGLIB --
-     Copyright 27.01.2010 by Bochkanov Sergey
-*************************************************************************/
-void cmatrixsolve(const complex_2d_array &a, const ae_int_t n, const complex_1d_array &b, ae_int_t &info, densesolverreport &rep, complex_1d_array &x, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Complex dense solver for A*x=B with N*N complex matrix A and  N*1  complex
-vectors x and b. "Fast-but-lightweight" version of the solver.
-
-Algorithm features:
-* O(N^3) complexity
-* no additional time consuming features, just triangular solver
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
 
   ! COMMERCIAL EDITION OF ALGLIB:
   !
@@ -1253,6 +1437,20 @@ Algorithm features:
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
   ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB --
+     Copyright 27.01.2010 by Bochkanov Sergey
+*************************************************************************/
+void cmatrixsolve(const complex_2d_array &a, const ae_int_t n, const complex_1d_array &b, ae_int_t &info, densesolverreport &rep, complex_1d_array &x, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Complex dense solver for A*x=B with N*N complex matrix A and  N*1  complex
+vectors x and b. "Fast-but-lightweight" version of the solver.
+
+Algorithm features:
+* O(N^3) complexity
+* no additional time consuming features, just triangular solver
 
 INPUT PARAMETERS:
     A       -   array[0..N-1,0..N-1], system matrix
@@ -1268,6 +1466,30 @@ OUTPUT PARAMETERS:
     B       -   array[N]:
                 * info>0    =>  overwritten by solution
                 * info=-3   =>  filled by zeros
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
@@ -1303,19 +1525,6 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
            ! In such cases we strongly recommend you to use faster solver,
            ! CMatrixLUSolveMFast() function.
 
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
 INPUT PARAMETERS
     LUA     -   array[0..N-1,0..N-1], LU decomposition, RMatrixLU result
     P       -   array[0..N-1], pivots array, RMatrixLU result
@@ -1336,6 +1545,30 @@ OUTPUT PARAMETERS
                 * info>0    =>  solution
                 * info=-3   =>  filled by zeros
 
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
@@ -1350,19 +1583,6 @@ version of the solver.
 Algorithm features:
 * O(M*N^2) complexity
 * no additional time-consuming features
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS
     LUA     -   array[0..N-1,0..N-1], LU decomposition, RMatrixLU result
@@ -1381,6 +1601,29 @@ OUTPUT PARAMETERS
                 * info>0    =>  overwritten by solution
                 * info=-3   =>  filled by zeros
 
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
@@ -1582,19 +1825,6 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
            ! that your system is well conditioned, we  strongly  recommend
            ! you to use faster solver, SPDMatrixSolveMFast() function.
 
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
 INPUT PARAMETERS
     A       -   array[0..N-1,0..N-1], system matrix
     N       -   size of A
@@ -1615,6 +1845,30 @@ OUTPUT PARAMETERS
                 * info>0    =>  solution
                 * info=-3   =>  filled by zeros
 
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
@@ -1629,19 +1883,6 @@ Algorithm features:
 * O(N^3+M*N^2) complexity
 * matrix is represented by its upper or lower triangle
 * no additional time consuming features
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS
     A       -   array[0..N-1,0..N-1], system matrix
@@ -1658,6 +1899,30 @@ OUTPUT PARAMETERS
     B       -   array[N,M], it contains:
                 * info>0    =>  solution
                 * info=-3   =>  filled by zeros
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
   -- ALGLIB --
      Copyright 17.03.2015 by Bochkanov Sergey
@@ -1696,19 +1961,6 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
            ! that your system is well conditioned, we  strongly  recommend
            ! you to use faster solver, SPDMatrixSolveFast() function.
 
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
 INPUT PARAMETERS
     A       -   array[0..N-1,0..N-1], system matrix
     N       -   size of A
@@ -1728,6 +1980,30 @@ OUTPUT PARAMETERS
                 * info>0    =>  solution
                 * info=-3   =>  filled by zeros
 
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
 *************************************************************************/
@@ -1744,19 +2020,6 @@ Algorithm features:
 * matrix is represented by its upper or lower triangle
 * no additional time consuming features like condition number estimation
 
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
 INPUT PARAMETERS
     A       -   array[0..N-1,0..N-1], system matrix
     N       -   size of A
@@ -1771,6 +2034,30 @@ OUTPUT PARAMETERS
     B       -   array[N], it contains:
                 * info>0    =>  solution
                 * info=-3   =>  filled by zeros
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
   -- ALGLIB --
      Copyright 17.03.2015 by Bochkanov Sergey
@@ -1993,19 +2280,6 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
            ! In such cases we strongly recommend you to use faster solver,
            ! HPDMatrixSolveMFast() function.
 
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
 INPUT PARAMETERS
     A       -   array[0..N-1,0..N-1], system matrix
     N       -   size of A
@@ -2018,6 +2292,30 @@ OUTPUT PARAMETERS
                 Returns -3 for non-HPD matrices.
     Rep     -   same as in RMatrixSolve
     X       -   same as in RMatrixSolve
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
@@ -2033,19 +2331,6 @@ Algorithm features:
 * O(N^3+M*N^2) complexity
 * matrix is represented by its upper or lower triangle
 * no additional time consuming features like condition number estimation
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS
     A       -   array[0..N-1,0..N-1], system matrix
@@ -2063,6 +2348,30 @@ OUTPUT PARAMETERS
     B       -   array[0..N-1]:
                 * overwritten by solution
                 * zeros, if problem was not solved
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
   -- ALGLIB --
      Copyright 17.03.2015 by Bochkanov Sergey
@@ -2101,6 +2410,29 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
            ! that your system is well conditioned, we  strongly  recommend
            ! you to use faster solver, HPDMatrixSolveFast() function.
 
+INPUT PARAMETERS
+    A       -   array[0..N-1,0..N-1], system matrix
+    N       -   size of A
+    IsUpper -   what half of A is provided
+    B       -   array[0..N-1], right part
+
+OUTPUT PARAMETERS
+    Info    -   same as in RMatrixSolve
+                Returns -3 for non-HPD matrices.
+    Rep     -   same as in RMatrixSolve
+    X       -   same as in RMatrixSolve
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
   ! COMMERCIAL EDITION OF ALGLIB:
   !
   ! Commercial Edition of ALGLIB includes following important improvements
@@ -2113,18 +2445,6 @@ IMPORTANT: ! this function is NOT the most efficient linear solver provided
   ! We recommend you to read 'Working with commercial version' section  of
   ! ALGLIB Reference Manual in order to find out how to  use  performance-
   ! related features provided by commercial edition of ALGLIB.
-
-INPUT PARAMETERS
-    A       -   array[0..N-1,0..N-1], system matrix
-    N       -   size of A
-    IsUpper -   what half of A is provided
-    B       -   array[0..N-1], right part
-
-OUTPUT PARAMETERS
-    Info    -   same as in RMatrixSolve
-                Returns -3 for non-HPD matrices.
-    Rep     -   same as in RMatrixSolve
-    X       -   same as in RMatrixSolve
 
   -- ALGLIB --
      Copyright 27.01.2010 by Bochkanov Sergey
@@ -2142,19 +2462,6 @@ Algorithm features:
 * matrix is represented by its upper or lower triangle
 * no additional time consuming functions
 
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
 INPUT PARAMETERS
     A       -   array[0..N-1,0..N-1], system matrix
     N       -   size of A
@@ -2171,6 +2478,30 @@ OUTPUT PARAMETERS
                 * overwritten by solution
                 * zeros, if A is exactly singular (diagonal of its LU
                   decomposition has exact zeros).
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
   -- ALGLIB --
      Copyright 17.03.2015 by Bochkanov Sergey
@@ -2376,19 +2707,6 @@ Algorithm features:
 * iterative refinement
 * O(N^3) complexity
 
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
 INPUT PARAMETERS
     A       -   array[0..NRows-1,0..NCols-1], system matrix
     NRows   -   vertical size of A
@@ -2418,10 +2736,982 @@ Subroutine sets following fields of the Rep structure:
 * CX        array[0..N-1,0..K-1], kernel of A.
             Columns of CX store such vectors that A*CX[i]=0.
 
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
   -- ALGLIB --
      Copyright 24.08.2009 by Bochkanov Sergey
 *************************************************************************/
 void rmatrixsolvels(const real_2d_array &a, const ae_int_t nrows, const ae_int_t ncols, const real_1d_array &b, const double threshold, ae_int_t &info, densesolverlsreport &rep, real_1d_array &x, const xparams _xparams = alglib::xdefault);
+#endif
+
+#if defined(AE_COMPILE_DIRECTSPARSESOLVERS) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+Sparse linear solver for A*x=b with N*N  sparse  real  symmetric  positive
+definite matrix A, N*1 vectors x and b.
+
+This solver  converts  input  matrix  to  SKS  format,  performs  Cholesky
+factorization using  SKS  Cholesky  subroutine  (works  well  for  limited
+bandwidth matrices) and uses sparse triangular solvers to get solution  of
+the original system.
+
+INPUT PARAMETERS
+    A       -   sparse matrix, must be NxN exactly
+    IsUpper -   which half of A is provided (another half is ignored)
+    B       -   array[0..N-1], right part
+
+OUTPUT PARAMETERS
+    X       -   array[N], it contains:
+                * rep.terminationtype>0    =>  solution
+                * rep.terminationtype=-3   =>  filled by zeros
+    Rep     -   solver report, following fields are set:
+                * rep.terminationtype - solver status; >0 for success,
+                  set to -3 on failure (degenerate or non-SPD system).
+
+  -- ALGLIB --
+     Copyright 26.12.2017 by Bochkanov Sergey
+*************************************************************************/
+void sparsespdsolvesks(const sparsematrix &a, const bool isupper, const real_1d_array &b, real_1d_array &x, sparsesolverreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Sparse linear solver for A*x=b with N*N  sparse  real  symmetric  positive
+definite matrix A, N*1 vectors x and b.
+
+This solver  converts  input  matrix  to  CRS  format,  performs  Cholesky
+factorization using supernodal Cholesky  decomposition  with  permutation-
+reducing ordering and uses sparse triangular solver to get solution of the
+original system.
+
+INPUT PARAMETERS
+    A       -   sparse matrix, must be NxN exactly
+    IsUpper -   which half of A is provided (another half is ignored)
+    B       -   array[N], right part
+
+OUTPUT PARAMETERS
+    X       -   array[N], it contains:
+                * rep.terminationtype>0    =>  solution
+                * rep.terminationtype=-3   =>  filled by zeros
+    Rep     -   solver report, following fields are set:
+                * rep.terminationtype - solver status; >0 for success,
+                  set to -3 on failure (degenerate or non-SPD system).
+
+  -- ALGLIB --
+     Copyright 26.12.2017 by Bochkanov Sergey
+*************************************************************************/
+void sparsespdsolve(const sparsematrix &a, const bool isupper, const real_1d_array &b, real_1d_array &x, sparsesolverreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Sparse linear solver for A*x=b with N*N real  symmetric  positive definite
+matrix A given by its Cholesky decomposition, and N*1 vectors x and b.
+
+IMPORTANT: this solver requires input matrix to be in  the  SKS  (Skyline)
+           or CRS (compressed row storage) format. An  exception  will  be
+           generated if you pass matrix in some other format.
+
+INPUT PARAMETERS
+    A       -   sparse NxN matrix stored in CRs or SKS format, must be NxN
+                exactly
+    IsUpper -   which half of A is provided (another half is ignored)
+    B       -   array[N], right part
+
+OUTPUT PARAMETERS
+    X       -   array[N], it contains:
+                * rep.terminationtype>0    =>  solution
+                * rep.terminationtype=-3   =>  filled by zeros
+    Rep     -   solver report, following fields are set:
+                * rep.terminationtype - solver status; >0 for success,
+                  set to -3 on failure (degenerate or non-SPD system).
+
+  -- ALGLIB --
+     Copyright 26.12.2017 by Bochkanov Sergey
+*************************************************************************/
+void sparsespdcholeskysolve(const sparsematrix &a, const bool isupper, const real_1d_array &b, real_1d_array &x, sparsesolverreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Sparse linear solver for A*x=b with general (nonsymmetric) N*N sparse real
+matrix A, N*1 vectors x and b.
+
+This solver converts input matrix to CRS format, performs LU factorization
+and uses sparse triangular solvers to get solution of the original system.
+
+INPUT PARAMETERS
+    A       -   sparse matrix, must be NxN exactly, any storage format
+    N       -   size of A, N>0
+    B       -   array[0..N-1], right part
+
+OUTPUT PARAMETERS
+    X       -   array[N], it contains:
+                * rep.terminationtype>0    =>  solution
+                * rep.terminationtype=-3   =>  filled by zeros
+    Rep     -   solver report, following fields are set:
+                * rep.terminationtype - solver status; >0 for success,
+                  set to -3 on failure (degenerate system).
+
+  -- ALGLIB --
+     Copyright 26.12.2017 by Bochkanov Sergey
+*************************************************************************/
+void sparsesolve(const sparsematrix &a, const real_1d_array &b, real_1d_array &x, sparsesolverreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Sparse linear solver for A*x=b with general (nonsymmetric) N*N sparse real
+matrix A given by its LU factorization, N*1 vectors x and b.
+
+IMPORTANT: this solver requires input matrix  to  be  in  the  CRS  sparse
+           storage format. An exception will  be  generated  if  you  pass
+           matrix in some other format (HASH or SKS).
+
+INPUT PARAMETERS
+    A       -   LU factorization of the sparse matrix, must be NxN exactly
+                in CRS storage format
+    P, Q    -   pivot indexes from LU factorization
+    N       -   size of A, N>0
+    B       -   array[0..N-1], right part
+
+OUTPUT PARAMETERS
+    X       -   array[N], it contains:
+                * rep.terminationtype>0    =>  solution
+                * rep.terminationtype=-3   =>  filled by zeros
+    Rep     -   solver report, following fields are set:
+                * rep.terminationtype - solver status; >0 for success,
+                  set to -3 on failure (degenerate system).
+
+  -- ALGLIB --
+     Copyright 26.12.2017 by Bochkanov Sergey
+*************************************************************************/
+void sparselusolve(const sparsematrix &a, const integer_1d_array &p, const integer_1d_array &q, const real_1d_array &b, real_1d_array &x, sparsesolverreport &rep, const xparams _xparams = alglib::xdefault);
+#endif
+
+#if defined(AE_COMPILE_ITERATIVESPARSE) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+Solving sparse symmetric linear system A*x=b using GMRES(k) method. Sparse
+symmetric A is given by its lower or upper triangle.
+
+NOTE: use SparseSolveGMRES() to solve system with nonsymmetric A.
+
+This function provides convenience API for an 'expert' interface  provided
+by SparseSolverState class. Use SparseSolver  API  if  you  need  advanced
+functions like providing initial point, using out-of-core API and so on.
+
+INPUT PARAMETERS:
+    A       -   sparse symmetric NxN matrix in any sparse storage  format.
+                Using CRS format is recommended because it avoids internal
+                conversion.
+                An exception will be generated if  A  is  not  NxN  matrix
+                (where  N  is  a  size   specified  during  solver  object
+                creation).
+    IsUpper -   whether upper or lower triangle of A is used:
+                * IsUpper=True  => only upper triangle is used and lower
+                                   triangle is not referenced at all
+                * IsUpper=False => only lower triangle is used and upper
+                                   triangle is not referenced at all
+    B       -   right part, array[N]
+    K       -   k parameter for  GMRES(k), k>=0.  Zero  value  means  that
+                algorithm will choose it automatically.
+    EpsF    -   stopping condition, EpsF>=0. The algorithm will stop  when
+                residual will decrease below EpsF*|B|. Having EpsF=0 means
+                that this stopping condition is ignored.
+    MaxIts  -   stopping condition, MaxIts>=0.  The  algorithm  will  stop
+                after performing MaxIts iterations. Zero  value  means  no
+                limit.
+
+NOTE: having both EpsF=0 and MaxIts=0 means that stopping criteria will be
+      chosen automatically.
+
+OUTPUT PARAMETERS:
+    X       -   array[N], the solution
+    Rep     -   solution report:
+                * Rep.TerminationType completion code:
+                    * -5    CG method was used for a matrix which  is  not
+                            positive definite
+                    * -4    overflow/underflow during solution
+                            (ill conditioned problem)
+                    *  1    ||residual||<=EpsF*||b||
+                    *  5    MaxIts steps was taken
+                    *  7    rounding errors prevent further progress,
+                            best point found is returned
+                    *  8    the  algorithm  was  terminated   early  with
+                            SparseSolverRequestTermination() being called
+                            from other thread.
+                * Rep.IterationsCount contains iterations count
+                * Rep.NMV contains number of matrix-vector calculations
+                * Rep.R2 contains squared residual
+
+  -- ALGLIB --
+     Copyright 25.09.2021 by Bochkanov Sergey
+*************************************************************************/
+void sparsesolvesymmetricgmres(const sparsematrix &a, const bool isupper, const real_1d_array &b, const ae_int_t k, const double epsf, const ae_int_t maxits, real_1d_array &x, sparsesolverreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Solving sparse linear system A*x=b using GMRES(k) method.
+
+This function provides convenience API for an 'expert' interface  provided
+by SparseSolverState class. Use SparseSolver  API  if  you  need  advanced
+functions like providing initial point, using out-of-core API and so on.
+
+INPUT PARAMETERS:
+    A       -   sparse NxN matrix in any sparse storage format. Using  CRS
+                format   is   recommended   because   it  avoids  internal
+                conversion.
+                An exception will be generated if  A  is  not  NxN  matrix
+                (where  N  is  a  size   specified  during  solver  object
+                creation).
+    B       -   right part, array[N]
+    K       -   k parameter for  GMRES(k), k>=0.  Zero  value  means  that
+                algorithm will choose it automatically.
+    EpsF    -   stopping condition, EpsF>=0. The algorithm will stop  when
+                residual will decrease below EpsF*|B|. Having EpsF=0 means
+                that this stopping condition is ignored.
+    MaxIts  -   stopping condition, MaxIts>=0.  The  algorithm  will  stop
+                after performing MaxIts iterations. Zero  value  means  no
+                limit.
+
+NOTE: having both EpsF=0 and MaxIts=0 means that stopping criteria will be
+      chosen automatically.
+
+OUTPUT PARAMETERS:
+    X       -   array[N], the solution
+    Rep     -   solution report:
+                * Rep.TerminationType completion code:
+                    * -5    CG method was used for a matrix which  is  not
+                            positive definite
+                    * -4    overflow/underflow during solution
+                            (ill conditioned problem)
+                    *  1    ||residual||<=EpsF*||b||
+                    *  5    MaxIts steps was taken
+                    *  7    rounding errors prevent further progress,
+                            best point found is returned
+                    *  8    the  algorithm  was  terminated   early  with
+                            SparseSolverRequestTermination() being called
+                            from other thread.
+                * Rep.IterationsCount contains iterations count
+                * Rep.NMV contains number of matrix-vector calculations
+                * Rep.R2 contains squared residual
+
+  -- ALGLIB --
+     Copyright 25.09.2021 by Bochkanov Sergey
+*************************************************************************/
+void sparsesolvegmres(const sparsematrix &a, const real_1d_array &b, const ae_int_t k, const double epsf, const ae_int_t maxits, real_1d_array &x, sparsesolverreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function initializes sparse linear iterative solver object.
+
+This solver can be used  to  solve  nonsymmetric  and  symmetric  positive
+definite NxN (square) linear systems.
+
+The solver provides  'expert'  API  which  allows  advanced  control  over
+algorithms being used, including ability to get progress report, terminate
+long-running solver from other thread, out-of-core solution and so on.
+
+NOTE: there are also convenience  functions  that  allows  quick  one-line
+      access to the solvers:
+      * SparseSolveCG() to solve SPD linear systems
+      * SparseSolveGMRES() to solve unsymmetric linear systems.
+
+NOTE: if you want to solve MxN (rectangular) linear problem  you  may  use
+      LinLSQR solver provided by ALGLIB.
+
+USAGE (A is given by the SparseMatrix structure):
+
+    1. User initializes algorithm state with SparseSolverCreate() call
+    2. User  selects   algorithm  with one of the SparseSolverSetAlgo???()
+       functions. By default, GMRES(k) is used with automatically chosen k
+    3. Optionally, user tunes solver parameters, sets starting point, etc.
+    4. Depending on whether system is symmetric or not, user calls:
+       * SparseSolverSolveSymmetric() for a  symmetric system given by its
+         lower or upper triangle
+       * SparseSolverSolve() for a nonsymmetric system or a symmetric  one
+         given by the full matrix
+    5. User calls SparseSolverResults() to get the solution
+
+    It is possible to call SparseSolverSolve???() again to  solve  another
+    task with same dimensionality but different matrix and/or  right  part
+    without reinitializing SparseSolverState structure.
+
+USAGE (out-of-core mode):
+
+    1. User initializes algorithm state with SparseSolverCreate() call
+    2. User  selects   algorithm  with one of the SparseSolverSetAlgo???()
+       functions. By default, GMRES(k) is used with automatically chosen k
+    3. Optionally, user tunes solver parameters, sets starting point, etc.
+    4. After that user should work with out-of-core interface  in  a  loop
+       like one given below:
+
+        > alglib.sparsesolveroocstart(state)
+        > while alglib.sparsesolverooccontinue(state) do
+        >     alglib.sparsesolveroocgetrequestinfo(state, out RequestType)
+        >     alglib.sparsesolveroocgetrequestdata(state, out X)
+        >     if RequestType=0 then
+        >         [calculate  Y=A*X, with X=R^N]
+        >     alglib.sparsesolveroocsendresult(state, in Y)
+        > alglib.sparsesolveroocstop(state, out X, out Report)
+
+INPUT PARAMETERS:
+    N       -   problem dimensionality (fixed at start-up)
+
+OUTPUT PARAMETERS:
+    State   -   structure which stores algorithm state
+
+  -- ALGLIB --
+     Copyright 24.09.2021 by Bochkanov Sergey
+*************************************************************************/
+void sparsesolvercreate(const ae_int_t n, sparsesolverstate &state, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function sets the solver algorithm to GMRES(k).
+
+NOTE: if you do not need advanced functionality of the  SparseSolver  API,
+      you   may   use   convenience   functions   SparseSolveGMRES()   and
+      SparseSolveSymmetricGMRES().
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state
+    K       -   GMRES parameter, K>=0:
+                * recommended values are in 10..100 range
+                * larger values up to N are possible but have little sense
+                  - the algorithm will be slower than any dense solver.
+                * values above N are truncated down to N
+                * zero value means that  default  value  is  chosen.  This
+                  value is 50 in the current version, but  it  may  change
+                  in future ALGLIB releases.
+
+  -- ALGLIB --
+     Copyright 24.09.2021 by Bochkanov Sergey
+*************************************************************************/
+void sparsesolversetalgogmres(const sparsesolverstate &state, const ae_int_t k, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function sets starting point.
+By default, zero starting point is used.
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state
+    X       -   starting point, array[N]
+
+OUTPUT PARAMETERS:
+    State   -   new starting point was set
+
+  -- ALGLIB --
+     Copyright 24.09.2021 by Bochkanov Sergey
+*************************************************************************/
+void sparsesolversetstartingpoint(const sparsesolverstate &state, const real_1d_array &x, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function sets stopping criteria.
+
+INPUT PARAMETERS:
+    EpsF    -   algorithm will be stopped if norm of residual is less than
+                EpsF*||b||.
+    MaxIts  -   algorithm will be stopped if number of iterations is  more
+                than MaxIts.
+
+OUTPUT PARAMETERS:
+    State   -   structure which stores algorithm state
+
+NOTES:
+If  both  EpsF  and  MaxIts  are  zero then small EpsF will be set to small
+value.
+
+  -- ALGLIB --
+     Copyright 14.11.2011 by Bochkanov Sergey
+*************************************************************************/
+void sparsesolversetcond(const sparsesolverstate &state, const double epsf, const ae_int_t maxits, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Procedure for  the  solution of A*x=b with sparse symmetric A given by its
+lower or upper triangle.
+
+This function will work with any solver algorithm  being   used,  SPD  one
+(like CG) or not (like GMRES). Using unsymmetric solvers (like  GMRES)  on
+SPD problems is suboptimal, but still possible.
+
+NOTE: the  solver  behavior is ill-defined  for  a  situation  when a  SPD
+      solver is used on indefinite matrix. It  may solve the problem up to
+      desired precision (sometimes, rarely)  or  return  with  error  code
+      signalling violation of underlying assumptions.
+
+INPUT PARAMETERS:
+    State   -   algorithm state
+    A       -   sparse symmetric NxN matrix in any sparse storage  format.
+                Using CRS format is recommended because it avoids internal
+                conversion.
+                An exception will be generated if  A  is  not  NxN  matrix
+                (where  N  is  a  size   specified  during  solver  object
+                creation).
+    IsUpper -   whether upper or lower triangle of A is used:
+                * IsUpper=True  => only upper triangle is used and lower
+                                   triangle is not referenced at all
+                * IsUpper=False => only lower triangle is used and upper
+                                   triangle is not referenced at all
+    B       -   right part, array[N]
+
+RESULT:
+    This function returns no result.
+    You can get the solution by calling SparseSolverResults()
+
+  -- ALGLIB --
+     Copyright 25.09.2021 by Bochkanov Sergey
+*************************************************************************/
+void sparsesolversolvesymmetric(const sparsesolverstate &state, const sparsematrix &a, const bool isupper, const real_1d_array &b, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Procedure for the solution of A*x=b with sparse nonsymmetric A
+
+IMPORTANT: this function will work with any solver algorithm  being  used,
+           symmetric solver like CG,  or  not.  However,  using  symmetric
+           solvers on nonsymmetric problems is  dangerous.  It  may  solve
+           the problem up  to  desired  precision  (sometimes,  rarely) or
+           terminate with error code signalling  violation  of  underlying
+           assumptions.
+
+INPUT PARAMETERS:
+    State   -   algorithm state
+    A       -   sparse NxN matrix in any sparse storage  format.
+                Using CRS format is recommended because it avoids internal
+                conversion.
+                An exception will be generated if  A  is  not  NxN  matrix
+                (where  N  is  a  size   specified  during  solver  object
+                creation).
+    B       -   right part, array[N]
+
+RESULT:
+    This function returns no result.
+    You can get the solution by calling SparseSolverResults()
+
+  -- ALGLIB --
+     Copyright 25.09.2021 by Bochkanov Sergey
+*************************************************************************/
+void sparsesolversolve(const sparsesolverstate &state, const sparsematrix &a, const real_1d_array &b, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Sparse solver results.
+
+This function must be called after calling one of the SparseSolverSolve()
+functions.
+
+INPUT PARAMETERS:
+    State   -   algorithm state
+
+OUTPUT PARAMETERS:
+    X       -   array[N], solution
+    Rep     -   solution report:
+                * Rep.TerminationType completion code:
+                    * -5    CG method was used for a matrix which  is  not
+                            positive definite
+                    * -4    overflow/underflow during solution
+                            (ill conditioned problem)
+                    *  1    ||residual||<=EpsF*||b||
+                    *  5    MaxIts steps was taken
+                    *  7    rounding errors prevent further progress,
+                            best point found is returned
+                    *  8    the  algorithm  was  terminated   early  with
+                            SparseSolverRequestTermination() being called
+                            from other thread.
+                * Rep.IterationsCount contains iterations count
+                * Rep.NMV contains number of matrix-vector calculations
+                * Rep.R2 contains squared residual
+s
+  -- ALGLIB --
+     Copyright 14.11.2011 by Bochkanov Sergey
+*************************************************************************/
+void sparsesolverresults(const sparsesolverstate &state, real_1d_array &x, sparsesolverreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function turns on/off reporting during out-of-core processing.
+
+When the solver works in the out-of-core mode, it  can  be  configured  to
+report its progress by returning current location. These location  reports
+are implemented as a special kind of the out-of-core request:
+* SparseSolverOOCGetRequestInfo() returns -1
+* SparseSolverOOCGetRequestData() returns current location
+* SparseSolverOOCGetRequestData1() returns squared norm of the residual
+* SparseSolverOOCSendResult() shall NOT be called
+
+This function has no effect when SparseSolverSolve() is used because  this
+function has no method of reporting its progress.
+
+NOTE: when used with GMRES(k), this function reports progress  every  k-th
+      iteration.
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state
+    NeedXRep-   whether iteration reports are needed or not
+
+  -- ALGLIB --
+     Copyright 01.10.2021 by Bochkanov Sergey
+*************************************************************************/
+void sparsesolversetxrep(const sparsesolverstate &state, const bool needxrep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function initiates out-of-core mode of the sparse solver.  It  should
+be used in conjunction with other out-of-core-related  functions  of  this
+subspackage in a loop like one given below:
+
+> alglib.sparsesolveroocstart(state)
+> while alglib.sparsesolverooccontinue(state) do
+>     alglib.sparsesolveroocgetrequestinfo(state, out RequestType)
+>     alglib.sparsesolveroocgetrequestdata(state, out X)
+>     if RequestType=0 then
+>         [calculate  Y=A*X, with X=R^N]
+>     alglib.sparsesolveroocsendresult(state, in Y)
+> alglib.sparsesolveroocstop(state, out X, out Report)
+
+INPUT PARAMETERS:
+    State       -   solver object
+
+  -- ALGLIB --
+     Copyright 24.09.2021 by Bochkanov Sergey
+*************************************************************************/
+void sparsesolveroocstart(const sparsesolverstate &state, const real_1d_array &b, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function performs iterative solution of  the  linear  system  in  the
+out-of-core mode. It should be used in conjunction with other out-of-core-
+related functions of this subspackage in a loop like one given below:
+
+> alglib.sparsesolveroocstart(state)
+> while alglib.sparsesolverooccontinue(state) do
+>     alglib.sparsesolveroocgetrequestinfo(state, out RequestType)
+>     alglib.sparsesolveroocgetrequestdata(state, out X)
+>     if RequestType=0 then
+>         [calculate  Y=A*X, with X=R^N]
+>     alglib.sparsesolveroocsendresult(state, in Y)
+> alglib.sparsesolveroocstop(state, out X, out Report)
+
+  -- ALGLIB --
+     Copyright 24.09.2021 by Bochkanov Sergey
+*************************************************************************/
+bool sparsesolverooccontinue(const sparsesolverstate &state, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function is used to retrieve information  about  out-of-core  request
+sent by the solver:
+* RequestType=0  means that matrix-vector products A*x is requested
+* RequestType=-1 means that solver reports its progress; this  request  is
+  returned only when reports are activated wit SparseSolverSetXRep().
+
+This function returns just request type; in order  to  get contents of the
+trial vector, use sparsesolveroocgetrequestdata().
+
+It should be used in conjunction with other out-of-core-related  functions
+of this subspackage in a loop like one given below:
+
+> alglib.sparsesolveroocstart(state)
+> while alglib.sparsesolverooccontinue(state) do
+>     alglib.sparsesolveroocgetrequestinfo(state, out RequestType)
+>     alglib.sparsesolveroocgetrequestdata(state, out X)
+>     if RequestType=0 then
+>         [calculate  Y=A*X, with X=R^N]
+>     alglib.sparsesolveroocsendresult(state, in Y)
+> alglib.sparsesolveroocstop(state, out X, out Report)
+
+INPUT PARAMETERS:
+    State           -   solver running in out-of-core mode
+
+OUTPUT PARAMETERS:
+    RequestType     -   type of the request to process:
+                        * 0   for matrix-vector product A*x, with A  being
+                          NxN system matrix  and X being N-dimensional
+                          vector
+                        *-1   for location and residual report
+
+
+  -- ALGLIB --
+     Copyright 24.09.2021 by Bochkanov Sergey
+*************************************************************************/
+void sparsesolveroocgetrequestinfo(const sparsesolverstate &state, ae_int_t &requesttype, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function is used  to  retrieve  vector  associated  with  out-of-core
+request sent by the solver to user code. Depending  on  the  request  type
+(returned by the SparseSolverOOCGetRequestInfo()) this  vector  should  be
+multiplied by A or subjected to another processing.
+
+It should be used in conjunction with other out-of-core-related  functions
+of this subspackage in a loop like one given below:
+
+> alglib.sparsesolveroocstart(state)
+> while alglib.sparsesolverooccontinue(state) do
+>     alglib.sparsesolveroocgetrequestinfo(state, out RequestType)
+>     alglib.sparsesolveroocgetrequestdata(state, out X)
+>     if RequestType=0 then
+>         [calculate  Y=A*X, with X=R^N]
+>     alglib.sparsesolveroocsendresult(state, in Y)
+> alglib.sparsesolveroocstop(state, out X, out Report)
+
+INPUT PARAMETERS:
+    State           -   solver running in out-of-core mode
+    X               -   possibly  preallocated   storage;  reallocated  if
+                        needed, left unchanged, if large enough  to  store
+                        request data.
+
+OUTPUT PARAMETERS:
+    X               -   array[N] or larger, leading N elements are  filled
+                        with vector X.
+
+
+  -- ALGLIB --
+     Copyright 24.09.2021 by Bochkanov Sergey
+*************************************************************************/
+void sparsesolveroocgetrequestdata(const sparsesolverstate &state, real_1d_array &x, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function is used to retrieve scalar value associated with out-of-core
+request sent by the solver to user code. In  the  current  ALGLIB  version
+this function is used to retrieve squared residual  norm  during  progress
+reports.
+
+INPUT PARAMETERS:
+    State           -   solver running in out-of-core mode
+
+OUTPUT PARAMETERS:
+    V               -   scalar value associated with the current request
+
+
+  -- ALGLIB --
+     Copyright 24.09.2021 by Bochkanov Sergey
+*************************************************************************/
+void sparsesolveroocgetrequestdata1(const sparsesolverstate &state, double &v, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function is used to send user reply to out-of-core  request  sent  by
+the solver. Usually it is product A*x for vector X returned by the solver.
+
+It should be used in conjunction with other out-of-core-related  functions
+of this subspackage in a loop like one given below:
+
+> alglib.sparsesolveroocstart(state)
+> while alglib.sparsesolverooccontinue(state) do
+>     alglib.sparsesolveroocgetrequestinfo(state, out RequestType)
+>     alglib.sparsesolveroocgetrequestdata(state, out X)
+>     if RequestType=0 then
+>         [calculate  Y=A*X, with X=R^N]
+>     alglib.sparsesolveroocsendresult(state, in Y)
+> alglib.sparsesolveroocstop(state, out X, out Report)
+
+INPUT PARAMETERS:
+    State           -   solver running in out-of-core mode
+    AX              -   array[N] or larger, leading N elements contain A*x
+
+
+  -- ALGLIB --
+     Copyright 24.09.2021 by Bochkanov Sergey
+*************************************************************************/
+void sparsesolveroocsendresult(const sparsesolverstate &state, const real_1d_array &ax, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This  function  finalizes out-of-core mode of the linear solver. It should
+be used in conjunction with other out-of-core-related  functions  of  this
+subspackage in a loop like one given below:
+
+> alglib.sparsesolveroocstart(state)
+> while alglib.sparsesolverooccontinue(state) do
+>     alglib.sparsesolveroocgetrequestinfo(state, out RequestType)
+>     alglib.sparsesolveroocgetrequestdata(state, out X)
+>     if RequestType=0 then
+>         [calculate  Y=A*X, with X=R^N]
+>     alglib.sparsesolveroocsendresult(state, in Y)
+> alglib.sparsesolveroocstop(state, out X, out Report)
+
+INPUT PARAMETERS:
+    State       -   solver state
+
+OUTPUT PARAMETERS:
+    X       -   array[N], the solution.
+                Zero-filled on the failure (Rep.TerminationType<0).
+    Rep     -   report with additional info:
+                * Rep.TerminationType completion code:
+                    * -5    CG method was used for a matrix which  is  not
+                            positive definite
+                    * -4    overflow/underflow during solution
+                            (ill conditioned problem)
+                    *  1    ||residual||<=EpsF*||b||
+                    *  5    MaxIts steps was taken
+                    *  7    rounding errors prevent further progress,
+                            best point found is returned
+                    *  8    the  algorithm  was  terminated   early  with
+                            SparseSolverRequestTermination() being called
+                            from other thread.
+                * Rep.IterationsCount contains iterations count
+                * Rep.NMV contains number of matrix-vector calculations
+                * Rep.R2 contains squared residual
+
+  -- ALGLIB --
+     Copyright 24.09.2021 by Bochkanov Sergey
+*************************************************************************/
+void sparsesolveroocstop(const sparsesolverstate &state, real_1d_array &x, sparsesolverreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This subroutine submits request for termination of the running solver.  It
+can be called from some other thread which wants the   solver to terminate
+or when processing an out-of-core request.
+
+As result, solver  stops  at  point  which  was  "current  accepted"  when
+the termination request was submitted and returns error code 8 (successful
+termination).  Such   termination   is  a smooth  process  which  properly
+deallocates all temporaries.
+
+INPUT PARAMETERS:
+    State   -   solver structure
+
+NOTE: calling this function on solver which is NOT running  will  have  no
+      effect.
+
+NOTE: multiple calls to this function are possible. First call is counted,
+      subsequent calls are silently ignored.
+
+NOTE: solver clears termination flag on its start, it means that  if  some
+      other thread will request termination too soon, its request will went
+      unnoticed.
+
+  -- ALGLIB --
+     Copyright 01.10.2021 by Bochkanov Sergey
+*************************************************************************/
+void sparsesolverrequesttermination(const sparsesolverstate &state, const xparams _xparams = alglib::xdefault);
+#endif
+
+#if defined(AE_COMPILE_LINCG) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+This function initializes linear CG Solver. This solver is used  to  solve
+symmetric positive definite problems. If you want  to  solve  nonsymmetric
+(or non-positive definite) problem you may use LinLSQR solver provided  by
+ALGLIB.
+
+USAGE:
+1. User initializes algorithm state with LinCGCreate() call
+2. User tunes solver parameters with  LinCGSetCond() and other functions
+3. Optionally, user sets starting point with LinCGSetStartingPoint()
+4. User  calls LinCGSolveSparse() function which takes algorithm state and
+   SparseMatrix object.
+5. User calls LinCGResults() to get solution
+6. Optionally, user may call LinCGSolveSparse()  again  to  solve  another
+   problem  with different matrix and/or right part without reinitializing
+   LinCGState structure.
+
+INPUT PARAMETERS:
+    N       -   problem dimension, N>0
+
+OUTPUT PARAMETERS:
+    State   -   structure which stores algorithm state
+
+  -- ALGLIB --
+     Copyright 14.11.2011 by Bochkanov Sergey
+*************************************************************************/
+void lincgcreate(const ae_int_t n, lincgstate &state, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function sets starting point.
+By default, zero starting point is used.
+
+INPUT PARAMETERS:
+    X       -   starting point, array[N]
+
+OUTPUT PARAMETERS:
+    State   -   structure which stores algorithm state
+
+  -- ALGLIB --
+     Copyright 14.11.2011 by Bochkanov Sergey
+*************************************************************************/
+void lincgsetstartingpoint(const lincgstate &state, const real_1d_array &x, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This  function  changes  preconditioning  settings  of  LinCGSolveSparse()
+function. By default, SolveSparse() uses diagonal preconditioner,  but  if
+you want to use solver without preconditioning, you can call this function
+which forces solver to use unit matrix for preconditioning.
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state
+
+  -- ALGLIB --
+     Copyright 19.11.2012 by Bochkanov Sergey
+*************************************************************************/
+void lincgsetprecunit(const lincgstate &state, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This  function  changes  preconditioning  settings  of  LinCGSolveSparse()
+function.  LinCGSolveSparse() will use diagonal of the  system  matrix  as
+preconditioner. This preconditioning mode is active by default.
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state
+
+  -- ALGLIB --
+     Copyright 19.11.2012 by Bochkanov Sergey
+*************************************************************************/
+void lincgsetprecdiag(const lincgstate &state, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function sets stopping criteria.
+
+INPUT PARAMETERS:
+    EpsF    -   algorithm will be stopped if norm of residual is less than
+                EpsF*||b||.
+    MaxIts  -   algorithm will be stopped if number of iterations is  more
+                than MaxIts.
+
+OUTPUT PARAMETERS:
+    State   -   structure which stores algorithm state
+
+NOTES:
+If  both  EpsF  and  MaxIts  are  zero then small EpsF will be set to small
+value.
+
+  -- ALGLIB --
+     Copyright 14.11.2011 by Bochkanov Sergey
+*************************************************************************/
+void lincgsetcond(const lincgstate &state, const double epsf, const ae_int_t maxits, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Procedure for solution of A*x=b with sparse A.
+
+INPUT PARAMETERS:
+    State   -   algorithm state
+    A       -   sparse matrix in the CRS format (you MUST contvert  it  to
+                CRS format by calling SparseConvertToCRS() function).
+    IsUpper -   whether upper or lower triangle of A is used:
+                * IsUpper=True  => only upper triangle is used and lower
+                                   triangle is not referenced at all
+                * IsUpper=False => only lower triangle is used and upper
+                                   triangle is not referenced at all
+    B       -   right part, array[N]
+
+RESULT:
+    This function returns no result.
+    You can get solution by calling LinCGResults()
+
+NOTE: this function uses lightweight preconditioning -  multiplication  by
+      inverse of diag(A). If you want, you can turn preconditioning off by
+      calling LinCGSetPrecUnit(). However, preconditioning cost is low and
+      preconditioner  is  very  important  for  solution  of  badly scaled
+      problems.
+
+  -- ALGLIB --
+     Copyright 14.11.2011 by Bochkanov Sergey
+*************************************************************************/
+void lincgsolvesparse(const lincgstate &state, const sparsematrix &a, const bool isupper, const real_1d_array &b, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+CG-solver: results.
+
+This function must be called after LinCGSolve
+
+INPUT PARAMETERS:
+    State   -   algorithm state
+
+OUTPUT PARAMETERS:
+    X       -   array[N], solution
+    Rep     -   optimization report:
+                * Rep.TerminationType completetion code:
+                    * -5    input matrix is either not positive definite,
+                            too large or too small
+                    * -4    overflow/underflow during solution
+                            (ill conditioned problem)
+                    *  1    ||residual||<=EpsF*||b||
+                    *  5    MaxIts steps was taken
+                    *  7    rounding errors prevent further progress,
+                            best point found is returned
+                * Rep.IterationsCount contains iterations count
+                * NMV countains number of matrix-vector calculations
+
+  -- ALGLIB --
+     Copyright 14.11.2011 by Bochkanov Sergey
+*************************************************************************/
+void lincgresults(const lincgstate &state, real_1d_array &x, lincgreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function sets restart frequency. By default, algorithm  is  restarted
+after N subsequent iterations.
+
+  -- ALGLIB --
+     Copyright 14.11.2011 by Bochkanov Sergey
+*************************************************************************/
+void lincgsetrestartfreq(const lincgstate &state, const ae_int_t srf, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function sets frequency of residual recalculations.
+
+Algorithm updates residual r_k using iterative formula,  but  recalculates
+it from scratch after each 10 iterations. It is done to avoid accumulation
+of numerical errors and to stop algorithm when r_k starts to grow.
+
+Such low update frequence (1/10) gives very  little  overhead,  but  makes
+algorithm a bit more robust against numerical errors. However, you may
+change it
+
+INPUT PARAMETERS:
+    Freq    -   desired update frequency, Freq>=0.
+                Zero value means that no updates will be done.
+
+  -- ALGLIB --
+     Copyright 14.11.2011 by Bochkanov Sergey
+*************************************************************************/
+void lincgsetrupdatefreq(const lincgstate &state, const ae_int_t freq, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function turns on/off reporting.
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state
+    NeedXRep-   whether iteration reports are needed or not
+
+If NeedXRep is True, algorithm will call rep() callback function if  it is
+provided to MinCGOptimize().
+
+  -- ALGLIB --
+     Copyright 14.11.2011 by Bochkanov Sergey
+*************************************************************************/
+void lincgsetxrep(const lincgstate &state, const bool needxrep, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_LINLSQR) || !defined(AE_PARTIAL_BUILD)
@@ -2657,50 +3947,6 @@ NOTE: solver clears termination flag on its start, it means that  if  some
 void linlsqrrequesttermination(const linlsqrstate &state, const xparams _xparams = alglib::xdefault);
 #endif
 
-#if defined(AE_COMPILE_POLYNOMIALSOLVER) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-Polynomial root finding.
-
-This function returns all roots of the polynomial
-    P(x) = a0 + a1*x + a2*x^2 + ... + an*x^n
-Both real and complex roots are returned (see below).
-
-INPUT PARAMETERS:
-    A       -   array[N+1], polynomial coefficients:
-                * A[0] is constant term
-                * A[N] is a coefficient of X^N
-    N       -   polynomial degree
-
-OUTPUT PARAMETERS:
-    X       -   array of complex roots:
-                * for isolated real root, X[I] is strictly real: IMAGE(X[I])=0
-                * complex roots are always returned in pairs - roots occupy
-                  positions I and I+1, with:
-                  * X[I+1]=Conj(X[I])
-                  * IMAGE(X[I]) > 0
-                  * IMAGE(X[I+1]) = -IMAGE(X[I]) < 0
-                * multiple real roots may have non-zero imaginary part due
-                  to roundoff errors. There is no reliable way to distinguish
-                  real root of multiplicity 2 from two  complex  roots  in
-                  the presence of roundoff errors.
-    Rep     -   report, additional information, following fields are set:
-                * Rep.MaxErr - max( |P(xi)| )  for  i=0..N-1.  This  field
-                  allows to quickly estimate "quality" of the roots  being
-                  returned.
-
-NOTE:   this function uses companion matrix method to find roots. In  case
-        internal EVD  solver  fails  do  find  eigenvalues,  exception  is
-        generated.
-
-NOTE:   roots are not "polished" and  no  matrix  balancing  is  performed
-        for them.
-
-  -- ALGLIB --
-     Copyright 24.02.2014 by Bochkanov Sergey
-*************************************************************************/
-void polynomialsolve(const real_1d_array &a, const ae_int_t n, complex_1d_array &x, polynomialsolverreport &rep, const xparams _xparams = alglib::xdefault);
-#endif
-
 #if defined(AE_COMPILE_NLEQ) || !defined(AE_PARTIAL_BUILD)
 /*************************************************************************
                 LEVENBERG-MARQUARDT-LIKE NONLINEAR SOLVER
@@ -2930,349 +4176,6 @@ INPUT PARAMETERS:
 *************************************************************************/
 void nleqrestartfrom(const nleqstate &state, const real_1d_array &x, const xparams _xparams = alglib::xdefault);
 #endif
-
-#if defined(AE_COMPILE_DIRECTSPARSESOLVERS) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-Sparse linear solver for A*x=b with N*N  sparse  real  symmetric  positive
-definite matrix A, N*1 vectors x and b.
-
-This solver  converts  input  matrix  to  SKS  format,  performs  Cholesky
-factorization using  SKS  Cholesky  subroutine  (works  well  for  limited
-bandwidth matrices) and uses sparse triangular solvers to get solution  of
-the original system.
-
-INPUT PARAMETERS
-    A       -   sparse matrix, must be NxN exactly
-    IsUpper -   which half of A is provided (another half is ignored)
-    B       -   array[0..N-1], right part
-
-OUTPUT PARAMETERS
-    X       -   array[N], it contains:
-                * rep.terminationtype>0    =>  solution
-                * rep.terminationtype=-3   =>  filled by zeros
-    Rep     -   solver report, following fields are set:
-                * rep.terminationtype - solver status; >0 for success,
-                  set to -3 on failure (degenerate or non-SPD system).
-
-  -- ALGLIB --
-     Copyright 26.12.2017 by Bochkanov Sergey
-*************************************************************************/
-void sparsespdsolvesks(const sparsematrix &a, const bool isupper, const real_1d_array &b, real_1d_array &x, sparsesolverreport &rep, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Sparse linear solver for A*x=b with N*N  sparse  real  symmetric  positive
-definite matrix A, N*1 vectors x and b.
-
-This solver  converts  input  matrix  to  CRS  format,  performs  Cholesky
-factorization using supernodal Cholesky  decomposition  with  permutation-
-reducing ordering and uses sparse triangular solver to get solution of the
-original system.
-
-INPUT PARAMETERS
-    A       -   sparse matrix, must be NxN exactly
-    IsUpper -   which half of A is provided (another half is ignored)
-    B       -   array[N], right part
-
-OUTPUT PARAMETERS
-    X       -   array[N], it contains:
-                * rep.terminationtype>0    =>  solution
-                * rep.terminationtype=-3   =>  filled by zeros
-    Rep     -   solver report, following fields are set:
-                * rep.terminationtype - solver status; >0 for success,
-                  set to -3 on failure (degenerate or non-SPD system).
-
-  -- ALGLIB --
-     Copyright 26.12.2017 by Bochkanov Sergey
-*************************************************************************/
-void sparsespdsolve(const sparsematrix &a, const bool isupper, const real_1d_array &b, real_1d_array &x, sparsesolverreport &rep, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Sparse linear solver for A*x=b with N*N real  symmetric  positive definite
-matrix A given by its Cholesky decomposition, and N*1 vectors x and b.
-
-IMPORTANT: this solver requires input matrix to be in  the  SKS  (Skyline)
-           or CRS (compressed row storage) format. An  exception  will  be
-           generated if you pass matrix in some other format.
-
-INPUT PARAMETERS
-    A       -   sparse NxN matrix stored in CRs or SKS format, must be NxN
-                exactly
-    IsUpper -   which half of A is provided (another half is ignored)
-    B       -   array[N], right part
-
-OUTPUT PARAMETERS
-    X       -   array[N], it contains:
-                * rep.terminationtype>0    =>  solution
-                * rep.terminationtype=-3   =>  filled by zeros
-    Rep     -   solver report, following fields are set:
-                * rep.terminationtype - solver status; >0 for success,
-                  set to -3 on failure (degenerate or non-SPD system).
-
-  -- ALGLIB --
-     Copyright 26.12.2017 by Bochkanov Sergey
-*************************************************************************/
-void sparsespdcholeskysolve(const sparsematrix &a, const bool isupper, const real_1d_array &b, real_1d_array &x, sparsesolverreport &rep, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Sparse linear solver for A*x=b with general (nonsymmetric) N*N sparse real
-matrix A, N*1 vectors x and b.
-
-This solver converts input matrix to CRS format, performs LU factorization
-and uses sparse triangular solvers to get solution of the original system.
-
-INPUT PARAMETERS
-    A       -   sparse matrix, must be NxN exactly, any storage format
-    N       -   size of A, N>0
-    B       -   array[0..N-1], right part
-
-OUTPUT PARAMETERS
-    X       -   array[N], it contains:
-                * rep.terminationtype>0    =>  solution
-                * rep.terminationtype=-3   =>  filled by zeros
-    Rep     -   solver report, following fields are set:
-                * rep.terminationtype - solver status; >0 for success,
-                  set to -3 on failure (degenerate system).
-
-  -- ALGLIB --
-     Copyright 26.12.2017 by Bochkanov Sergey
-*************************************************************************/
-void sparsesolve(const sparsematrix &a, const real_1d_array &b, real_1d_array &x, sparsesolverreport &rep, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Sparse linear solver for A*x=b with general (nonsymmetric) N*N sparse real
-matrix A given by its LU factorization, N*1 vectors x and b.
-
-IMPORTANT: this solver requires input matrix  to  be  in  the  CRS  sparse
-           storage format. An exception will  be  generated  if  you  pass
-           matrix in some other format (HASH or SKS).
-
-INPUT PARAMETERS
-    A       -   LU factorization of the sparse matrix, must be NxN exactly
-                in CRS storage format
-    P, Q    -   pivot indexes from LU factorization
-    N       -   size of A, N>0
-    B       -   array[0..N-1], right part
-
-OUTPUT PARAMETERS
-    X       -   array[N], it contains:
-                * rep.terminationtype>0    =>  solution
-                * rep.terminationtype=-3   =>  filled by zeros
-    Rep     -   solver report, following fields are set:
-                * rep.terminationtype - solver status; >0 for success,
-                  set to -3 on failure (degenerate system).
-
-  -- ALGLIB --
-     Copyright 26.12.2017 by Bochkanov Sergey
-*************************************************************************/
-void sparselusolve(const sparsematrix &a, const integer_1d_array &p, const integer_1d_array &q, const real_1d_array &b, real_1d_array &x, sparsesolverreport &rep, const xparams _xparams = alglib::xdefault);
-#endif
-
-#if defined(AE_COMPILE_LINCG) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-This function initializes linear CG Solver. This solver is used  to  solve
-symmetric positive definite problems. If you want  to  solve  nonsymmetric
-(or non-positive definite) problem you may use LinLSQR solver provided  by
-ALGLIB.
-
-USAGE:
-1. User initializes algorithm state with LinCGCreate() call
-2. User tunes solver parameters with  LinCGSetCond() and other functions
-3. Optionally, user sets starting point with LinCGSetStartingPoint()
-4. User  calls LinCGSolveSparse() function which takes algorithm state and
-   SparseMatrix object.
-5. User calls LinCGResults() to get solution
-6. Optionally, user may call LinCGSolveSparse()  again  to  solve  another
-   problem  with different matrix and/or right part without reinitializing
-   LinCGState structure.
-
-INPUT PARAMETERS:
-    N       -   problem dimension, N>0
-
-OUTPUT PARAMETERS:
-    State   -   structure which stores algorithm state
-
-  -- ALGLIB --
-     Copyright 14.11.2011 by Bochkanov Sergey
-*************************************************************************/
-void lincgcreate(const ae_int_t n, lincgstate &state, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function sets starting point.
-By default, zero starting point is used.
-
-INPUT PARAMETERS:
-    X       -   starting point, array[N]
-
-OUTPUT PARAMETERS:
-    State   -   structure which stores algorithm state
-
-  -- ALGLIB --
-     Copyright 14.11.2011 by Bochkanov Sergey
-*************************************************************************/
-void lincgsetstartingpoint(const lincgstate &state, const real_1d_array &x, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This  function  changes  preconditioning  settings  of  LinCGSolveSparse()
-function. By default, SolveSparse() uses diagonal preconditioner,  but  if
-you want to use solver without preconditioning, you can call this function
-which forces solver to use unit matrix for preconditioning.
-
-INPUT PARAMETERS:
-    State   -   structure which stores algorithm state
-
-  -- ALGLIB --
-     Copyright 19.11.2012 by Bochkanov Sergey
-*************************************************************************/
-void lincgsetprecunit(const lincgstate &state, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This  function  changes  preconditioning  settings  of  LinCGSolveSparse()
-function.  LinCGSolveSparse() will use diagonal of the  system  matrix  as
-preconditioner. This preconditioning mode is active by default.
-
-INPUT PARAMETERS:
-    State   -   structure which stores algorithm state
-
-  -- ALGLIB --
-     Copyright 19.11.2012 by Bochkanov Sergey
-*************************************************************************/
-void lincgsetprecdiag(const lincgstate &state, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function sets stopping criteria.
-
-INPUT PARAMETERS:
-    EpsF    -   algorithm will be stopped if norm of residual is less than
-                EpsF*||b||.
-    MaxIts  -   algorithm will be stopped if number of iterations is  more
-                than MaxIts.
-
-OUTPUT PARAMETERS:
-    State   -   structure which stores algorithm state
-
-NOTES:
-If  both  EpsF  and  MaxIts  are  zero then small EpsF will be set to small
-value.
-
-  -- ALGLIB --
-     Copyright 14.11.2011 by Bochkanov Sergey
-*************************************************************************/
-void lincgsetcond(const lincgstate &state, const double epsf, const ae_int_t maxits, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Procedure for solution of A*x=b with sparse A.
-
-INPUT PARAMETERS:
-    State   -   algorithm state
-    A       -   sparse matrix in the CRS format (you MUST contvert  it  to
-                CRS format by calling SparseConvertToCRS() function).
-    IsUpper -   whether upper or lower triangle of A is used:
-                * IsUpper=True  => only upper triangle is used and lower
-                                   triangle is not referenced at all
-                * IsUpper=False => only lower triangle is used and upper
-                                   triangle is not referenced at all
-    B       -   right part, array[N]
-
-RESULT:
-    This function returns no result.
-    You can get solution by calling LinCGResults()
-
-NOTE: this function uses lightweight preconditioning -  multiplication  by
-      inverse of diag(A). If you want, you can turn preconditioning off by
-      calling LinCGSetPrecUnit(). However, preconditioning cost is low and
-      preconditioner  is  very  important  for  solution  of  badly scaled
-      problems.
-
-  -- ALGLIB --
-     Copyright 14.11.2011 by Bochkanov Sergey
-*************************************************************************/
-void lincgsolvesparse(const lincgstate &state, const sparsematrix &a, const bool isupper, const real_1d_array &b, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-CG-solver: results.
-
-This function must be called after LinCGSolve
-
-INPUT PARAMETERS:
-    State   -   algorithm state
-
-OUTPUT PARAMETERS:
-    X       -   array[N], solution
-    Rep     -   optimization report:
-                * Rep.TerminationType completetion code:
-                    * -5    input matrix is either not positive definite,
-                            too large or too small
-                    * -4    overflow/underflow during solution
-                            (ill conditioned problem)
-                    *  1    ||residual||<=EpsF*||b||
-                    *  5    MaxIts steps was taken
-                    *  7    rounding errors prevent further progress,
-                            best point found is returned
-                * Rep.IterationsCount contains iterations count
-                * NMV countains number of matrix-vector calculations
-
-  -- ALGLIB --
-     Copyright 14.11.2011 by Bochkanov Sergey
-*************************************************************************/
-void lincgresults(const lincgstate &state, real_1d_array &x, lincgreport &rep, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function sets restart frequency. By default, algorithm  is  restarted
-after N subsequent iterations.
-
-  -- ALGLIB --
-     Copyright 14.11.2011 by Bochkanov Sergey
-*************************************************************************/
-void lincgsetrestartfreq(const lincgstate &state, const ae_int_t srf, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function sets frequency of residual recalculations.
-
-Algorithm updates residual r_k using iterative formula,  but  recalculates
-it from scratch after each 10 iterations. It is done to avoid accumulation
-of numerical errors and to stop algorithm when r_k starts to grow.
-
-Such low update frequence (1/10) gives very  little  overhead,  but  makes
-algorithm a bit more robust against numerical errors. However, you may
-change it
-
-INPUT PARAMETERS:
-    Freq    -   desired update frequency, Freq>=0.
-                Zero value means that no updates will be done.
-
-  -- ALGLIB --
-     Copyright 14.11.2011 by Bochkanov Sergey
-*************************************************************************/
-void lincgsetrupdatefreq(const lincgstate &state, const ae_int_t freq, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function turns on/off reporting.
-
-INPUT PARAMETERS:
-    State   -   structure which stores algorithm state
-    NeedXRep-   whether iteration reports are needed or not
-
-If NeedXRep is True, algorithm will call rep() callback function if  it is
-provided to MinCGOptimize().
-
-  -- ALGLIB --
-     Copyright 14.11.2011 by Bochkanov Sergey
-*************************************************************************/
-void lincgsetxrep(const lincgstate &state, const bool needxrep, const xparams _xparams = alglib::xdefault);
-#endif
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -3282,6 +4185,17 @@ void lincgsetxrep(const lincgstate &state, const bool needxrep, const xparams _x
 /////////////////////////////////////////////////////////////////////////
 namespace alglib_impl
 {
+#if defined(AE_COMPILE_POLYNOMIALSOLVER) || !defined(AE_PARTIAL_BUILD)
+void polynomialsolve(/* Real    */ ae_vector* a,
+     ae_int_t n,
+     /* Complex */ ae_vector* x,
+     polynomialsolverreport* rep,
+     ae_state *_state);
+void _polynomialsolverreport_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _polynomialsolverreport_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _polynomialsolverreport_clear(void* _p);
+void _polynomialsolverreport_destroy(void* _p);
+#endif
 #if defined(AE_COMPILE_DIRECTDENSESOLVERS) || !defined(AE_PARTIAL_BUILD)
 void rmatrixsolve(/* Real    */ ae_matrix* a,
      ae_int_t n,
@@ -3573,6 +4487,159 @@ void _densesolverlsreport_init_copy(void* _dst, void* _src, ae_state *_state, ae
 void _densesolverlsreport_clear(void* _p);
 void _densesolverlsreport_destroy(void* _p);
 #endif
+#if defined(AE_COMPILE_DIRECTSPARSESOLVERS) || !defined(AE_PARTIAL_BUILD)
+void sparsespdsolvesks(sparsematrix* a,
+     ae_bool isupper,
+     /* Real    */ ae_vector* b,
+     /* Real    */ ae_vector* x,
+     sparsesolverreport* rep,
+     ae_state *_state);
+void sparsespdsolve(sparsematrix* a,
+     ae_bool isupper,
+     /* Real    */ ae_vector* b,
+     /* Real    */ ae_vector* x,
+     sparsesolverreport* rep,
+     ae_state *_state);
+void sparsespdcholeskysolve(sparsematrix* a,
+     ae_bool isupper,
+     /* Real    */ ae_vector* b,
+     /* Real    */ ae_vector* x,
+     sparsesolverreport* rep,
+     ae_state *_state);
+void sparsesolve(sparsematrix* a,
+     /* Real    */ ae_vector* b,
+     /* Real    */ ae_vector* x,
+     sparsesolverreport* rep,
+     ae_state *_state);
+void sparselusolve(sparsematrix* a,
+     /* Integer */ ae_vector* p,
+     /* Integer */ ae_vector* q,
+     /* Real    */ ae_vector* b,
+     /* Real    */ ae_vector* x,
+     sparsesolverreport* rep,
+     ae_state *_state);
+void initsparsesolverreport(sparsesolverreport* rep, ae_state *_state);
+void _sparsesolverreport_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _sparsesolverreport_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _sparsesolverreport_clear(void* _p);
+void _sparsesolverreport_destroy(void* _p);
+#endif
+#if defined(AE_COMPILE_ITERATIVESPARSE) || !defined(AE_PARTIAL_BUILD)
+void sparsesolvesymmetricgmres(sparsematrix* a,
+     ae_bool isupper,
+     /* Real    */ ae_vector* b,
+     ae_int_t k,
+     double epsf,
+     ae_int_t maxits,
+     /* Real    */ ae_vector* x,
+     sparsesolverreport* rep,
+     ae_state *_state);
+void sparsesolvegmres(sparsematrix* a,
+     /* Real    */ ae_vector* b,
+     ae_int_t k,
+     double epsf,
+     ae_int_t maxits,
+     /* Real    */ ae_vector* x,
+     sparsesolverreport* rep,
+     ae_state *_state);
+void sparsesolvercreate(ae_int_t n,
+     sparsesolverstate* state,
+     ae_state *_state);
+void sparsesolversetalgogmres(sparsesolverstate* state,
+     ae_int_t k,
+     ae_state *_state);
+void sparsesolversetstartingpoint(sparsesolverstate* state,
+     /* Real    */ ae_vector* x,
+     ae_state *_state);
+void sparsesolversetcond(sparsesolverstate* state,
+     double epsf,
+     ae_int_t maxits,
+     ae_state *_state);
+void sparsesolversolvesymmetric(sparsesolverstate* state,
+     sparsematrix* a,
+     ae_bool isupper,
+     /* Real    */ ae_vector* b,
+     ae_state *_state);
+void sparsesolversolve(sparsesolverstate* state,
+     sparsematrix* a,
+     /* Real    */ ae_vector* b,
+     ae_state *_state);
+void sparsesolverresults(sparsesolverstate* state,
+     /* Real    */ ae_vector* x,
+     sparsesolverreport* rep,
+     ae_state *_state);
+void sparsesolversetxrep(sparsesolverstate* state,
+     ae_bool needxrep,
+     ae_state *_state);
+void sparsesolveroocstart(sparsesolverstate* state,
+     /* Real    */ ae_vector* b,
+     ae_state *_state);
+ae_bool sparsesolverooccontinue(sparsesolverstate* state,
+     ae_state *_state);
+void sparsesolveroocgetrequestinfo(sparsesolverstate* state,
+     ae_int_t* requesttype,
+     ae_state *_state);
+void sparsesolveroocgetrequestdata(sparsesolverstate* state,
+     /* Real    */ ae_vector* x,
+     ae_state *_state);
+void sparsesolveroocgetrequestdata1(sparsesolverstate* state,
+     double* v,
+     ae_state *_state);
+void sparsesolveroocsendresult(sparsesolverstate* state,
+     /* Real    */ ae_vector* ax,
+     ae_state *_state);
+void sparsesolveroocstop(sparsesolverstate* state,
+     /* Real    */ ae_vector* x,
+     sparsesolverreport* rep,
+     ae_state *_state);
+void sparsesolverrequesttermination(sparsesolverstate* state,
+     ae_state *_state);
+void _sparsesolverstate_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _sparsesolverstate_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _sparsesolverstate_clear(void* _p);
+void _sparsesolverstate_destroy(void* _p);
+#endif
+#if defined(AE_COMPILE_LINCG) || !defined(AE_PARTIAL_BUILD)
+void lincgcreate(ae_int_t n, lincgstate* state, ae_state *_state);
+void lincgsetstartingpoint(lincgstate* state,
+     /* Real    */ ae_vector* x,
+     ae_state *_state);
+void lincgsetb(lincgstate* state,
+     /* Real    */ ae_vector* b,
+     ae_state *_state);
+void lincgsetprecunit(lincgstate* state, ae_state *_state);
+void lincgsetprecdiag(lincgstate* state, ae_state *_state);
+void lincgsetcond(lincgstate* state,
+     double epsf,
+     ae_int_t maxits,
+     ae_state *_state);
+ae_bool lincgiteration(lincgstate* state, ae_state *_state);
+void lincgsolvesparse(lincgstate* state,
+     sparsematrix* a,
+     ae_bool isupper,
+     /* Real    */ ae_vector* b,
+     ae_state *_state);
+void lincgresults(lincgstate* state,
+     /* Real    */ ae_vector* x,
+     lincgreport* rep,
+     ae_state *_state);
+void lincgsetrestartfreq(lincgstate* state,
+     ae_int_t srf,
+     ae_state *_state);
+void lincgsetrupdatefreq(lincgstate* state,
+     ae_int_t freq,
+     ae_state *_state);
+void lincgsetxrep(lincgstate* state, ae_bool needxrep, ae_state *_state);
+void lincgrestart(lincgstate* state, ae_state *_state);
+void _lincgstate_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _lincgstate_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _lincgstate_clear(void* _p);
+void _lincgstate_destroy(void* _p);
+void _lincgreport_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _lincgreport_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _lincgreport_clear(void* _p);
+void _lincgreport_destroy(void* _p);
+#endif
 #if defined(AE_COMPILE_LINLSQR) || !defined(AE_PARTIAL_BUILD)
 void linlsqrcreate(ae_int_t m,
      ae_int_t n,
@@ -3619,17 +4686,6 @@ void _linlsqrreport_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool 
 void _linlsqrreport_clear(void* _p);
 void _linlsqrreport_destroy(void* _p);
 #endif
-#if defined(AE_COMPILE_POLYNOMIALSOLVER) || !defined(AE_PARTIAL_BUILD)
-void polynomialsolve(/* Real    */ ae_vector* a,
-     ae_int_t n,
-     /* Complex */ ae_vector* x,
-     polynomialsolverreport* rep,
-     ae_state *_state);
-void _polynomialsolverreport_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _polynomialsolverreport_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _polynomialsolverreport_clear(void* _p);
-void _polynomialsolverreport_destroy(void* _p);
-#endif
 #if defined(AE_COMPILE_NLEQ) || !defined(AE_PARTIAL_BUILD)
 void nleqcreatelm(ae_int_t n,
      ae_int_t m,
@@ -3662,83 +4718,6 @@ void _nleqreport_init(void* _p, ae_state *_state, ae_bool make_automatic);
 void _nleqreport_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
 void _nleqreport_clear(void* _p);
 void _nleqreport_destroy(void* _p);
-#endif
-#if defined(AE_COMPILE_DIRECTSPARSESOLVERS) || !defined(AE_PARTIAL_BUILD)
-void sparsespdsolvesks(sparsematrix* a,
-     ae_bool isupper,
-     /* Real    */ ae_vector* b,
-     /* Real    */ ae_vector* x,
-     sparsesolverreport* rep,
-     ae_state *_state);
-void sparsespdsolve(sparsematrix* a,
-     ae_bool isupper,
-     /* Real    */ ae_vector* b,
-     /* Real    */ ae_vector* x,
-     sparsesolverreport* rep,
-     ae_state *_state);
-void sparsespdcholeskysolve(sparsematrix* a,
-     ae_bool isupper,
-     /* Real    */ ae_vector* b,
-     /* Real    */ ae_vector* x,
-     sparsesolverreport* rep,
-     ae_state *_state);
-void sparsesolve(sparsematrix* a,
-     /* Real    */ ae_vector* b,
-     /* Real    */ ae_vector* x,
-     sparsesolverreport* rep,
-     ae_state *_state);
-void sparselusolve(sparsematrix* a,
-     /* Integer */ ae_vector* p,
-     /* Integer */ ae_vector* q,
-     /* Real    */ ae_vector* b,
-     /* Real    */ ae_vector* x,
-     sparsesolverreport* rep,
-     ae_state *_state);
-void _sparsesolverreport_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _sparsesolverreport_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _sparsesolverreport_clear(void* _p);
-void _sparsesolverreport_destroy(void* _p);
-#endif
-#if defined(AE_COMPILE_LINCG) || !defined(AE_PARTIAL_BUILD)
-void lincgcreate(ae_int_t n, lincgstate* state, ae_state *_state);
-void lincgsetstartingpoint(lincgstate* state,
-     /* Real    */ ae_vector* x,
-     ae_state *_state);
-void lincgsetb(lincgstate* state,
-     /* Real    */ ae_vector* b,
-     ae_state *_state);
-void lincgsetprecunit(lincgstate* state, ae_state *_state);
-void lincgsetprecdiag(lincgstate* state, ae_state *_state);
-void lincgsetcond(lincgstate* state,
-     double epsf,
-     ae_int_t maxits,
-     ae_state *_state);
-ae_bool lincgiteration(lincgstate* state, ae_state *_state);
-void lincgsolvesparse(lincgstate* state,
-     sparsematrix* a,
-     ae_bool isupper,
-     /* Real    */ ae_vector* b,
-     ae_state *_state);
-void lincgresults(lincgstate* state,
-     /* Real    */ ae_vector* x,
-     lincgreport* rep,
-     ae_state *_state);
-void lincgsetrestartfreq(lincgstate* state,
-     ae_int_t srf,
-     ae_state *_state);
-void lincgsetrupdatefreq(lincgstate* state,
-     ae_int_t freq,
-     ae_state *_state);
-void lincgsetxrep(lincgstate* state, ae_bool needxrep, ae_state *_state);
-void lincgrestart(lincgstate* state, ae_state *_state);
-void _lincgstate_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _lincgstate_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _lincgstate_clear(void* _p);
-void _lincgstate_destroy(void* _p);
-void _lincgreport_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _lincgreport_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _lincgreport_clear(void* _p);
-void _lincgreport_destroy(void* _p);
 #endif
 
 }

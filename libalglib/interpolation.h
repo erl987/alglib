@@ -1,5 +1,5 @@
 /*************************************************************************
-ALGLIB 3.17.0 (source code generated 2020-12-27)
+ALGLIB 3.19.0 (source code generated 2022-06-07)
 Copyright (c) Sergey Bochkanov (ALGLIB project).
 
 >>> SOURCE LICENSE >>>
@@ -23,8 +23,8 @@ http://www.fsf.org/licensing/licenses
 #include "alglibinternal.h"
 #include "alglibmisc.h"
 #include "linalg.h"
-#include "optimization.h"
 #include "solvers.h"
+#include "optimization.h"
 #include "specialfunctions.h"
 #include "integration.h"
 
@@ -35,6 +35,16 @@ http://www.fsf.org/licensing/licenses
 /////////////////////////////////////////////////////////////////////////
 namespace alglib_impl
 {
+#if defined(AE_COMPILE_RATINT) || !defined(AE_PARTIAL_BUILD)
+typedef struct
+{
+    ae_int_t n;
+    double sy;
+    ae_vector x;
+    ae_vector y;
+    ae_vector w;
+} barycentricinterpolant;
+#endif
 #if defined(AE_COMPILE_IDW) || !defined(AE_PARTIAL_BUILD)
 typedef struct
 {
@@ -98,24 +108,9 @@ typedef struct
     double r2;
 } idwreport;
 #endif
-#if defined(AE_COMPILE_RATINT) || !defined(AE_PARTIAL_BUILD)
-typedef struct
-{
-    ae_int_t n;
-    double sy;
-    ae_vector x;
-    ae_vector y;
-    ae_vector w;
-} barycentricinterpolant;
-#endif
-#if defined(AE_COMPILE_FITSPHERE) || !defined(AE_PARTIAL_BUILD)
-typedef struct
-{
-    ae_int_t nfev;
-    ae_int_t iterationscount;
-} fitsphereinternalreport;
-#endif
 #if defined(AE_COMPILE_INTFITSERV) || !defined(AE_PARTIAL_BUILD)
+#endif
+#if defined(AE_COMPILE_POLINT) || !defined(AE_PARTIAL_BUILD)
 #endif
 #if defined(AE_COMPILE_SPLINE1D) || !defined(AE_PARTIAL_BUILD)
 typedef struct
@@ -135,42 +130,6 @@ typedef struct
     double avgrelerror;
     double maxerror;
 } spline1dfitreport;
-#endif
-#if defined(AE_COMPILE_PARAMETRIC) || !defined(AE_PARTIAL_BUILD)
-typedef struct
-{
-    ae_int_t n;
-    ae_bool periodic;
-    ae_vector p;
-    spline1dinterpolant x;
-    spline1dinterpolant y;
-} pspline2interpolant;
-typedef struct
-{
-    ae_int_t n;
-    ae_bool periodic;
-    ae_vector p;
-    spline1dinterpolant x;
-    spline1dinterpolant y;
-    spline1dinterpolant z;
-} pspline3interpolant;
-#endif
-#if defined(AE_COMPILE_SPLINE3D) || !defined(AE_PARTIAL_BUILD)
-typedef struct
-{
-    ae_int_t k;
-    ae_int_t stype;
-    ae_int_t n;
-    ae_int_t m;
-    ae_int_t l;
-    ae_int_t d;
-    ae_vector x;
-    ae_vector y;
-    ae_vector z;
-    ae_vector f;
-} spline3dinterpolant;
-#endif
-#if defined(AE_COMPILE_POLINT) || !defined(AE_PARTIAL_BUILD)
 #endif
 #if defined(AE_COMPILE_LSFIT) || !defined(AE_PARTIAL_BUILD)
 typedef struct
@@ -266,53 +225,244 @@ typedef struct
     rcommstate rstate;
 } lsfitstate;
 #endif
-#if defined(AE_COMPILE_RBFV2) || !defined(AE_PARTIAL_BUILD)
+#if defined(AE_COMPILE_FITSPHERE) || !defined(AE_PARTIAL_BUILD)
 typedef struct
 {
-    ae_vector x;
-    ae_vector curboxmin;
-    ae_vector curboxmax;
-    double curdist2;
-    ae_vector x123;
-    ae_vector y123;
-} rbfv2calcbuffer;
+    ae_int_t nfev;
+    ae_int_t iterationscount;
+} fitsphereinternalreport;
+#endif
+#if defined(AE_COMPILE_PARAMETRIC) || !defined(AE_PARTIAL_BUILD)
+typedef struct
+{
+    ae_int_t n;
+    ae_bool periodic;
+    ae_vector p;
+    spline1dinterpolant x;
+    spline1dinterpolant y;
+} pspline2interpolant;
+typedef struct
+{
+    ae_int_t n;
+    ae_bool periodic;
+    ae_vector p;
+    spline1dinterpolant x;
+    spline1dinterpolant y;
+    spline1dinterpolant z;
+} pspline3interpolant;
+#endif
+#if defined(AE_COMPILE_RBFV1) || !defined(AE_PARTIAL_BUILD)
+typedef struct
+{
+    ae_vector calcbufxcx;
+    ae_matrix calcbufx;
+    ae_vector calcbuftags;
+    kdtreerequestbuffer requestbuffer;
+} rbfv1calcbuffer;
 typedef struct
 {
     ae_int_t ny;
     ae_int_t nx;
-    ae_int_t bf;
-    ae_int_t nh;
-    ae_vector ri;
-    ae_vector s;
-    ae_vector kdroots;
-    ae_vector kdnodes;
-    ae_vector kdsplits;
-    ae_vector kdboxmin;
-    ae_vector kdboxmax;
-    ae_vector cw;
+    ae_int_t nc;
+    ae_int_t nl;
+    kdtree tree;
+    ae_matrix xc;
+    ae_matrix wr;
+    double rmax;
     ae_matrix v;
-    double lambdareg;
-    ae_int_t maxits;
-    double supportr;
-    ae_int_t basisfunction;
-    rbfv2calcbuffer calcbuf;
-} rbfv2model;
+    ae_vector calcbufxcx;
+    ae_matrix calcbufx;
+    ae_vector calcbuftags;
+} rbfv1model;
 typedef struct
 {
-    rbfv2calcbuffer calcbuf;
-    ae_vector cx;
-    ae_vector rx;
-    ae_vector ry;
     ae_vector tx;
+    ae_vector cx;
     ae_vector ty;
-    ae_vector rf;
-} rbfv2gridcalcbuffer;
+    ae_vector flag0;
+    ae_vector flag1;
+    ae_vector flag2;
+    ae_vector flag12;
+    ae_vector expbuf0;
+    ae_vector expbuf1;
+    ae_vector expbuf2;
+    kdtreerequestbuffer requestbuf;
+    ae_matrix calcbufx;
+    ae_vector calcbuftags;
+} gridcalc3v1buf;
+typedef struct
+{
+    ae_int_t arows;
+    ae_int_t acols;
+    ae_int_t annz;
+    ae_int_t iterationscount;
+    ae_int_t nmv;
+    ae_int_t terminationtype;
+} rbfv1report;
+#endif
+#if defined(AE_COMPILE_RBFV3) || !defined(AE_PARTIAL_BUILD)
+typedef struct
+{
+    ae_int_t n;
+    ae_int_t storagetype;
+    ae_matrix f;
+    ae_int_t nx;
+    ae_int_t functype;
+    double funcparam;
+    ae_int_t chunksize;
+    ae_vector entireset;
+    ae_matrix x;
+    ae_matrix xtchunked;
+    ae_shared_pool bufferpool;
+    ae_vector chunk1;
+} rbf3evaluator;
+typedef struct
+{
+    ae_vector x;
+    ae_vector coeffbuf;
+    ae_vector funcbuf;
+    ae_vector wrkbuf;
+    ae_vector mindist2;
+    ae_vector df1;
+    ae_vector df2;
+    ae_matrix deltabuf;
+} rbf3evaluatorbuffer;
+typedef struct
+{
+    ae_vector x;
+    rbf3evaluatorbuffer evalbuf;
+    ae_vector x123;
+    ae_vector y123;
+    ae_vector xg;
+    ae_vector yg;
+} rbfv3calcbuffer;
+typedef struct
+{
+    ae_bool dodetailedtrace;
+    ae_int_t ntotal;
+    ae_int_t nx;
+    ae_matrix xx;
+    ae_int_t functype;
+    double funcparam;
+    double roughdatasetdiameter;
+    ae_int_t nglobal;
+    ae_vector globalgrid;
+    double globalgridseparation;
+    ae_int_t nlocal;
+    ae_int_t ncorrection;
+    double correctorgrowth;
+    ae_int_t batchsize;
+    double lambdav;
+    ae_int_t aterm;
+    kdtree kdt;
+    kdtree kdt1;
+    kdtree kdt2;
+    ae_shared_pool bufferpool;
+    ae_shared_pool chunksproducer;
+    ae_shared_pool chunkspool;
+    ae_vector wrkidx;
+} acbfbuilder;
+typedef struct
+{
+    ae_vector bflags;
+    kdtreerequestbuffer kdtbuf;
+    kdtreerequestbuffer kdt1buf;
+    kdtreerequestbuffer kdt2buf;
+    ae_vector tmpboxmin;
+    ae_vector tmpboxmax;
+    ae_vector currentnodes;
+    ae_vector neighbors;
+    ae_vector chosenneighbors;
+    ae_vector y;
+    ae_vector z;
+    ae_vector d;
+    ae_matrix atwrk;
+    ae_matrix xq;
+    ae_matrix q;
+    ae_matrix q1;
+    ae_matrix wrkq;
+    ae_matrix b;
+    ae_matrix c;
+    ae_vector choltmp;
+    ae_vector tau;
+    ae_matrix r;
+    ae_vector perm;
+} acbfbuffer;
+typedef struct
+{
+    ae_int_t ntargetrows;
+    ae_int_t ntargetcols;
+    ae_vector targetrows;
+    ae_vector targetcols;
+    ae_matrix s;
+} acbfchunk;
+typedef struct
+{
+    ae_vector bflags;
+    ae_vector idx2preccol;
+    kdtreerequestbuffer kdtbuf;
+    ae_vector tmpboxmin;
+    ae_vector tmpboxmax;
+} rbf3ddmbuffer;
+typedef struct
+{
+    ae_bool isvalid;
+    ae_int_t ntarget;
+    ae_vector targetnodes;
+    ae_int_t nwork;
+    ae_vector workingnodes;
+    ae_matrix regsystem;
+    ae_int_t decomposition;
+    ae_matrix wrklu;
+    ae_matrix rhs;
+    ae_matrix qtrhs;
+    ae_matrix sol;
+    ae_matrix pred;
+    ae_vector wrkp;
+    ae_matrix wrkq;
+    ae_matrix wrkr;
+} rbf3ddmsubproblem;
+typedef struct
+{
+    double lambdav;
+    kdtree kdt;
+    ae_shared_pool bufferpool;
+    ae_int_t subproblemscnt;
+    ae_shared_pool subproblemspool;
+    ae_shared_pool subproblemsbuffer;
+    ae_int_t ncorrector;
+    ae_matrix corrq;
+    ae_matrix corrr;
+    ae_vector corrnodes;
+    ae_matrix corrx;
+    ae_matrix tmpres1;
+    ae_matrix tmpupd1;
+    ae_int_t cntlu;
+    ae_int_t cntregqr;
+} rbf3ddmsolver;
+typedef struct
+{
+    ae_int_t ny;
+    ae_int_t nx;
+    ae_int_t bftype;
+    double bfparam;
+    ae_vector s;
+    ae_matrix v;
+    ae_vector cw;
+    ae_vector pointindexes;
+    ae_int_t nc;
+    rbf3evaluator evaluator;
+    ae_matrix wchunked;
+    rbfv3calcbuffer calcbuf;
+    ae_bool dbgregqrusedforddm;
+} rbfv3model;
 typedef struct
 {
     ae_int_t terminationtype;
     double maxerror;
     double rmserror;
-} rbfv2report;
+    ae_int_t iterationscount;
+} rbfv3report;
 #endif
 #if defined(AE_COMPILE_SPLINE2D) || !defined(AE_PARTIAL_BUILD)
 typedef struct
@@ -398,54 +548,70 @@ typedef struct
     spline2dblockllsbuf blockllsbuf;
 } spline2dfastddmbuf;
 #endif
-#if defined(AE_COMPILE_RBFV1) || !defined(AE_PARTIAL_BUILD)
+#if defined(AE_COMPILE_RBFV2) || !defined(AE_PARTIAL_BUILD)
 typedef struct
 {
-    ae_vector calcbufxcx;
-    ae_matrix calcbufx;
-    ae_vector calcbuftags;
-    kdtreerequestbuffer requestbuffer;
-} rbfv1calcbuffer;
+    ae_vector x;
+    ae_vector curboxmin;
+    ae_vector curboxmax;
+    double curdist2;
+    ae_vector x123;
+    ae_vector y123;
+} rbfv2calcbuffer;
 typedef struct
 {
     ae_int_t ny;
     ae_int_t nx;
-    ae_int_t nc;
-    ae_int_t nl;
-    kdtree tree;
-    ae_matrix xc;
-    ae_matrix wr;
-    double rmax;
+    ae_int_t bf;
+    ae_int_t nh;
+    ae_vector ri;
+    ae_vector s;
+    ae_vector kdroots;
+    ae_vector kdnodes;
+    ae_vector kdsplits;
+    ae_vector kdboxmin;
+    ae_vector kdboxmax;
+    ae_vector cw;
     ae_matrix v;
-    ae_vector calcbufxcx;
-    ae_matrix calcbufx;
-    ae_vector calcbuftags;
-} rbfv1model;
+    double lambdareg;
+    ae_int_t maxits;
+    double supportr;
+    ae_int_t basisfunction;
+    rbfv2calcbuffer calcbuf;
+} rbfv2model;
 typedef struct
 {
-    ae_vector tx;
+    rbfv2calcbuffer calcbuf;
     ae_vector cx;
+    ae_vector rx;
+    ae_vector ry;
+    ae_vector tx;
     ae_vector ty;
-    ae_vector flag0;
-    ae_vector flag1;
-    ae_vector flag2;
-    ae_vector flag12;
-    ae_vector expbuf0;
-    ae_vector expbuf1;
-    ae_vector expbuf2;
-    kdtreerequestbuffer requestbuf;
-    ae_matrix calcbufx;
-    ae_vector calcbuftags;
-} gridcalc3v1buf;
+    ae_vector rf;
+} rbfv2gridcalcbuffer;
 typedef struct
 {
-    ae_int_t arows;
-    ae_int_t acols;
-    ae_int_t annz;
-    ae_int_t iterationscount;
-    ae_int_t nmv;
     ae_int_t terminationtype;
-} rbfv1report;
+    double maxerror;
+    double rmserror;
+} rbfv2report;
+#endif
+#if defined(AE_COMPILE_SPLINE3D) || !defined(AE_PARTIAL_BUILD)
+typedef struct
+{
+    ae_int_t k;
+    ae_int_t stype;
+    ae_int_t n;
+    ae_int_t m;
+    ae_int_t l;
+    ae_int_t d;
+    ae_vector x;
+    ae_vector y;
+    ae_vector z;
+    ae_vector f;
+} spline3dinterpolant;
+#endif
+#if defined(AE_COMPILE_INTCOMP) || !defined(AE_PARTIAL_BUILD)
 #endif
 #if defined(AE_COMPILE_RBF) || !defined(AE_PARTIAL_BUILD)
 typedef struct
@@ -453,6 +619,10 @@ typedef struct
     ae_int_t modelversion;
     rbfv1calcbuffer bufv1;
     rbfv2calcbuffer bufv2;
+    rbfv3calcbuffer bufv3;
+    ae_vector x;
+    ae_vector y;
+    ae_vector dy;
 } rbfcalcbuffer;
 typedef struct
 {
@@ -461,12 +631,16 @@ typedef struct
     ae_int_t modelversion;
     rbfv1model model1;
     rbfv2model model2;
+    rbfv3model model3;
+    rbfcalcbuffer calcbuf;
     double lambdav;
     double radvalue;
     double radzvalue;
     ae_int_t nlayers;
     ae_int_t aterm;
     ae_int_t algorithmtype;
+    ae_int_t bftype;
+    double bfparam;
     double epsort;
     double epserr;
     ae_int_t maxits;
@@ -491,8 +665,6 @@ typedef struct
     ae_int_t terminationtype;
 } rbfreport;
 #endif
-#if defined(AE_COMPILE_INTCOMP) || !defined(AE_PARTIAL_BUILD)
-#endif
 
 }
 
@@ -503,6 +675,33 @@ typedef struct
 /////////////////////////////////////////////////////////////////////////
 namespace alglib
 {
+
+#if defined(AE_COMPILE_RATINT) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+Barycentric interpolant.
+*************************************************************************/
+class _barycentricinterpolant_owner
+{
+public:
+    _barycentricinterpolant_owner();
+    _barycentricinterpolant_owner(const _barycentricinterpolant_owner &rhs);
+    _barycentricinterpolant_owner& operator=(const _barycentricinterpolant_owner &rhs);
+    virtual ~_barycentricinterpolant_owner();
+    alglib_impl::barycentricinterpolant* c_ptr();
+    alglib_impl::barycentricinterpolant* c_ptr() const;
+protected:
+    alglib_impl::barycentricinterpolant *p_struct;
+};
+class barycentricinterpolant : public _barycentricinterpolant_owner
+{
+public:
+    barycentricinterpolant();
+    barycentricinterpolant(const barycentricinterpolant &rhs);
+    barycentricinterpolant& operator=(const barycentricinterpolant &rhs);
+    virtual ~barycentricinterpolant();
+
+};
+#endif
 
 #if defined(AE_COMPILE_IDW) || !defined(AE_PARTIAL_BUILD)
 /*************************************************************************
@@ -620,38 +819,11 @@ public:
 };
 #endif
 
-#if defined(AE_COMPILE_RATINT) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-Barycentric interpolant.
-*************************************************************************/
-class _barycentricinterpolant_owner
-{
-public:
-    _barycentricinterpolant_owner();
-    _barycentricinterpolant_owner(const _barycentricinterpolant_owner &rhs);
-    _barycentricinterpolant_owner& operator=(const _barycentricinterpolant_owner &rhs);
-    virtual ~_barycentricinterpolant_owner();
-    alglib_impl::barycentricinterpolant* c_ptr();
-    alglib_impl::barycentricinterpolant* c_ptr() const;
-protected:
-    alglib_impl::barycentricinterpolant *p_struct;
-};
-class barycentricinterpolant : public _barycentricinterpolant_owner
-{
-public:
-    barycentricinterpolant();
-    barycentricinterpolant(const barycentricinterpolant &rhs);
-    barycentricinterpolant& operator=(const barycentricinterpolant &rhs);
-    virtual ~barycentricinterpolant();
-
-};
-#endif
-
-#if defined(AE_COMPILE_FITSPHERE) || !defined(AE_PARTIAL_BUILD)
-
-#endif
-
 #if defined(AE_COMPILE_INTFITSERV) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
+#if defined(AE_COMPILE_POLINT) || !defined(AE_PARTIAL_BUILD)
 
 #endif
 
@@ -719,96 +891,6 @@ public:
     double &maxerror;
 
 };
-#endif
-
-#if defined(AE_COMPILE_PARAMETRIC) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-Parametric spline inteprolant: 2-dimensional curve.
-
-You should not try to access its members directly - use PSpline2XXXXXXXX()
-functions instead.
-*************************************************************************/
-class _pspline2interpolant_owner
-{
-public:
-    _pspline2interpolant_owner();
-    _pspline2interpolant_owner(const _pspline2interpolant_owner &rhs);
-    _pspline2interpolant_owner& operator=(const _pspline2interpolant_owner &rhs);
-    virtual ~_pspline2interpolant_owner();
-    alglib_impl::pspline2interpolant* c_ptr();
-    alglib_impl::pspline2interpolant* c_ptr() const;
-protected:
-    alglib_impl::pspline2interpolant *p_struct;
-};
-class pspline2interpolant : public _pspline2interpolant_owner
-{
-public:
-    pspline2interpolant();
-    pspline2interpolant(const pspline2interpolant &rhs);
-    pspline2interpolant& operator=(const pspline2interpolant &rhs);
-    virtual ~pspline2interpolant();
-
-};
-
-
-/*************************************************************************
-Parametric spline inteprolant: 3-dimensional curve.
-
-You should not try to access its members directly - use PSpline3XXXXXXXX()
-functions instead.
-*************************************************************************/
-class _pspline3interpolant_owner
-{
-public:
-    _pspline3interpolant_owner();
-    _pspline3interpolant_owner(const _pspline3interpolant_owner &rhs);
-    _pspline3interpolant_owner& operator=(const _pspline3interpolant_owner &rhs);
-    virtual ~_pspline3interpolant_owner();
-    alglib_impl::pspline3interpolant* c_ptr();
-    alglib_impl::pspline3interpolant* c_ptr() const;
-protected:
-    alglib_impl::pspline3interpolant *p_struct;
-};
-class pspline3interpolant : public _pspline3interpolant_owner
-{
-public:
-    pspline3interpolant();
-    pspline3interpolant(const pspline3interpolant &rhs);
-    pspline3interpolant& operator=(const pspline3interpolant &rhs);
-    virtual ~pspline3interpolant();
-
-};
-#endif
-
-#if defined(AE_COMPILE_SPLINE3D) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-3-dimensional spline inteprolant
-*************************************************************************/
-class _spline3dinterpolant_owner
-{
-public:
-    _spline3dinterpolant_owner();
-    _spline3dinterpolant_owner(const _spline3dinterpolant_owner &rhs);
-    _spline3dinterpolant_owner& operator=(const _spline3dinterpolant_owner &rhs);
-    virtual ~_spline3dinterpolant_owner();
-    alglib_impl::spline3dinterpolant* c_ptr();
-    alglib_impl::spline3dinterpolant* c_ptr() const;
-protected:
-    alglib_impl::spline3dinterpolant *p_struct;
-};
-class spline3dinterpolant : public _spline3dinterpolant_owner
-{
-public:
-    spline3dinterpolant();
-    spline3dinterpolant(const spline3dinterpolant &rhs);
-    spline3dinterpolant& operator=(const spline3dinterpolant &rhs);
-    virtual ~spline3dinterpolant();
-
-};
-#endif
-
-#if defined(AE_COMPILE_POLINT) || !defined(AE_PARTIAL_BUILD)
-
 #endif
 
 #if defined(AE_COMPILE_LSFIT) || !defined(AE_PARTIAL_BUILD)
@@ -991,7 +1073,74 @@ public:
 };
 #endif
 
-#if defined(AE_COMPILE_RBFV2) || !defined(AE_PARTIAL_BUILD)
+#if defined(AE_COMPILE_FITSPHERE) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
+#if defined(AE_COMPILE_PARAMETRIC) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+Parametric spline inteprolant: 2-dimensional curve.
+
+You should not try to access its members directly - use PSpline2XXXXXXXX()
+functions instead.
+*************************************************************************/
+class _pspline2interpolant_owner
+{
+public:
+    _pspline2interpolant_owner();
+    _pspline2interpolant_owner(const _pspline2interpolant_owner &rhs);
+    _pspline2interpolant_owner& operator=(const _pspline2interpolant_owner &rhs);
+    virtual ~_pspline2interpolant_owner();
+    alglib_impl::pspline2interpolant* c_ptr();
+    alglib_impl::pspline2interpolant* c_ptr() const;
+protected:
+    alglib_impl::pspline2interpolant *p_struct;
+};
+class pspline2interpolant : public _pspline2interpolant_owner
+{
+public:
+    pspline2interpolant();
+    pspline2interpolant(const pspline2interpolant &rhs);
+    pspline2interpolant& operator=(const pspline2interpolant &rhs);
+    virtual ~pspline2interpolant();
+
+};
+
+
+/*************************************************************************
+Parametric spline inteprolant: 3-dimensional curve.
+
+You should not try to access its members directly - use PSpline3XXXXXXXX()
+functions instead.
+*************************************************************************/
+class _pspline3interpolant_owner
+{
+public:
+    _pspline3interpolant_owner();
+    _pspline3interpolant_owner(const _pspline3interpolant_owner &rhs);
+    _pspline3interpolant_owner& operator=(const _pspline3interpolant_owner &rhs);
+    virtual ~_pspline3interpolant_owner();
+    alglib_impl::pspline3interpolant* c_ptr();
+    alglib_impl::pspline3interpolant* c_ptr() const;
+protected:
+    alglib_impl::pspline3interpolant *p_struct;
+};
+class pspline3interpolant : public _pspline3interpolant_owner
+{
+public:
+    pspline3interpolant();
+    pspline3interpolant(const pspline3interpolant &rhs);
+    pspline3interpolant& operator=(const pspline3interpolant &rhs);
+    virtual ~pspline3interpolant();
+
+};
+#endif
+
+#if defined(AE_COMPILE_RBFV1) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
+#if defined(AE_COMPILE_RBFV3) || !defined(AE_PARTIAL_BUILD)
 
 #endif
 
@@ -1082,16 +1231,47 @@ public:
 };
 #endif
 
-#if defined(AE_COMPILE_RBFV1) || !defined(AE_PARTIAL_BUILD)
+#if defined(AE_COMPILE_RBFV2) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
+#if defined(AE_COMPILE_SPLINE3D) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+3-dimensional spline inteprolant
+*************************************************************************/
+class _spline3dinterpolant_owner
+{
+public:
+    _spline3dinterpolant_owner();
+    _spline3dinterpolant_owner(const _spline3dinterpolant_owner &rhs);
+    _spline3dinterpolant_owner& operator=(const _spline3dinterpolant_owner &rhs);
+    virtual ~_spline3dinterpolant_owner();
+    alglib_impl::spline3dinterpolant* c_ptr();
+    alglib_impl::spline3dinterpolant* c_ptr() const;
+protected:
+    alglib_impl::spline3dinterpolant *p_struct;
+};
+class spline3dinterpolant : public _spline3dinterpolant_owner
+{
+public:
+    spline3dinterpolant();
+    spline3dinterpolant(const spline3dinterpolant &rhs);
+    spline3dinterpolant& operator=(const spline3dinterpolant &rhs);
+    virtual ~spline3dinterpolant();
+
+};
+#endif
+
+#if defined(AE_COMPILE_INTCOMP) || !defined(AE_PARTIAL_BUILD)
 
 #endif
 
 #if defined(AE_COMPILE_RBF) || !defined(AE_PARTIAL_BUILD)
 /*************************************************************************
-Buffer object which is used to perform nearest neighbor  requests  in  the
-multithreaded mode (multiple threads working with same KD-tree object).
+Buffer object which is used  to  perform  RBF  model  calculation  in  the
+multithreaded mode (multiple threads working with same RBF object).
 
-This object should be created with KDTreeCreateBuffer().
+This object should be created with RBFCreateCalcBuffer().
 *************************************************************************/
 class _rbfcalcbuffer_owner
 {
@@ -1185,8 +1365,174 @@ public:
 };
 #endif
 
-#if defined(AE_COMPILE_INTCOMP) || !defined(AE_PARTIAL_BUILD)
+#if defined(AE_COMPILE_RATINT) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+Rational interpolation using barycentric formula
 
+F(t) = SUM(i=0,n-1,w[i]*f[i]/(t-x[i])) / SUM(i=0,n-1,w[i]/(t-x[i]))
+
+Input parameters:
+    B   -   barycentric interpolant built with one of model building
+            subroutines.
+    T   -   interpolation point
+
+Result:
+    barycentric interpolant F(t)
+
+  -- ALGLIB --
+     Copyright 17.08.2009 by Bochkanov Sergey
+*************************************************************************/
+double barycentriccalc(const barycentricinterpolant &b, const double t, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Differentiation of barycentric interpolant: first derivative.
+
+Algorithm used in this subroutine is very robust and should not fail until
+provided with values too close to MaxRealNumber  (usually  MaxRealNumber/N
+or greater will overflow).
+
+INPUT PARAMETERS:
+    B   -   barycentric interpolant built with one of model building
+            subroutines.
+    T   -   interpolation point
+
+OUTPUT PARAMETERS:
+    F   -   barycentric interpolant at T
+    DF  -   first derivative
+
+NOTE
+
+
+  -- ALGLIB --
+     Copyright 17.08.2009 by Bochkanov Sergey
+*************************************************************************/
+void barycentricdiff1(const barycentricinterpolant &b, const double t, double &f, double &df, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Differentiation of barycentric interpolant: first/second derivatives.
+
+INPUT PARAMETERS:
+    B   -   barycentric interpolant built with one of model building
+            subroutines.
+    T   -   interpolation point
+
+OUTPUT PARAMETERS:
+    F   -   barycentric interpolant at T
+    DF  -   first derivative
+    D2F -   second derivative
+
+NOTE: this algorithm may fail due to overflow/underflor if  used  on  data
+whose values are close to MaxRealNumber or MinRealNumber.  Use more robust
+BarycentricDiff1() subroutine in such cases.
+
+
+  -- ALGLIB --
+     Copyright 17.08.2009 by Bochkanov Sergey
+*************************************************************************/
+void barycentricdiff2(const barycentricinterpolant &b, const double t, double &f, double &df, double &d2f, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This subroutine performs linear transformation of the argument.
+
+INPUT PARAMETERS:
+    B       -   rational interpolant in barycentric form
+    CA, CB  -   transformation coefficients: x = CA*t + CB
+
+OUTPUT PARAMETERS:
+    B       -   transformed interpolant with X replaced by T
+
+  -- ALGLIB PROJECT --
+     Copyright 19.08.2009 by Bochkanov Sergey
+*************************************************************************/
+void barycentriclintransx(const barycentricinterpolant &b, const double ca, const double cb, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This  subroutine   performs   linear  transformation  of  the  barycentric
+interpolant.
+
+INPUT PARAMETERS:
+    B       -   rational interpolant in barycentric form
+    CA, CB  -   transformation coefficients: B2(x) = CA*B(x) + CB
+
+OUTPUT PARAMETERS:
+    B       -   transformed interpolant
+
+  -- ALGLIB PROJECT --
+     Copyright 19.08.2009 by Bochkanov Sergey
+*************************************************************************/
+void barycentriclintransy(const barycentricinterpolant &b, const double ca, const double cb, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Extracts X/Y/W arrays from rational interpolant
+
+INPUT PARAMETERS:
+    B   -   barycentric interpolant
+
+OUTPUT PARAMETERS:
+    N   -   nodes count, N>0
+    X   -   interpolation nodes, array[0..N-1]
+    F   -   function values, array[0..N-1]
+    W   -   barycentric weights, array[0..N-1]
+
+  -- ALGLIB --
+     Copyright 17.08.2009 by Bochkanov Sergey
+*************************************************************************/
+void barycentricunpack(const barycentricinterpolant &b, ae_int_t &n, real_1d_array &x, real_1d_array &y, real_1d_array &w, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Rational interpolant from X/Y/W arrays
+
+F(t) = SUM(i=0,n-1,w[i]*f[i]/(t-x[i])) / SUM(i=0,n-1,w[i]/(t-x[i]))
+
+INPUT PARAMETERS:
+    X   -   interpolation nodes, array[0..N-1]
+    F   -   function values, array[0..N-1]
+    W   -   barycentric weights, array[0..N-1]
+    N   -   nodes count, N>0
+
+OUTPUT PARAMETERS:
+    B   -   barycentric interpolant built from (X, Y, W)
+
+  -- ALGLIB --
+     Copyright 17.08.2009 by Bochkanov Sergey
+*************************************************************************/
+void barycentricbuildxyw(const real_1d_array &x, const real_1d_array &y, const real_1d_array &w, const ae_int_t n, barycentricinterpolant &b, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Rational interpolant without poles
+
+The subroutine constructs the rational interpolating function without real
+poles  (see  'Barycentric rational interpolation with no  poles  and  high
+rates of approximation', Michael S. Floater. and  Kai  Hormann,  for  more
+information on this subject).
+
+Input parameters:
+    X   -   interpolation nodes, array[0..N-1].
+    Y   -   function values, array[0..N-1].
+    N   -   number of nodes, N>0.
+    D   -   order of the interpolation scheme, 0 <= D <= N-1.
+            D<0 will cause an error.
+            D>=N it will be replaced with D=N-1.
+            if you don't know what D to choose, use small value about 3-5.
+
+Output parameters:
+    B   -   barycentric interpolant.
+
+Note:
+    this algorithm always succeeds and calculates the weights  with  close
+    to machine precision.
+
+  -- ALGLIB PROJECT --
+     Copyright 17.06.2007 by Bochkanov Sergey
+*************************************************************************/
+void barycentricbuildfloaterhormann(const real_1d_array &x, const real_1d_array &y, const ae_int_t n, const ae_int_t d, barycentricinterpolant &b, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_IDW) || !defined(AE_PARTIAL_BUILD)
@@ -1709,454 +2055,324 @@ NOTE: although IDW-MSTAB algorithm is an  interpolation  method,  i.e.  it
 void idwfit(const idwbuilder &state, idwmodel &model, idwreport &rep, const xparams _xparams = alglib::xdefault);
 #endif
 
-#if defined(AE_COMPILE_RATINT) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-Rational interpolation using barycentric formula
-
-F(t) = SUM(i=0,n-1,w[i]*f[i]/(t-x[i])) / SUM(i=0,n-1,w[i]/(t-x[i]))
-
-Input parameters:
-    B   -   barycentric interpolant built with one of model building
-            subroutines.
-    T   -   interpolation point
-
-Result:
-    barycentric interpolant F(t)
-
-  -- ALGLIB --
-     Copyright 17.08.2009 by Bochkanov Sergey
-*************************************************************************/
-double barycentriccalc(const barycentricinterpolant &b, const double t, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Differentiation of barycentric interpolant: first derivative.
-
-Algorithm used in this subroutine is very robust and should not fail until
-provided with values too close to MaxRealNumber  (usually  MaxRealNumber/N
-or greater will overflow).
-
-INPUT PARAMETERS:
-    B   -   barycentric interpolant built with one of model building
-            subroutines.
-    T   -   interpolation point
-
-OUTPUT PARAMETERS:
-    F   -   barycentric interpolant at T
-    DF  -   first derivative
-
-NOTE
-
-
-  -- ALGLIB --
-     Copyright 17.08.2009 by Bochkanov Sergey
-*************************************************************************/
-void barycentricdiff1(const barycentricinterpolant &b, const double t, double &f, double &df, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Differentiation of barycentric interpolant: first/second derivatives.
-
-INPUT PARAMETERS:
-    B   -   barycentric interpolant built with one of model building
-            subroutines.
-    T   -   interpolation point
-
-OUTPUT PARAMETERS:
-    F   -   barycentric interpolant at T
-    DF  -   first derivative
-    D2F -   second derivative
-
-NOTE: this algorithm may fail due to overflow/underflor if  used  on  data
-whose values are close to MaxRealNumber or MinRealNumber.  Use more robust
-BarycentricDiff1() subroutine in such cases.
-
-
-  -- ALGLIB --
-     Copyright 17.08.2009 by Bochkanov Sergey
-*************************************************************************/
-void barycentricdiff2(const barycentricinterpolant &b, const double t, double &f, double &df, double &d2f, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This subroutine performs linear transformation of the argument.
-
-INPUT PARAMETERS:
-    B       -   rational interpolant in barycentric form
-    CA, CB  -   transformation coefficients: x = CA*t + CB
-
-OUTPUT PARAMETERS:
-    B       -   transformed interpolant with X replaced by T
-
-  -- ALGLIB PROJECT --
-     Copyright 19.08.2009 by Bochkanov Sergey
-*************************************************************************/
-void barycentriclintransx(const barycentricinterpolant &b, const double ca, const double cb, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This  subroutine   performs   linear  transformation  of  the  barycentric
-interpolant.
-
-INPUT PARAMETERS:
-    B       -   rational interpolant in barycentric form
-    CA, CB  -   transformation coefficients: B2(x) = CA*B(x) + CB
-
-OUTPUT PARAMETERS:
-    B       -   transformed interpolant
-
-  -- ALGLIB PROJECT --
-     Copyright 19.08.2009 by Bochkanov Sergey
-*************************************************************************/
-void barycentriclintransy(const barycentricinterpolant &b, const double ca, const double cb, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Extracts X/Y/W arrays from rational interpolant
-
-INPUT PARAMETERS:
-    B   -   barycentric interpolant
-
-OUTPUT PARAMETERS:
-    N   -   nodes count, N>0
-    X   -   interpolation nodes, array[0..N-1]
-    F   -   function values, array[0..N-1]
-    W   -   barycentric weights, array[0..N-1]
-
-  -- ALGLIB --
-     Copyright 17.08.2009 by Bochkanov Sergey
-*************************************************************************/
-void barycentricunpack(const barycentricinterpolant &b, ae_int_t &n, real_1d_array &x, real_1d_array &y, real_1d_array &w, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Rational interpolant from X/Y/W arrays
-
-F(t) = SUM(i=0,n-1,w[i]*f[i]/(t-x[i])) / SUM(i=0,n-1,w[i]/(t-x[i]))
-
-INPUT PARAMETERS:
-    X   -   interpolation nodes, array[0..N-1]
-    F   -   function values, array[0..N-1]
-    W   -   barycentric weights, array[0..N-1]
-    N   -   nodes count, N>0
-
-OUTPUT PARAMETERS:
-    B   -   barycentric interpolant built from (X, Y, W)
-
-  -- ALGLIB --
-     Copyright 17.08.2009 by Bochkanov Sergey
-*************************************************************************/
-void barycentricbuildxyw(const real_1d_array &x, const real_1d_array &y, const real_1d_array &w, const ae_int_t n, barycentricinterpolant &b, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Rational interpolant without poles
-
-The subroutine constructs the rational interpolating function without real
-poles  (see  'Barycentric rational interpolation with no  poles  and  high
-rates of approximation', Michael S. Floater. and  Kai  Hormann,  for  more
-information on this subject).
-
-Input parameters:
-    X   -   interpolation nodes, array[0..N-1].
-    Y   -   function values, array[0..N-1].
-    N   -   number of nodes, N>0.
-    D   -   order of the interpolation scheme, 0 <= D <= N-1.
-            D<0 will cause an error.
-            D>=N it will be replaced with D=N-1.
-            if you don't know what D to choose, use small value about 3-5.
-
-Output parameters:
-    B   -   barycentric interpolant.
-
-Note:
-    this algorithm always succeeds and calculates the weights  with  close
-    to machine precision.
-
-  -- ALGLIB PROJECT --
-     Copyright 17.06.2007 by Bochkanov Sergey
-*************************************************************************/
-void barycentricbuildfloaterhormann(const real_1d_array &x, const real_1d_array &y, const ae_int_t n, const ae_int_t d, barycentricinterpolant &b, const xparams _xparams = alglib::xdefault);
-#endif
-
-#if defined(AE_COMPILE_FITSPHERE) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-Fits least squares (LS) circle (or NX-dimensional sphere) to data  (a  set
-of points in NX-dimensional space).
-
-Least squares circle minimizes sum of squared deviations between distances
-from points to the center and  some  "candidate"  radius,  which  is  also
-fitted to the data.
-
-INPUT PARAMETERS:
-    XY      -   array[NPoints,NX] (or larger), contains dataset.
-                One row = one point in NX-dimensional space.
-    NPoints -   dataset size, NPoints>0
-    NX      -   space dimensionality, NX>0 (1, 2, 3, 4, 5 and so on)
-
-OUTPUT PARAMETERS:
-    CX      -   central point for a sphere
-    R       -   radius
-
-  -- ALGLIB --
-     Copyright 07.05.2018 by Bochkanov Sergey
-*************************************************************************/
-void fitspherels(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nx, real_1d_array &cx, double &r, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Fits minimum circumscribed (MC) circle (or NX-dimensional sphere) to  data
-(a set of points in NX-dimensional space).
-
-INPUT PARAMETERS:
-    XY      -   array[NPoints,NX] (or larger), contains dataset.
-                One row = one point in NX-dimensional space.
-    NPoints -   dataset size, NPoints>0
-    NX      -   space dimensionality, NX>0 (1, 2, 3, 4, 5 and so on)
-
-OUTPUT PARAMETERS:
-    CX      -   central point for a sphere
-    RHi     -   radius
-
-NOTE: this function is an easy-to-use wrapper around more powerful "expert"
-      function fitspherex().
-
-      This  wrapper  is optimized  for  ease of use and stability - at the
-      cost of somewhat lower  performance  (we  have  to  use  very  tight
-      stopping criteria for inner optimizer because we want to  make  sure
-      that it will converge on any dataset).
-
-      If you are ready to experiment with settings of  "expert"  function,
-      you can achieve ~2-4x speedup over standard "bulletproof" settings.
-
-
-  -- ALGLIB --
-     Copyright 14.04.2017 by Bochkanov Sergey
-*************************************************************************/
-void fitspheremc(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nx, real_1d_array &cx, double &rhi, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Fits maximum inscribed circle (or NX-dimensional sphere) to data (a set of
-points in NX-dimensional space).
-
-INPUT PARAMETERS:
-    XY      -   array[NPoints,NX] (or larger), contains dataset.
-                One row = one point in NX-dimensional space.
-    NPoints -   dataset size, NPoints>0
-    NX      -   space dimensionality, NX>0 (1, 2, 3, 4, 5 and so on)
-
-OUTPUT PARAMETERS:
-    CX      -   central point for a sphere
-    RLo     -   radius
-
-NOTE: this function is an easy-to-use wrapper around more powerful "expert"
-      function fitspherex().
-
-      This  wrapper  is optimized  for  ease of use and stability - at the
-      cost of somewhat lower  performance  (we  have  to  use  very  tight
-      stopping criteria for inner optimizer because we want to  make  sure
-      that it will converge on any dataset).
-
-      If you are ready to experiment with settings of  "expert"  function,
-      you can achieve ~2-4x speedup over standard "bulletproof" settings.
-
-
-  -- ALGLIB --
-     Copyright 14.04.2017 by Bochkanov Sergey
-*************************************************************************/
-void fitspheremi(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nx, real_1d_array &cx, double &rlo, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Fits minimum zone circle (or NX-dimensional sphere)  to  data  (a  set  of
-points in NX-dimensional space).
-
-INPUT PARAMETERS:
-    XY      -   array[NPoints,NX] (or larger), contains dataset.
-                One row = one point in NX-dimensional space.
-    NPoints -   dataset size, NPoints>0
-    NX      -   space dimensionality, NX>0 (1, 2, 3, 4, 5 and so on)
-
-OUTPUT PARAMETERS:
-    CX      -   central point for a sphere
-    RLo     -   radius of inscribed circle
-    RHo     -   radius of circumscribed circle
-
-NOTE: this function is an easy-to-use wrapper around more powerful "expert"
-      function fitspherex().
-
-      This  wrapper  is optimized  for  ease of use and stability - at the
-      cost of somewhat lower  performance  (we  have  to  use  very  tight
-      stopping criteria for inner optimizer because we want to  make  sure
-      that it will converge on any dataset).
-
-      If you are ready to experiment with settings of  "expert"  function,
-      you can achieve ~2-4x speedup over standard "bulletproof" settings.
-
-
-  -- ALGLIB --
-     Copyright 14.04.2017 by Bochkanov Sergey
-*************************************************************************/
-void fitspheremz(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nx, real_1d_array &cx, double &rlo, double &rhi, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Fitting minimum circumscribed, maximum inscribed or minimum  zone  circles
-(or NX-dimensional spheres)  to  data  (a  set of points in NX-dimensional
-space).
-
-This  is  expert  function  which  allows  to  tweak  many  parameters  of
-underlying nonlinear solver:
-* stopping criteria for inner iterations
-* number of outer iterations
-* penalty coefficient used to handle  nonlinear  constraints  (we  convert
-  unconstrained nonsmooth optimization problem ivolving max() and/or min()
-  operations to quadratically constrained smooth one).
-
-You may tweak all these parameters or only some  of  them,  leaving  other
-ones at their default state - just specify zero  value,  and  solver  will
-fill it with appropriate default one.
-
-These comments also include some discussion of  approach  used  to  handle
-such unusual fitting problem,  its  stability,  drawbacks  of  alternative
-methods, and convergence properties.
-
-INPUT PARAMETERS:
-    XY      -   array[NPoints,NX] (or larger), contains dataset.
-                One row = one point in NX-dimensional space.
-    NPoints -   dataset size, NPoints>0
-    NX      -   space dimensionality, NX>0 (1, 2, 3, 4, 5 and so on)
-    ProblemType-used to encode problem type:
-                * 0 for least squares circle
-                * 1 for minimum circumscribed circle/sphere fitting (MC)
-                * 2 for  maximum inscribed circle/sphere fitting (MI)
-                * 3 for minimum zone circle fitting (difference between
-                    Rhi and Rlo is minimized), denoted as MZ
-    EpsX    -   stopping condition for NLC optimizer:
-                * must be non-negative
-                * use 0 to choose default value (1.0E-12 is used by default)
-                * you may specify larger values, up to 1.0E-6, if you want
-                  to   speed-up   solver;   NLC   solver  performs several
-                  preconditioned  outer  iterations,   so   final   result
-                  typically has precision much better than EpsX.
-    AULIts  -   number of outer iterations performed by NLC optimizer:
-                * must be non-negative
-                * use 0 to choose default value (20 is used by default)
-                * you may specify values smaller than 20 if you want to
-                  speed up solver; 10 often results in good combination of
-                  precision and speed; sometimes you may get good results
-                  with just 6 outer iterations.
-                Ignored for ProblemType=0.
-    Penalty -   penalty coefficient for NLC optimizer:
-                * must be non-negative
-                * use 0 to choose default value (1.0E6 in current version)
-                * it should be really large, 1.0E6...1.0E7 is a good value
-                  to start from;
-                * generally, default value is good enough
-                Ignored for ProblemType=0.
-
-OUTPUT PARAMETERS:
-    CX      -   central point for a sphere
-    RLo     -   radius:
-                * for ProblemType=2,3, radius of the inscribed sphere
-                * for ProblemType=0 - radius of the least squares sphere
-                * for ProblemType=1 - zero
-    RHo     -   radius:
-                * for ProblemType=1,3, radius of the circumscribed sphere
-                * for ProblemType=0 - radius of the least squares sphere
-                * for ProblemType=2 - zero
-
-NOTE: ON THE UNIQUENESS OF SOLUTIONS
-
-ALGLIB provides solution to several related circle fitting  problems:   MC
-(minimum circumscribed), MI (maximum inscribed)   and   MZ  (minimum zone)
-fitting, LS (least squares) fitting.
-
-It  is  important  to  note  that  among these problems only MC and LS are
-convex and have unique solution independently from starting point.
-
-As  for MI,  it  may (or  may  not, depending on dataset properties)  have
-multiple solutions, and it always  has  one degenerate solution C=infinity
-which corresponds to infinitely large radius. Thus, there are no guarantees
-that solution to  MI returned by this solver will be the best one (and  no
-one can provide you with such guarantee because problem is  NP-hard).  The
-only guarantee you have is that this solution is locally optimal, i.e.  it
-can not be improved by infinitesimally small tweaks in the parameters.
-
-It  is  also  possible  to "run away" to infinity when  started  from  bad
-initial point located outside of point cloud (or when point cloud does not
-span entire circumference/surface of the sphere).
-
-Finally,  MZ (minimum zone circle) stands somewhere between MC  and  MI in
-stability. It is somewhat regularized by "circumscribed" term of the merit
-function; however, solutions to  MZ may be non-unique, and in some unlucky
-cases it is also possible to "run away to infinity".
-
-
-NOTE: ON THE NONLINEARLY CONSTRAINED PROGRAMMING APPROACH
-
-The problem formulation for MC  (minimum circumscribed   circle;  for  the
-sake of simplicity we omit MZ and MI here) is:
-
-        [     [         ]2 ]
-    min [ max [ XY[i]-C ]  ]
-     C  [  i  [         ]  ]
-
-i.e. it is unconstrained nonsmooth optimization problem of finding  "best"
-central point, with radius R being unambiguously  determined  from  C.  In
-order to move away from non-smoothness we use following reformulation:
-
-        [   ]                  [         ]2
-    min [ R ] subject to R>=0, [ XY[i]-C ]  <= R^2
-    C,R [   ]                  [         ]
-
-i.e. it becomes smooth quadratically constrained optimization problem with
-linear target function. Such problem statement is 100% equivalent  to  the
-original nonsmooth one, but much easier  to  approach.  We solve  it  with
-MinNLC solver provided by ALGLIB.
-
-
-NOTE: ON INSTABILITY OF SEQUENTIAL LINEARIZATION APPROACH
-
-ALGLIB  has  nonlinearly  constrained  solver which proved to be stable on
-such problems. However, some authors proposed to linearize constraints  in
-the vicinity of current approximation (Ci,Ri) and to get next  approximate
-solution (Ci+1,Ri+1) as solution to linear programming problem. Obviously,
-LP problems are easier than nonlinearly constrained ones.
-
-Indeed,  such approach  to   MC/MI/MZ   resulted   in  ~10-20x increase in
-performance (when compared with NLC solver). However, it turned  out  that
-in some cases linearized model fails to predict correct direction for next
-step and tells us that we converged to solution even when we are still 2-4
-digits of precision away from it.
-
-It is important that it is not failure of LP solver - it is failure of the
-linear model;  even  when  solved  exactly,  it  fails  to  handle  subtle
-nonlinearities which arise near the solution. We validated it by comparing
-results returned by ALGLIB linear solver with that of MATLAB.
-
-In our experiments with linearization:
-* MC failed most often, at both realistic and synthetic datasets
-* MI sometimes failed, but sometimes succeeded
-* MZ often  succeeded; our guess is that presence of two independent  sets
-  of constraints (one set for Rlo and another one for Rhi) and  two  terms
-  in the target function (Rlo and Rhi) regularizes task,  so  when  linear
-  model fails to handle nonlinearities from Rlo, it uses  Rhi  as  a  hint
-  (and vice versa).
-
-Because linearization approach failed to achieve stable results, we do not
-include it in ALGLIB.
-
-
-  -- ALGLIB --
-     Copyright 14.04.2017 by Bochkanov Sergey
-*************************************************************************/
-void fitspherex(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nx, const ae_int_t problemtype, const double epsx, const ae_int_t aulits, const double penalty, real_1d_array &cx, double &rlo, double &rhi, const xparams _xparams = alglib::xdefault);
-#endif
-
 #if defined(AE_COMPILE_INTFITSERV) || !defined(AE_PARTIAL_BUILD)
 
+#endif
+
+#if defined(AE_COMPILE_POLINT) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+Conversion from barycentric representation to Chebyshev basis.
+This function has O(N^2) complexity.
+
+INPUT PARAMETERS:
+    P   -   polynomial in barycentric form
+    A,B -   base interval for Chebyshev polynomials (see below)
+            A<>B
+
+OUTPUT PARAMETERS
+    T   -   coefficients of Chebyshev representation;
+            P(x) = sum { T[i]*Ti(2*(x-A)/(B-A)-1), i=0..N-1 },
+            where Ti - I-th Chebyshev polynomial.
+
+NOTES:
+    barycentric interpolant passed as P may be either polynomial  obtained
+    from  polynomial  interpolation/ fitting or rational function which is
+    NOT polynomial. We can't distinguish between these two cases, and this
+    algorithm just tries to work assuming that P IS a polynomial.  If not,
+    algorithm will return results, but they won't have any meaning.
+
+  -- ALGLIB --
+     Copyright 30.09.2010 by Bochkanov Sergey
+*************************************************************************/
+void polynomialbar2cheb(const barycentricinterpolant &p, const double a, const double b, real_1d_array &t, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Conversion from Chebyshev basis to barycentric representation.
+This function has O(N^2) complexity.
+
+INPUT PARAMETERS:
+    T   -   coefficients of Chebyshev representation;
+            P(x) = sum { T[i]*Ti(2*(x-A)/(B-A)-1), i=0..N },
+            where Ti - I-th Chebyshev polynomial.
+    N   -   number of coefficients:
+            * if given, only leading N elements of T are used
+            * if not given, automatically determined from size of T
+    A,B -   base interval for Chebyshev polynomials (see above)
+            A<B
+
+OUTPUT PARAMETERS
+    P   -   polynomial in barycentric form
+
+  -- ALGLIB --
+     Copyright 30.09.2010 by Bochkanov Sergey
+*************************************************************************/
+void polynomialcheb2bar(const real_1d_array &t, const ae_int_t n, const double a, const double b, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
+void polynomialcheb2bar(const real_1d_array &t, const double a, const double b, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Conversion from barycentric representation to power basis.
+This function has O(N^2) complexity.
+
+INPUT PARAMETERS:
+    P   -   polynomial in barycentric form
+    C   -   offset (see below); 0.0 is used as default value.
+    S   -   scale (see below);  1.0 is used as default value. S<>0.
+
+OUTPUT PARAMETERS
+    A   -   coefficients, P(x) = sum { A[i]*((X-C)/S)^i, i=0..N-1 }
+    N   -   number of coefficients (polynomial degree plus 1)
+
+NOTES:
+1.  this function accepts offset and scale, which can be  set  to  improve
+    numerical properties of polynomial. For example, if P was obtained  as
+    result of interpolation on [-1,+1],  you  can  set  C=0  and  S=1  and
+    represent  P  as sum of 1, x, x^2, x^3 and so on. In most cases you it
+    is exactly what you need.
+
+    However, if your interpolation model was built on [999,1001], you will
+    see significant growth of numerical errors when using {1, x, x^2, x^3}
+    as basis. Representing P as sum of 1, (x-1000), (x-1000)^2, (x-1000)^3
+    will be better option. Such representation can be  obtained  by  using
+    1000.0 as offset C and 1.0 as scale S.
+
+2.  power basis is ill-conditioned and tricks described above can't  solve
+    this problem completely. This function  will  return  coefficients  in
+    any  case,  but  for  N>8  they  will  become unreliable. However, N's
+    less than 5 are pretty safe.
+
+3.  barycentric interpolant passed as P may be either polynomial  obtained
+    from  polynomial  interpolation/ fitting or rational function which is
+    NOT polynomial. We can't distinguish between these two cases, and this
+    algorithm just tries to work assuming that P IS a polynomial.  If not,
+    algorithm will return results, but they won't have any meaning.
+
+  -- ALGLIB --
+     Copyright 30.09.2010 by Bochkanov Sergey
+*************************************************************************/
+void polynomialbar2pow(const barycentricinterpolant &p, const double c, const double s, real_1d_array &a, const xparams _xparams = alglib::xdefault);
+void polynomialbar2pow(const barycentricinterpolant &p, real_1d_array &a, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Conversion from power basis to barycentric representation.
+This function has O(N^2) complexity.
+
+INPUT PARAMETERS:
+    A   -   coefficients, P(x) = sum { A[i]*((X-C)/S)^i, i=0..N-1 }
+    N   -   number of coefficients (polynomial degree plus 1)
+            * if given, only leading N elements of A are used
+            * if not given, automatically determined from size of A
+    C   -   offset (see below); 0.0 is used as default value.
+    S   -   scale (see below);  1.0 is used as default value. S<>0.
+
+OUTPUT PARAMETERS
+    P   -   polynomial in barycentric form
+
+
+NOTES:
+1.  this function accepts offset and scale, which can be  set  to  improve
+    numerical properties of polynomial. For example, if you interpolate on
+    [-1,+1],  you  can  set C=0 and S=1 and convert from sum of 1, x, x^2,
+    x^3 and so on. In most cases you it is exactly what you need.
+
+    However, if your interpolation model was built on [999,1001], you will
+    see significant growth of numerical errors when using {1, x, x^2, x^3}
+    as  input  basis.  Converting  from  sum  of  1, (x-1000), (x-1000)^2,
+    (x-1000)^3 will be better option (you have to specify 1000.0 as offset
+    C and 1.0 as scale S).
+
+2.  power basis is ill-conditioned and tricks described above can't  solve
+    this problem completely. This function  will  return barycentric model
+    in any case, but for N>8 accuracy well degrade. However, N's less than
+    5 are pretty safe.
+
+  -- ALGLIB --
+     Copyright 30.09.2010 by Bochkanov Sergey
+*************************************************************************/
+void polynomialpow2bar(const real_1d_array &a, const ae_int_t n, const double c, const double s, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
+void polynomialpow2bar(const real_1d_array &a, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Lagrange intepolant: generation of the model on the general grid.
+This function has O(N^2) complexity.
+
+INPUT PARAMETERS:
+    X   -   abscissas, array[0..N-1]
+    Y   -   function values, array[0..N-1]
+    N   -   number of points, N>=1
+
+OUTPUT PARAMETERS
+    P   -   barycentric model which represents Lagrange interpolant
+            (see ratint unit info and BarycentricCalc() description for
+            more information).
+
+  -- ALGLIB --
+     Copyright 02.12.2009 by Bochkanov Sergey
+*************************************************************************/
+void polynomialbuild(const real_1d_array &x, const real_1d_array &y, const ae_int_t n, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
+void polynomialbuild(const real_1d_array &x, const real_1d_array &y, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Lagrange intepolant: generation of the model on equidistant grid.
+This function has O(N) complexity.
+
+INPUT PARAMETERS:
+    A   -   left boundary of [A,B]
+    B   -   right boundary of [A,B]
+    Y   -   function values at the nodes, array[0..N-1]
+    N   -   number of points, N>=1
+            for N=1 a constant model is constructed.
+
+OUTPUT PARAMETERS
+    P   -   barycentric model which represents Lagrange interpolant
+            (see ratint unit info and BarycentricCalc() description for
+            more information).
+
+  -- ALGLIB --
+     Copyright 03.12.2009 by Bochkanov Sergey
+*************************************************************************/
+void polynomialbuildeqdist(const double a, const double b, const real_1d_array &y, const ae_int_t n, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
+void polynomialbuildeqdist(const double a, const double b, const real_1d_array &y, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Lagrange intepolant on Chebyshev grid (first kind).
+This function has O(N) complexity.
+
+INPUT PARAMETERS:
+    A   -   left boundary of [A,B]
+    B   -   right boundary of [A,B]
+    Y   -   function values at the nodes, array[0..N-1],
+            Y[I] = Y(0.5*(B+A) + 0.5*(B-A)*Cos(PI*(2*i+1)/(2*n)))
+    N   -   number of points, N>=1
+            for N=1 a constant model is constructed.
+
+OUTPUT PARAMETERS
+    P   -   barycentric model which represents Lagrange interpolant
+            (see ratint unit info and BarycentricCalc() description for
+            more information).
+
+  -- ALGLIB --
+     Copyright 03.12.2009 by Bochkanov Sergey
+*************************************************************************/
+void polynomialbuildcheb1(const double a, const double b, const real_1d_array &y, const ae_int_t n, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
+void polynomialbuildcheb1(const double a, const double b, const real_1d_array &y, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Lagrange intepolant on Chebyshev grid (second kind).
+This function has O(N) complexity.
+
+INPUT PARAMETERS:
+    A   -   left boundary of [A,B]
+    B   -   right boundary of [A,B]
+    Y   -   function values at the nodes, array[0..N-1],
+            Y[I] = Y(0.5*(B+A) + 0.5*(B-A)*Cos(PI*i/(n-1)))
+    N   -   number of points, N>=1
+            for N=1 a constant model is constructed.
+
+OUTPUT PARAMETERS
+    P   -   barycentric model which represents Lagrange interpolant
+            (see ratint unit info and BarycentricCalc() description for
+            more information).
+
+  -- ALGLIB --
+     Copyright 03.12.2009 by Bochkanov Sergey
+*************************************************************************/
+void polynomialbuildcheb2(const double a, const double b, const real_1d_array &y, const ae_int_t n, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
+void polynomialbuildcheb2(const double a, const double b, const real_1d_array &y, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Fast equidistant polynomial interpolation function with O(N) complexity
+
+INPUT PARAMETERS:
+    A   -   left boundary of [A,B]
+    B   -   right boundary of [A,B]
+    F   -   function values, array[0..N-1]
+    N   -   number of points on equidistant grid, N>=1
+            for N=1 a constant model is constructed.
+    T   -   position where P(x) is calculated
+
+RESULT
+    value of the Lagrange interpolant at T
+
+IMPORTANT
+    this function provides fast interface which is not overflow-safe
+    nor it is very precise.
+    the best option is to use  PolynomialBuildEqDist()/BarycentricCalc()
+    subroutines unless you are pretty sure that your data will not result
+    in overflow.
+
+  -- ALGLIB --
+     Copyright 02.12.2009 by Bochkanov Sergey
+*************************************************************************/
+double polynomialcalceqdist(const double a, const double b, const real_1d_array &f, const ae_int_t n, const double t, const xparams _xparams = alglib::xdefault);
+double polynomialcalceqdist(const double a, const double b, const real_1d_array &f, const double t, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Fast polynomial interpolation function on Chebyshev points (first kind)
+with O(N) complexity.
+
+INPUT PARAMETERS:
+    A   -   left boundary of [A,B]
+    B   -   right boundary of [A,B]
+    F   -   function values, array[0..N-1]
+    N   -   number of points on Chebyshev grid (first kind),
+            X[i] = 0.5*(B+A) + 0.5*(B-A)*Cos(PI*(2*i+1)/(2*n))
+            for N=1 a constant model is constructed.
+    T   -   position where P(x) is calculated
+
+RESULT
+    value of the Lagrange interpolant at T
+
+IMPORTANT
+    this function provides fast interface which is not overflow-safe
+    nor it is very precise.
+    the best option is to use  PolIntBuildCheb1()/BarycentricCalc()
+    subroutines unless you are pretty sure that your data will not result
+    in overflow.
+
+  -- ALGLIB --
+     Copyright 02.12.2009 by Bochkanov Sergey
+*************************************************************************/
+double polynomialcalccheb1(const double a, const double b, const real_1d_array &f, const ae_int_t n, const double t, const xparams _xparams = alglib::xdefault);
+double polynomialcalccheb1(const double a, const double b, const real_1d_array &f, const double t, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Fast polynomial interpolation function on Chebyshev points (second kind)
+with O(N) complexity.
+
+INPUT PARAMETERS:
+    A   -   left boundary of [A,B]
+    B   -   right boundary of [A,B]
+    F   -   function values, array[0..N-1]
+    N   -   number of points on Chebyshev grid (second kind),
+            X[i] = 0.5*(B+A) + 0.5*(B-A)*Cos(PI*i/(n-1))
+            for N=1 a constant model is constructed.
+    T   -   position where P(x) is calculated
+
+RESULT
+    value of the Lagrange interpolant at T
+
+IMPORTANT
+    this function provides fast interface which is not overflow-safe
+    nor it is very precise.
+    the best option is to use PolIntBuildCheb2()/BarycentricCalc()
+    subroutines unless you are pretty sure that your data will not result
+    in overflow.
+
+  -- ALGLIB --
+     Copyright 02.12.2009 by Bochkanov Sergey
+*************************************************************************/
+double polynomialcalccheb2(const double a, const double b, const real_1d_array &f, const ae_int_t n, const double t, const xparams _xparams = alglib::xdefault);
+double polynomialcalccheb2(const double a, const double b, const real_1d_array &f, const double t, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_SPLINE1D) || !defined(AE_PARTIAL_BUILD)
@@ -2874,997 +3090,6 @@ void spline1dbuildmonotone(const real_1d_array &x, const real_1d_array &y, const
 void spline1dbuildmonotone(const real_1d_array &x, const real_1d_array &y, spline1dinterpolant &c, const xparams _xparams = alglib::xdefault);
 #endif
 
-#if defined(AE_COMPILE_PARAMETRIC) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-This function  builds  non-periodic 2-dimensional parametric spline  which
-starts at (X[0],Y[0]) and ends at (X[N-1],Y[N-1]).
-
-INPUT PARAMETERS:
-    XY  -   points, array[0..N-1,0..1].
-            XY[I,0:1] corresponds to the Ith point.
-            Order of points is important!
-    N   -   points count, N>=5 for Akima splines, N>=2 for other types  of
-            splines.
-    ST  -   spline type:
-            * 0     Akima spline
-            * 1     parabolically terminated Catmull-Rom spline (Tension=0)
-            * 2     parabolically terminated cubic spline
-    PT  -   parameterization type:
-            * 0     uniform
-            * 1     chord length
-            * 2     centripetal
-
-OUTPUT PARAMETERS:
-    P   -   parametric spline interpolant
-
-
-NOTES:
-* this function  assumes  that  there all consequent points  are distinct.
-  I.e. (x0,y0)<>(x1,y1),  (x1,y1)<>(x2,y2),  (x2,y2)<>(x3,y3)  and  so on.
-  However, non-consequent points may coincide, i.e. we can  have  (x0,y0)=
-  =(x2,y2).
-
-  -- ALGLIB PROJECT --
-     Copyright 28.05.2010 by Bochkanov Sergey
-*************************************************************************/
-void pspline2build(const real_2d_array &xy, const ae_int_t n, const ae_int_t st, const ae_int_t pt, pspline2interpolant &p, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function  builds  non-periodic 3-dimensional parametric spline  which
-starts at (X[0],Y[0],Z[0]) and ends at (X[N-1],Y[N-1],Z[N-1]).
-
-Same as PSpline2Build() function, but for 3D, so we  won't  duplicate  its
-description here.
-
-  -- ALGLIB PROJECT --
-     Copyright 28.05.2010 by Bochkanov Sergey
-*************************************************************************/
-void pspline3build(const real_2d_array &xy, const ae_int_t n, const ae_int_t st, const ae_int_t pt, pspline3interpolant &p, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This  function  builds  periodic  2-dimensional  parametric  spline  which
-starts at (X[0],Y[0]), goes through all points to (X[N-1],Y[N-1]) and then
-back to (X[0],Y[0]).
-
-INPUT PARAMETERS:
-    XY  -   points, array[0..N-1,0..1].
-            XY[I,0:1] corresponds to the Ith point.
-            XY[N-1,0:1] must be different from XY[0,0:1].
-            Order of points is important!
-    N   -   points count, N>=3 for other types of splines.
-    ST  -   spline type:
-            * 1     Catmull-Rom spline (Tension=0) with cyclic boundary conditions
-            * 2     cubic spline with cyclic boundary conditions
-    PT  -   parameterization type:
-            * 0     uniform
-            * 1     chord length
-            * 2     centripetal
-
-OUTPUT PARAMETERS:
-    P   -   parametric spline interpolant
-
-
-NOTES:
-* this function  assumes  that there all consequent points  are  distinct.
-  I.e. (x0,y0)<>(x1,y1), (x1,y1)<>(x2,y2),  (x2,y2)<>(x3,y3)  and  so  on.
-  However, non-consequent points may coincide, i.e. we can  have  (x0,y0)=
-  =(x2,y2).
-* last point of sequence is NOT equal to the first  point.  You  shouldn't
-  make curve "explicitly periodic" by making them equal.
-
-  -- ALGLIB PROJECT --
-     Copyright 28.05.2010 by Bochkanov Sergey
-*************************************************************************/
-void pspline2buildperiodic(const real_2d_array &xy, const ae_int_t n, const ae_int_t st, const ae_int_t pt, pspline2interpolant &p, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This  function  builds  periodic  3-dimensional  parametric  spline  which
-starts at (X[0],Y[0],Z[0]), goes through all points to (X[N-1],Y[N-1],Z[N-1])
-and then back to (X[0],Y[0],Z[0]).
-
-Same as PSpline2Build() function, but for 3D, so we  won't  duplicate  its
-description here.
-
-  -- ALGLIB PROJECT --
-     Copyright 28.05.2010 by Bochkanov Sergey
-*************************************************************************/
-void pspline3buildperiodic(const real_2d_array &xy, const ae_int_t n, const ae_int_t st, const ae_int_t pt, pspline3interpolant &p, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function returns vector of parameter values correspoding to points.
-
-I.e. for P created from (X[0],Y[0])...(X[N-1],Y[N-1]) and U=TValues(P)  we
-have
-    (X[0],Y[0]) = PSpline2Calc(P,U[0]),
-    (X[1],Y[1]) = PSpline2Calc(P,U[1]),
-    (X[2],Y[2]) = PSpline2Calc(P,U[2]),
-    ...
-
-INPUT PARAMETERS:
-    P   -   parametric spline interpolant
-
-OUTPUT PARAMETERS:
-    N   -   array size
-    T   -   array[0..N-1]
-
-
-NOTES:
-* for non-periodic splines U[0]=0, U[0]<U[1]<...<U[N-1], U[N-1]=1
-* for periodic splines     U[0]=0, U[0]<U[1]<...<U[N-1], U[N-1]<1
-
-  -- ALGLIB PROJECT --
-     Copyright 28.05.2010 by Bochkanov Sergey
-*************************************************************************/
-void pspline2parametervalues(const pspline2interpolant &p, ae_int_t &n, real_1d_array &t, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function returns vector of parameter values correspoding to points.
-
-Same as PSpline2ParameterValues(), but for 3D.
-
-  -- ALGLIB PROJECT --
-     Copyright 28.05.2010 by Bochkanov Sergey
-*************************************************************************/
-void pspline3parametervalues(const pspline3interpolant &p, ae_int_t &n, real_1d_array &t, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function  calculates  the value of the parametric spline for a  given
-value of parameter T
-
-INPUT PARAMETERS:
-    P   -   parametric spline interpolant
-    T   -   point:
-            * T in [0,1] corresponds to interval spanned by points
-            * for non-periodic splines T<0 (or T>1) correspond to parts of
-              the curve before the first (after the last) point
-            * for periodic splines T<0 (or T>1) are projected  into  [0,1]
-              by making T=T-floor(T).
-
-OUTPUT PARAMETERS:
-    X   -   X-position
-    Y   -   Y-position
-
-
-  -- ALGLIB PROJECT --
-     Copyright 28.05.2010 by Bochkanov Sergey
-*************************************************************************/
-void pspline2calc(const pspline2interpolant &p, const double t, double &x, double &y, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function  calculates  the value of the parametric spline for a  given
-value of parameter T.
-
-INPUT PARAMETERS:
-    P   -   parametric spline interpolant
-    T   -   point:
-            * T in [0,1] corresponds to interval spanned by points
-            * for non-periodic splines T<0 (or T>1) correspond to parts of
-              the curve before the first (after the last) point
-            * for periodic splines T<0 (or T>1) are projected  into  [0,1]
-              by making T=T-floor(T).
-
-OUTPUT PARAMETERS:
-    X   -   X-position
-    Y   -   Y-position
-    Z   -   Z-position
-
-
-  -- ALGLIB PROJECT --
-     Copyright 28.05.2010 by Bochkanov Sergey
-*************************************************************************/
-void pspline3calc(const pspline3interpolant &p, const double t, double &x, double &y, double &z, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function  calculates  tangent vector for a given value of parameter T
-
-INPUT PARAMETERS:
-    P   -   parametric spline interpolant
-    T   -   point:
-            * T in [0,1] corresponds to interval spanned by points
-            * for non-periodic splines T<0 (or T>1) correspond to parts of
-              the curve before the first (after the last) point
-            * for periodic splines T<0 (or T>1) are projected  into  [0,1]
-              by making T=T-floor(T).
-
-OUTPUT PARAMETERS:
-    X    -   X-component of tangent vector (normalized)
-    Y    -   Y-component of tangent vector (normalized)
-
-NOTE:
-    X^2+Y^2 is either 1 (for non-zero tangent vector) or 0.
-
-
-  -- ALGLIB PROJECT --
-     Copyright 28.05.2010 by Bochkanov Sergey
-*************************************************************************/
-void pspline2tangent(const pspline2interpolant &p, const double t, double &x, double &y, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function  calculates  tangent vector for a given value of parameter T
-
-INPUT PARAMETERS:
-    P   -   parametric spline interpolant
-    T   -   point:
-            * T in [0,1] corresponds to interval spanned by points
-            * for non-periodic splines T<0 (or T>1) correspond to parts of
-              the curve before the first (after the last) point
-            * for periodic splines T<0 (or T>1) are projected  into  [0,1]
-              by making T=T-floor(T).
-
-OUTPUT PARAMETERS:
-    X    -   X-component of tangent vector (normalized)
-    Y    -   Y-component of tangent vector (normalized)
-    Z    -   Z-component of tangent vector (normalized)
-
-NOTE:
-    X^2+Y^2+Z^2 is either 1 (for non-zero tangent vector) or 0.
-
-
-  -- ALGLIB PROJECT --
-     Copyright 28.05.2010 by Bochkanov Sergey
-*************************************************************************/
-void pspline3tangent(const pspline3interpolant &p, const double t, double &x, double &y, double &z, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function calculates derivative, i.e. it returns (dX/dT,dY/dT).
-
-INPUT PARAMETERS:
-    P   -   parametric spline interpolant
-    T   -   point:
-            * T in [0,1] corresponds to interval spanned by points
-            * for non-periodic splines T<0 (or T>1) correspond to parts of
-              the curve before the first (after the last) point
-            * for periodic splines T<0 (or T>1) are projected  into  [0,1]
-              by making T=T-floor(T).
-
-OUTPUT PARAMETERS:
-    X   -   X-value
-    DX  -   X-derivative
-    Y   -   Y-value
-    DY  -   Y-derivative
-
-
-  -- ALGLIB PROJECT --
-     Copyright 28.05.2010 by Bochkanov Sergey
-*************************************************************************/
-void pspline2diff(const pspline2interpolant &p, const double t, double &x, double &dx, double &y, double &dy, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function calculates derivative, i.e. it returns (dX/dT,dY/dT,dZ/dT).
-
-INPUT PARAMETERS:
-    P   -   parametric spline interpolant
-    T   -   point:
-            * T in [0,1] corresponds to interval spanned by points
-            * for non-periodic splines T<0 (or T>1) correspond to parts of
-              the curve before the first (after the last) point
-            * for periodic splines T<0 (or T>1) are projected  into  [0,1]
-              by making T=T-floor(T).
-
-OUTPUT PARAMETERS:
-    X   -   X-value
-    DX  -   X-derivative
-    Y   -   Y-value
-    DY  -   Y-derivative
-    Z   -   Z-value
-    DZ  -   Z-derivative
-
-
-  -- ALGLIB PROJECT --
-     Copyright 28.05.2010 by Bochkanov Sergey
-*************************************************************************/
-void pspline3diff(const pspline3interpolant &p, const double t, double &x, double &dx, double &y, double &dy, double &z, double &dz, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function calculates first and second derivative with respect to T.
-
-INPUT PARAMETERS:
-    P   -   parametric spline interpolant
-    T   -   point:
-            * T in [0,1] corresponds to interval spanned by points
-            * for non-periodic splines T<0 (or T>1) correspond to parts of
-              the curve before the first (after the last) point
-            * for periodic splines T<0 (or T>1) are projected  into  [0,1]
-              by making T=T-floor(T).
-
-OUTPUT PARAMETERS:
-    X   -   X-value
-    DX  -   derivative
-    D2X -   second derivative
-    Y   -   Y-value
-    DY  -   derivative
-    D2Y -   second derivative
-
-
-  -- ALGLIB PROJECT --
-     Copyright 28.05.2010 by Bochkanov Sergey
-*************************************************************************/
-void pspline2diff2(const pspline2interpolant &p, const double t, double &x, double &dx, double &d2x, double &y, double &dy, double &d2y, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function calculates first and second derivative with respect to T.
-
-INPUT PARAMETERS:
-    P   -   parametric spline interpolant
-    T   -   point:
-            * T in [0,1] corresponds to interval spanned by points
-            * for non-periodic splines T<0 (or T>1) correspond to parts of
-              the curve before the first (after the last) point
-            * for periodic splines T<0 (or T>1) are projected  into  [0,1]
-              by making T=T-floor(T).
-
-OUTPUT PARAMETERS:
-    X   -   X-value
-    DX  -   derivative
-    D2X -   second derivative
-    Y   -   Y-value
-    DY  -   derivative
-    D2Y -   second derivative
-    Z   -   Z-value
-    DZ  -   derivative
-    D2Z -   second derivative
-
-
-  -- ALGLIB PROJECT --
-     Copyright 28.05.2010 by Bochkanov Sergey
-*************************************************************************/
-void pspline3diff2(const pspline3interpolant &p, const double t, double &x, double &dx, double &d2x, double &y, double &dy, double &d2y, double &z, double &dz, double &d2z, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function  calculates  arc length, i.e. length of  curve  between  t=a
-and t=b.
-
-INPUT PARAMETERS:
-    P   -   parametric spline interpolant
-    A,B -   parameter values corresponding to arc ends:
-            * B>A will result in positive length returned
-            * B<A will result in negative length returned
-
-RESULT:
-    length of arc starting at T=A and ending at T=B.
-
-
-  -- ALGLIB PROJECT --
-     Copyright 30.05.2010 by Bochkanov Sergey
-*************************************************************************/
-double pspline2arclength(const pspline2interpolant &p, const double a, const double b, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function  calculates  arc length, i.e. length of  curve  between  t=a
-and t=b.
-
-INPUT PARAMETERS:
-    P   -   parametric spline interpolant
-    A,B -   parameter values corresponding to arc ends:
-            * B>A will result in positive length returned
-            * B<A will result in negative length returned
-
-RESULT:
-    length of arc starting at T=A and ending at T=B.
-
-
-  -- ALGLIB PROJECT --
-     Copyright 30.05.2010 by Bochkanov Sergey
-*************************************************************************/
-double pspline3arclength(const pspline3interpolant &p, const double a, const double b, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This  subroutine fits piecewise linear curve to points with Ramer-Douglas-
-Peucker algorithm. This  function  performs PARAMETRIC fit, i.e. it can be
-used to fit curves like circles.
-
-On  input  it  accepts dataset which describes parametric multidimensional
-curve X(t), with X being vector, and t taking values in [0,N), where N  is
-a number of points in dataset. As result, it returns reduced  dataset  X2,
-which can be used to build  parametric  curve  X2(t),  which  approximates
-X(t) with desired precision (or has specified number of sections).
-
-
-INPUT PARAMETERS:
-    X       -   array of multidimensional points:
-                * at least N elements, leading N elements are used if more
-                  than N elements were specified
-                * order of points is IMPORTANT because  it  is  parametric
-                  fit
-                * each row of array is one point which has D coordinates
-    N       -   number of elements in X
-    D       -   number of dimensions (elements per row of X)
-    StopM   -   stopping condition - desired number of sections:
-                * at most M sections are generated by this function
-                * less than M sections can be generated if we have N<M
-                  (or some X are non-distinct).
-                * zero StopM means that algorithm does not stop after
-                  achieving some pre-specified section count
-    StopEps -   stopping condition - desired precision:
-                * algorithm stops after error in each section is at most Eps
-                * zero Eps means that algorithm does not stop after
-                  achieving some pre-specified precision
-
-OUTPUT PARAMETERS:
-    X2      -   array of corner points for piecewise approximation,
-                has length NSections+1 or zero (for NSections=0).
-    Idx2    -   array of indexes (parameter values):
-                * has length NSections+1 or zero (for NSections=0).
-                * each element of Idx2 corresponds to same-numbered
-                  element of X2
-                * each element of Idx2 is index of  corresponding  element
-                  of X2 at original array X, i.e. I-th  row  of  X2  is
-                  Idx2[I]-th row of X.
-                * elements of Idx2 can be treated as parameter values
-                  which should be used when building new parametric curve
-                * Idx2[0]=0, Idx2[NSections]=N-1
-    NSections-  number of sections found by algorithm, NSections<=M,
-                NSections can be zero for degenerate datasets
-                (N<=1 or all X[] are non-distinct).
-
-NOTE: algorithm stops after:
-      a) dividing curve into StopM sections
-      b) achieving required precision StopEps
-      c) dividing curve into N-1 sections
-      If both StopM and StopEps are non-zero, algorithm is stopped by  the
-      FIRST criterion which is satisfied. In case both StopM  and  StopEps
-      are zero, algorithm stops because of (c).
-
-  -- ALGLIB --
-     Copyright 02.10.2014 by Bochkanov Sergey
-*************************************************************************/
-void parametricrdpfixed(const real_2d_array &x, const ae_int_t n, const ae_int_t d, const ae_int_t stopm, const double stopeps, real_2d_array &x2, integer_1d_array &idx2, ae_int_t &nsections, const xparams _xparams = alglib::xdefault);
-#endif
-
-#if defined(AE_COMPILE_SPLINE3D) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-This subroutine calculates the value of the trilinear or tricubic spline at
-the given point (X,Y,Z).
-
-INPUT PARAMETERS:
-    C   -   coefficients table.
-            Built by BuildBilinearSpline or BuildBicubicSpline.
-    X, Y,
-    Z   -   point
-
-Result:
-    S(x,y,z)
-
-  -- ALGLIB PROJECT --
-     Copyright 26.04.2012 by Bochkanov Sergey
-*************************************************************************/
-double spline3dcalc(const spline3dinterpolant &c, const double x, const double y, const double z, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This subroutine performs linear transformation of the spline argument.
-
-INPUT PARAMETERS:
-    C       -   spline interpolant
-    AX, BX  -   transformation coefficients: x = A*u + B
-    AY, BY  -   transformation coefficients: y = A*v + B
-    AZ, BZ  -   transformation coefficients: z = A*w + B
-
-OUTPUT PARAMETERS:
-    C   -   transformed spline
-
-  -- ALGLIB PROJECT --
-     Copyright 26.04.2012 by Bochkanov Sergey
-*************************************************************************/
-void spline3dlintransxyz(const spline3dinterpolant &c, const double ax, const double bx, const double ay, const double by, const double az, const double bz, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This subroutine performs linear transformation of the spline.
-
-INPUT PARAMETERS:
-    C   -   spline interpolant.
-    A, B-   transformation coefficients: S2(x,y) = A*S(x,y,z) + B
-
-OUTPUT PARAMETERS:
-    C   -   transformed spline
-
-  -- ALGLIB PROJECT --
-     Copyright 26.04.2012 by Bochkanov Sergey
-*************************************************************************/
-void spline3dlintransf(const spline3dinterpolant &c, const double a, const double b, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Trilinear spline resampling
-
-INPUT PARAMETERS:
-    A           -   array[0..OldXCount*OldYCount*OldZCount-1], function
-                    values at the old grid, :
-                        A[0]        x=0,y=0,z=0
-                        A[1]        x=1,y=0,z=0
-                        A[..]       ...
-                        A[..]       x=oldxcount-1,y=0,z=0
-                        A[..]       x=0,y=1,z=0
-                        A[..]       ...
-                        ...
-    OldZCount   -   old Z-count, OldZCount>1
-    OldYCount   -   old Y-count, OldYCount>1
-    OldXCount   -   old X-count, OldXCount>1
-    NewZCount   -   new Z-count, NewZCount>1
-    NewYCount   -   new Y-count, NewYCount>1
-    NewXCount   -   new X-count, NewXCount>1
-
-OUTPUT PARAMETERS:
-    B           -   array[0..NewXCount*NewYCount*NewZCount-1], function
-                    values at the new grid:
-                        B[0]        x=0,y=0,z=0
-                        B[1]        x=1,y=0,z=0
-                        B[..]       ...
-                        B[..]       x=newxcount-1,y=0,z=0
-                        B[..]       x=0,y=1,z=0
-                        B[..]       ...
-                        ...
-
-  -- ALGLIB routine --
-     26.04.2012
-     Copyright by Bochkanov Sergey
-*************************************************************************/
-void spline3dresampletrilinear(const real_1d_array &a, const ae_int_t oldzcount, const ae_int_t oldycount, const ae_int_t oldxcount, const ae_int_t newzcount, const ae_int_t newycount, const ae_int_t newxcount, real_1d_array &b, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This subroutine builds trilinear vector-valued spline.
-
-INPUT PARAMETERS:
-    X   -   spline abscissas,  array[0..N-1]
-    Y   -   spline ordinates,  array[0..M-1]
-    Z   -   spline applicates, array[0..L-1]
-    F   -   function values, array[0..M*N*L*D-1]:
-            * first D elements store D values at (X[0],Y[0],Z[0])
-            * next D elements store D values at (X[1],Y[0],Z[0])
-            * next D elements store D values at (X[2],Y[0],Z[0])
-            * ...
-            * next D elements store D values at (X[0],Y[1],Z[0])
-            * next D elements store D values at (X[1],Y[1],Z[0])
-            * next D elements store D values at (X[2],Y[1],Z[0])
-            * ...
-            * next D elements store D values at (X[0],Y[0],Z[1])
-            * next D elements store D values at (X[1],Y[0],Z[1])
-            * next D elements store D values at (X[2],Y[0],Z[1])
-            * ...
-            * general form - D function values at (X[i],Y[j]) are stored
-              at F[D*(N*(M*K+J)+I)...D*(N*(M*K+J)+I)+D-1].
-    M,N,
-    L   -   grid size, M>=2, N>=2, L>=2
-    D   -   vector dimension, D>=1
-
-OUTPUT PARAMETERS:
-    C   -   spline interpolant
-
-  -- ALGLIB PROJECT --
-     Copyright 26.04.2012 by Bochkanov Sergey
-*************************************************************************/
-void spline3dbuildtrilinearv(const real_1d_array &x, const ae_int_t n, const real_1d_array &y, const ae_int_t m, const real_1d_array &z, const ae_int_t l, const real_1d_array &f, const ae_int_t d, spline3dinterpolant &c, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This subroutine calculates bilinear or bicubic vector-valued spline at the
-given point (X,Y,Z).
-
-INPUT PARAMETERS:
-    C   -   spline interpolant.
-    X, Y,
-    Z   -   point
-    F   -   output buffer, possibly preallocated array. In case array size
-            is large enough to store result, it is not reallocated.  Array
-            which is too short will be reallocated
-
-OUTPUT PARAMETERS:
-    F   -   array[D] (or larger) which stores function values
-
-  -- ALGLIB PROJECT --
-     Copyright 26.04.2012 by Bochkanov Sergey
-*************************************************************************/
-void spline3dcalcvbuf(const spline3dinterpolant &c, const double x, const double y, const double z, real_1d_array &f, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This subroutine calculates trilinear or tricubic vector-valued spline at the
-given point (X,Y,Z).
-
-INPUT PARAMETERS:
-    C   -   spline interpolant.
-    X, Y,
-    Z   -   point
-
-OUTPUT PARAMETERS:
-    F   -   array[D] which stores function values.  F is out-parameter and
-            it  is  reallocated  after  call to this function. In case you
-            want  to    reuse  previously  allocated  F,   you   may   use
-            Spline2DCalcVBuf(),  which  reallocates  F only when it is too
-            small.
-
-  -- ALGLIB PROJECT --
-     Copyright 26.04.2012 by Bochkanov Sergey
-*************************************************************************/
-void spline3dcalcv(const spline3dinterpolant &c, const double x, const double y, const double z, real_1d_array &f, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This subroutine unpacks tri-dimensional spline into the coefficients table
-
-INPUT PARAMETERS:
-    C   -   spline interpolant.
-
-Result:
-    N   -   grid size (X)
-    M   -   grid size (Y)
-    L   -   grid size (Z)
-    D   -   number of components
-    SType-  spline type. Currently, only one spline type is supported:
-            trilinear spline, as indicated by SType=1.
-    Tbl -   spline coefficients: [0..(N-1)*(M-1)*(L-1)*D-1, 0..13].
-            For T=0..D-1 (component index), I = 0...N-2 (x index),
-            J=0..M-2 (y index), K=0..L-2 (z index):
-                Q := T + I*D + J*D*(N-1) + K*D*(N-1)*(M-1),
-
-                Q-th row stores decomposition for T-th component of the
-                vector-valued function
-
-                Tbl[Q,0] = X[i]
-                Tbl[Q,1] = X[i+1]
-                Tbl[Q,2] = Y[j]
-                Tbl[Q,3] = Y[j+1]
-                Tbl[Q,4] = Z[k]
-                Tbl[Q,5] = Z[k+1]
-
-                Tbl[Q,6] = C000
-                Tbl[Q,7] = C100
-                Tbl[Q,8] = C010
-                Tbl[Q,9] = C110
-                Tbl[Q,10]= C001
-                Tbl[Q,11]= C101
-                Tbl[Q,12]= C011
-                Tbl[Q,13]= C111
-            On each grid square spline is equals to:
-                S(x) = SUM(c[i,j,k]*(x^i)*(y^j)*(z^k), i=0..1, j=0..1, k=0..1)
-                t = x-x[j]
-                u = y-y[i]
-                v = z-z[k]
-
-            NOTE: format of Tbl is given for SType=1. Future versions of
-                  ALGLIB can use different formats for different values of
-                  SType.
-
-  -- ALGLIB PROJECT --
-     Copyright 26.04.2012 by Bochkanov Sergey
-*************************************************************************/
-void spline3dunpackv(const spline3dinterpolant &c, ae_int_t &n, ae_int_t &m, ae_int_t &l, ae_int_t &d, ae_int_t &stype, real_2d_array &tbl, const xparams _xparams = alglib::xdefault);
-#endif
-
-#if defined(AE_COMPILE_POLINT) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-Conversion from barycentric representation to Chebyshev basis.
-This function has O(N^2) complexity.
-
-INPUT PARAMETERS:
-    P   -   polynomial in barycentric form
-    A,B -   base interval for Chebyshev polynomials (see below)
-            A<>B
-
-OUTPUT PARAMETERS
-    T   -   coefficients of Chebyshev representation;
-            P(x) = sum { T[i]*Ti(2*(x-A)/(B-A)-1), i=0..N-1 },
-            where Ti - I-th Chebyshev polynomial.
-
-NOTES:
-    barycentric interpolant passed as P may be either polynomial  obtained
-    from  polynomial  interpolation/ fitting or rational function which is
-    NOT polynomial. We can't distinguish between these two cases, and this
-    algorithm just tries to work assuming that P IS a polynomial.  If not,
-    algorithm will return results, but they won't have any meaning.
-
-  -- ALGLIB --
-     Copyright 30.09.2010 by Bochkanov Sergey
-*************************************************************************/
-void polynomialbar2cheb(const barycentricinterpolant &p, const double a, const double b, real_1d_array &t, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Conversion from Chebyshev basis to barycentric representation.
-This function has O(N^2) complexity.
-
-INPUT PARAMETERS:
-    T   -   coefficients of Chebyshev representation;
-            P(x) = sum { T[i]*Ti(2*(x-A)/(B-A)-1), i=0..N },
-            where Ti - I-th Chebyshev polynomial.
-    N   -   number of coefficients:
-            * if given, only leading N elements of T are used
-            * if not given, automatically determined from size of T
-    A,B -   base interval for Chebyshev polynomials (see above)
-            A<B
-
-OUTPUT PARAMETERS
-    P   -   polynomial in barycentric form
-
-  -- ALGLIB --
-     Copyright 30.09.2010 by Bochkanov Sergey
-*************************************************************************/
-void polynomialcheb2bar(const real_1d_array &t, const ae_int_t n, const double a, const double b, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
-void polynomialcheb2bar(const real_1d_array &t, const double a, const double b, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Conversion from barycentric representation to power basis.
-This function has O(N^2) complexity.
-
-INPUT PARAMETERS:
-    P   -   polynomial in barycentric form
-    C   -   offset (see below); 0.0 is used as default value.
-    S   -   scale (see below);  1.0 is used as default value. S<>0.
-
-OUTPUT PARAMETERS
-    A   -   coefficients, P(x) = sum { A[i]*((X-C)/S)^i, i=0..N-1 }
-    N   -   number of coefficients (polynomial degree plus 1)
-
-NOTES:
-1.  this function accepts offset and scale, which can be  set  to  improve
-    numerical properties of polynomial. For example, if P was obtained  as
-    result of interpolation on [-1,+1],  you  can  set  C=0  and  S=1  and
-    represent  P  as sum of 1, x, x^2, x^3 and so on. In most cases you it
-    is exactly what you need.
-
-    However, if your interpolation model was built on [999,1001], you will
-    see significant growth of numerical errors when using {1, x, x^2, x^3}
-    as basis. Representing P as sum of 1, (x-1000), (x-1000)^2, (x-1000)^3
-    will be better option. Such representation can be  obtained  by  using
-    1000.0 as offset C and 1.0 as scale S.
-
-2.  power basis is ill-conditioned and tricks described above can't  solve
-    this problem completely. This function  will  return  coefficients  in
-    any  case,  but  for  N>8  they  will  become unreliable. However, N's
-    less than 5 are pretty safe.
-
-3.  barycentric interpolant passed as P may be either polynomial  obtained
-    from  polynomial  interpolation/ fitting or rational function which is
-    NOT polynomial. We can't distinguish between these two cases, and this
-    algorithm just tries to work assuming that P IS a polynomial.  If not,
-    algorithm will return results, but they won't have any meaning.
-
-  -- ALGLIB --
-     Copyright 30.09.2010 by Bochkanov Sergey
-*************************************************************************/
-void polynomialbar2pow(const barycentricinterpolant &p, const double c, const double s, real_1d_array &a, const xparams _xparams = alglib::xdefault);
-void polynomialbar2pow(const barycentricinterpolant &p, real_1d_array &a, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Conversion from power basis to barycentric representation.
-This function has O(N^2) complexity.
-
-INPUT PARAMETERS:
-    A   -   coefficients, P(x) = sum { A[i]*((X-C)/S)^i, i=0..N-1 }
-    N   -   number of coefficients (polynomial degree plus 1)
-            * if given, only leading N elements of A are used
-            * if not given, automatically determined from size of A
-    C   -   offset (see below); 0.0 is used as default value.
-    S   -   scale (see below);  1.0 is used as default value. S<>0.
-
-OUTPUT PARAMETERS
-    P   -   polynomial in barycentric form
-
-
-NOTES:
-1.  this function accepts offset and scale, which can be  set  to  improve
-    numerical properties of polynomial. For example, if you interpolate on
-    [-1,+1],  you  can  set C=0 and S=1 and convert from sum of 1, x, x^2,
-    x^3 and so on. In most cases you it is exactly what you need.
-
-    However, if your interpolation model was built on [999,1001], you will
-    see significant growth of numerical errors when using {1, x, x^2, x^3}
-    as  input  basis.  Converting  from  sum  of  1, (x-1000), (x-1000)^2,
-    (x-1000)^3 will be better option (you have to specify 1000.0 as offset
-    C and 1.0 as scale S).
-
-2.  power basis is ill-conditioned and tricks described above can't  solve
-    this problem completely. This function  will  return barycentric model
-    in any case, but for N>8 accuracy well degrade. However, N's less than
-    5 are pretty safe.
-
-  -- ALGLIB --
-     Copyright 30.09.2010 by Bochkanov Sergey
-*************************************************************************/
-void polynomialpow2bar(const real_1d_array &a, const ae_int_t n, const double c, const double s, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
-void polynomialpow2bar(const real_1d_array &a, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Lagrange intepolant: generation of the model on the general grid.
-This function has O(N^2) complexity.
-
-INPUT PARAMETERS:
-    X   -   abscissas, array[0..N-1]
-    Y   -   function values, array[0..N-1]
-    N   -   number of points, N>=1
-
-OUTPUT PARAMETERS
-    P   -   barycentric model which represents Lagrange interpolant
-            (see ratint unit info and BarycentricCalc() description for
-            more information).
-
-  -- ALGLIB --
-     Copyright 02.12.2009 by Bochkanov Sergey
-*************************************************************************/
-void polynomialbuild(const real_1d_array &x, const real_1d_array &y, const ae_int_t n, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
-void polynomialbuild(const real_1d_array &x, const real_1d_array &y, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Lagrange intepolant: generation of the model on equidistant grid.
-This function has O(N) complexity.
-
-INPUT PARAMETERS:
-    A   -   left boundary of [A,B]
-    B   -   right boundary of [A,B]
-    Y   -   function values at the nodes, array[0..N-1]
-    N   -   number of points, N>=1
-            for N=1 a constant model is constructed.
-
-OUTPUT PARAMETERS
-    P   -   barycentric model which represents Lagrange interpolant
-            (see ratint unit info and BarycentricCalc() description for
-            more information).
-
-  -- ALGLIB --
-     Copyright 03.12.2009 by Bochkanov Sergey
-*************************************************************************/
-void polynomialbuildeqdist(const double a, const double b, const real_1d_array &y, const ae_int_t n, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
-void polynomialbuildeqdist(const double a, const double b, const real_1d_array &y, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Lagrange intepolant on Chebyshev grid (first kind).
-This function has O(N) complexity.
-
-INPUT PARAMETERS:
-    A   -   left boundary of [A,B]
-    B   -   right boundary of [A,B]
-    Y   -   function values at the nodes, array[0..N-1],
-            Y[I] = Y(0.5*(B+A) + 0.5*(B-A)*Cos(PI*(2*i+1)/(2*n)))
-    N   -   number of points, N>=1
-            for N=1 a constant model is constructed.
-
-OUTPUT PARAMETERS
-    P   -   barycentric model which represents Lagrange interpolant
-            (see ratint unit info and BarycentricCalc() description for
-            more information).
-
-  -- ALGLIB --
-     Copyright 03.12.2009 by Bochkanov Sergey
-*************************************************************************/
-void polynomialbuildcheb1(const double a, const double b, const real_1d_array &y, const ae_int_t n, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
-void polynomialbuildcheb1(const double a, const double b, const real_1d_array &y, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Lagrange intepolant on Chebyshev grid (second kind).
-This function has O(N) complexity.
-
-INPUT PARAMETERS:
-    A   -   left boundary of [A,B]
-    B   -   right boundary of [A,B]
-    Y   -   function values at the nodes, array[0..N-1],
-            Y[I] = Y(0.5*(B+A) + 0.5*(B-A)*Cos(PI*i/(n-1)))
-    N   -   number of points, N>=1
-            for N=1 a constant model is constructed.
-
-OUTPUT PARAMETERS
-    P   -   barycentric model which represents Lagrange interpolant
-            (see ratint unit info and BarycentricCalc() description for
-            more information).
-
-  -- ALGLIB --
-     Copyright 03.12.2009 by Bochkanov Sergey
-*************************************************************************/
-void polynomialbuildcheb2(const double a, const double b, const real_1d_array &y, const ae_int_t n, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
-void polynomialbuildcheb2(const double a, const double b, const real_1d_array &y, barycentricinterpolant &p, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Fast equidistant polynomial interpolation function with O(N) complexity
-
-INPUT PARAMETERS:
-    A   -   left boundary of [A,B]
-    B   -   right boundary of [A,B]
-    F   -   function values, array[0..N-1]
-    N   -   number of points on equidistant grid, N>=1
-            for N=1 a constant model is constructed.
-    T   -   position where P(x) is calculated
-
-RESULT
-    value of the Lagrange interpolant at T
-
-IMPORTANT
-    this function provides fast interface which is not overflow-safe
-    nor it is very precise.
-    the best option is to use  PolynomialBuildEqDist()/BarycentricCalc()
-    subroutines unless you are pretty sure that your data will not result
-    in overflow.
-
-  -- ALGLIB --
-     Copyright 02.12.2009 by Bochkanov Sergey
-*************************************************************************/
-double polynomialcalceqdist(const double a, const double b, const real_1d_array &f, const ae_int_t n, const double t, const xparams _xparams = alglib::xdefault);
-double polynomialcalceqdist(const double a, const double b, const real_1d_array &f, const double t, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Fast polynomial interpolation function on Chebyshev points (first kind)
-with O(N) complexity.
-
-INPUT PARAMETERS:
-    A   -   left boundary of [A,B]
-    B   -   right boundary of [A,B]
-    F   -   function values, array[0..N-1]
-    N   -   number of points on Chebyshev grid (first kind),
-            X[i] = 0.5*(B+A) + 0.5*(B-A)*Cos(PI*(2*i+1)/(2*n))
-            for N=1 a constant model is constructed.
-    T   -   position where P(x) is calculated
-
-RESULT
-    value of the Lagrange interpolant at T
-
-IMPORTANT
-    this function provides fast interface which is not overflow-safe
-    nor it is very precise.
-    the best option is to use  PolIntBuildCheb1()/BarycentricCalc()
-    subroutines unless you are pretty sure that your data will not result
-    in overflow.
-
-  -- ALGLIB --
-     Copyright 02.12.2009 by Bochkanov Sergey
-*************************************************************************/
-double polynomialcalccheb1(const double a, const double b, const real_1d_array &f, const ae_int_t n, const double t, const xparams _xparams = alglib::xdefault);
-double polynomialcalccheb1(const double a, const double b, const real_1d_array &f, const double t, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Fast polynomial interpolation function on Chebyshev points (second kind)
-with O(N) complexity.
-
-INPUT PARAMETERS:
-    A   -   left boundary of [A,B]
-    B   -   right boundary of [A,B]
-    F   -   function values, array[0..N-1]
-    N   -   number of points on Chebyshev grid (second kind),
-            X[i] = 0.5*(B+A) + 0.5*(B-A)*Cos(PI*i/(n-1))
-            for N=1 a constant model is constructed.
-    T   -   position where P(x) is calculated
-
-RESULT
-    value of the Lagrange interpolant at T
-
-IMPORTANT
-    this function provides fast interface which is not overflow-safe
-    nor it is very precise.
-    the best option is to use PolIntBuildCheb2()/BarycentricCalc()
-    subroutines unless you are pretty sure that your data will not result
-    in overflow.
-
-  -- ALGLIB --
-     Copyright 02.12.2009 by Bochkanov Sergey
-*************************************************************************/
-double polynomialcalccheb2(const double a, const double b, const real_1d_array &f, const ae_int_t n, const double t, const xparams _xparams = alglib::xdefault);
-double polynomialcalccheb2(const double a, const double b, const real_1d_array &f, const double t, const xparams _xparams = alglib::xdefault);
-#endif
-
 #if defined(AE_COMPILE_LSFIT) || !defined(AE_PARTIAL_BUILD)
 /*************************************************************************
 This  subroutine fits piecewise linear curve to points with Ramer-Douglas-
@@ -3966,8 +3191,9 @@ Fitting by polynomials in barycentric form. This function provides  simple
 unterface for unconstrained unweighted fitting. See  PolynomialFitWC()  if
 you need constrained fitting.
 
-Task is linear, so linear least squares solver is used. Complexity of this
-computational scheme is O(N*M^2), mostly dominated by least squares solver
+The task is linear, thus the linear least  squares  solver  is  used.  The
+complexity of this computational scheme is O(N*M^2), mostly  dominated  by
+the least squares solver
 
 SEE ALSO:
     PolynomialFitWC()
@@ -3976,19 +3202,6 @@ NOTES:
     you can convert P from barycentric form  to  the  power  or  Chebyshev
     basis with PolynomialBar2Pow() or PolynomialBar2Cheb() functions  from
     POLINT subpackage.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   points, array[0..N-1].
@@ -4011,6 +3224,30 @@ OUTPUT PARAMETERS:
             * AvgRelError   average relative error on the non-zero Y
             * MaxError      maximum error
                             NON-WEIGHTED ERRORS ARE CALCULATED
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
   -- ALGLIB PROJECT --
      Copyright 10.12.2009 by Bochkanov Sergey
@@ -4036,19 +3273,6 @@ NOTES:
     you can convert P from barycentric form  to  the  power  or  Chebyshev
     basis with PolynomialBar2Pow() or PolynomialBar2Cheb() functions  from
     POLINT subpackage.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   points, array[0..N-1].
@@ -4107,6 +3331,30 @@ constrained regression splines:
 Our final recommendation is to use constraints  WHEN  AND  ONLY  when  you
 can't solve your task without them. Anything beyond  special  cases  given
 above is not guaranteed and may result in inconsistency.
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
   -- ALGLIB PROJECT --
      Copyright 10.12.2009 by Bochkanov Sergey
@@ -4704,19 +3952,6 @@ SEE ALSO
 * BarycentricFitFloaterHormann(), "lightweight" fitting without invididual
   weights and constraints.
 
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
 INPUT PARAMETERS:
     X   -   points, array[0..N-1].
     Y   -   function values, array[0..N-1].
@@ -4783,6 +4018,30 @@ Our final recommendation is to use constraints  WHEN  AND  ONLY  WHEN  you
 can't solve your task without them. Anything beyond  special  cases  given
 above is not guaranteed and may result in inconsistency.
 
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
   -- ALGLIB PROJECT --
      Copyright 18.08.2009 by Bochkanov Sergey
 *************************************************************************/
@@ -4798,19 +4057,6 @@ functions. Different values of D are tried, optimal  D  (least  root  mean
 square error) is chosen.  Task  is  linear, so linear least squares solver
 is used. Complexity  of  this  computational  scheme is  O(N*M^2)  (mostly
 dominated by the least squares solver).
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   points, array[0..N-1].
@@ -4833,6 +4079,30 @@ OUTPUT PARAMETERS:
             * AvgRelError   average relative error on the non-zero Y
             * MaxError      maximum error
                             NON-WEIGHTED ERRORS ARE CALCULATED
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
   -- ALGLIB PROJECT --
      Copyright 18.08.2009 by Bochkanov Sergey
@@ -4858,19 +4128,6 @@ SEE ALSO
                                 less smooth)
     Spline1DFitCubic()      -   "lightweight" fitting  by  cubic  splines,
                                 without invididual weights and constraints
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   points, array[0..N-1].
@@ -4948,6 +4205,29 @@ Our final recommendation is to use constraints  WHEN  AND  ONLY  WHEN  you
 can't solve your task without them. Anything beyond  special  cases  given
 above is not guaranteed and may result in inconsistency.
 
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
   -- ALGLIB PROJECT --
      Copyright 18.08.2009 by Bochkanov Sergey
@@ -4972,19 +4252,6 @@ SEE ALSO
                                 more smooth)
     Spline1DFitHermite()    -   "lightweight" Hermite fitting, without
                                 invididual weights and constraints
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     X   -   points, array[0..N-1].
@@ -5070,6 +4337,30 @@ Our final recommendation is to use constraints  WHEN  AND  ONLY  when  you
 can't solve your task without them. Anything beyond  special  cases  given
 above is not guaranteed and may result in inconsistency.
 
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
   -- ALGLIB PROJECT --
      Copyright 18.08.2009 by Bochkanov Sergey
 *************************************************************************/
@@ -5083,6 +4374,17 @@ Least squares fitting by cubic spline.
 This subroutine is "lightweight" alternative for more complex and feature-
 rich Spline1DFitCubicWC().  See  Spline1DFitCubicWC() for more information
 about subroutine parameters (we don't duplicate it here because of length)
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
 
   ! COMMERCIAL EDITION OF ALGLIB:
   !
@@ -5111,6 +4413,17 @@ This subroutine is "lightweight" alternative for more complex and feature-
 rich Spline1DFitHermiteWC().  See Spline1DFitHermiteWC()  description  for
 more information about subroutine parameters (we don't duplicate  it  here
 because of length).
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
 
   ! COMMERCIAL EDITION OF ALGLIB:
   !
@@ -5144,19 +4457,6 @@ IMPORTANT: if you want to perform  polynomial  fitting,  it  may  be  more
            best  results  on  polynomial  problems  and  solves  numerical
            stability  issues  which  arise  when   you   fit   high-degree
            polynomials to your data.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Y       -   array[0..N-1] Function values in  N  points.
@@ -5222,6 +4522,30 @@ NOTE:       covariance matrix is estimated using  correction  for  degrees
             of freedom (covariances are divided by N-M instead of dividing
             by N).
 
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
   -- ALGLIB --
      Copyright 17.08.2009 by Bochkanov Sergey
 *************************************************************************/
@@ -5242,19 +4566,6 @@ IMPORTANT: if you want to perform  polynomial  fitting,  it  may  be  more
            best  results  on  polynomial  problems  and  solves  numerical
            stability  issues  which  arise  when   you   fit   high-degree
            polynomials to your data.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Y       -   array[0..N-1] Function values in  N  points.
@@ -5335,6 +4646,30 @@ NOTE:       covariance matrix is estimated using  correction  for  degrees
             of freedom (covariances are divided by N-M instead of dividing
             by N).
 
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
   -- ALGLIB --
      Copyright 07.09.2009 by Bochkanov Sergey
 *************************************************************************/
@@ -5354,19 +4689,6 @@ IMPORTANT: if you want to perform  polynomial  fitting,  it  may  be  more
            best  results  on  polynomial  problems  and  solves  numerical
            stability  issues  which  arise  when   you   fit   high-degree
            polynomials to your data.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Y       -   array[0..N-1] Function values in  N  points.
@@ -5427,6 +4749,30 @@ NOTE:       covariance matrix is estimated using  correction  for  degrees
             of freedom (covariances are divided by N-M instead of dividing
             by N).
 
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
   -- ALGLIB --
      Copyright 17.08.2009 by Bochkanov Sergey
 *************************************************************************/
@@ -5447,19 +4793,6 @@ IMPORTANT: if you want to perform  polynomial  fitting,  it  may  be  more
            best  results  on  polynomial  problems  and  solves  numerical
            stability  issues  which  arise  when   you   fit   high-degree
            polynomials to your data.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     Y       -   array[0..N-1] Function values in  N  points.
@@ -5535,6 +4868,30 @@ NOTE:       we apply small amount of regularization when we invert squared
 NOTE:       covariance matrix is estimated using  correction  for  degrees
             of freedom (covariances are divided by N-M instead of dividing
             by N).
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
   -- ALGLIB --
      Copyright 07.09.2009 by Bochkanov Sergey
@@ -6178,7 +5535,740 @@ INPUT PARAMETERS:
 void lsfitsetgradientcheck(const lsfitstate &state, const double teststep, const xparams _xparams = alglib::xdefault);
 #endif
 
-#if defined(AE_COMPILE_RBFV2) || !defined(AE_PARTIAL_BUILD)
+#if defined(AE_COMPILE_FITSPHERE) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+Fits least squares (LS) circle (or NX-dimensional sphere) to data  (a  set
+of points in NX-dimensional space).
+
+Least squares circle minimizes sum of squared deviations between distances
+from points to the center and  some  "candidate"  radius,  which  is  also
+fitted to the data.
+
+INPUT PARAMETERS:
+    XY      -   array[NPoints,NX] (or larger), contains dataset.
+                One row = one point in NX-dimensional space.
+    NPoints -   dataset size, NPoints>0
+    NX      -   space dimensionality, NX>0 (1, 2, 3, 4, 5 and so on)
+
+OUTPUT PARAMETERS:
+    CX      -   central point for a sphere
+    R       -   radius
+
+  -- ALGLIB --
+     Copyright 07.05.2018 by Bochkanov Sergey
+*************************************************************************/
+void fitspherels(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nx, real_1d_array &cx, double &r, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Fits minimum circumscribed (MC) circle (or NX-dimensional sphere) to  data
+(a set of points in NX-dimensional space).
+
+INPUT PARAMETERS:
+    XY      -   array[NPoints,NX] (or larger), contains dataset.
+                One row = one point in NX-dimensional space.
+    NPoints -   dataset size, NPoints>0
+    NX      -   space dimensionality, NX>0 (1, 2, 3, 4, 5 and so on)
+
+OUTPUT PARAMETERS:
+    CX      -   central point for a sphere
+    RHi     -   radius
+
+NOTE: this function is an easy-to-use wrapper around more powerful "expert"
+      function fitspherex().
+
+      This  wrapper  is optimized  for  ease of use and stability - at the
+      cost of somewhat lower  performance  (we  have  to  use  very  tight
+      stopping criteria for inner optimizer because we want to  make  sure
+      that it will converge on any dataset).
+
+      If you are ready to experiment with settings of  "expert"  function,
+      you can achieve ~2-4x speedup over standard "bulletproof" settings.
+
+
+  -- ALGLIB --
+     Copyright 14.04.2017 by Bochkanov Sergey
+*************************************************************************/
+void fitspheremc(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nx, real_1d_array &cx, double &rhi, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Fits maximum inscribed circle (or NX-dimensional sphere) to data (a set of
+points in NX-dimensional space).
+
+INPUT PARAMETERS:
+    XY      -   array[NPoints,NX] (or larger), contains dataset.
+                One row = one point in NX-dimensional space.
+    NPoints -   dataset size, NPoints>0
+    NX      -   space dimensionality, NX>0 (1, 2, 3, 4, 5 and so on)
+
+OUTPUT PARAMETERS:
+    CX      -   central point for a sphere
+    RLo     -   radius
+
+NOTE: this function is an easy-to-use wrapper around more powerful "expert"
+      function fitspherex().
+
+      This  wrapper  is optimized  for  ease of use and stability - at the
+      cost of somewhat lower  performance  (we  have  to  use  very  tight
+      stopping criteria for inner optimizer because we want to  make  sure
+      that it will converge on any dataset).
+
+      If you are ready to experiment with settings of  "expert"  function,
+      you can achieve ~2-4x speedup over standard "bulletproof" settings.
+
+
+  -- ALGLIB --
+     Copyright 14.04.2017 by Bochkanov Sergey
+*************************************************************************/
+void fitspheremi(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nx, real_1d_array &cx, double &rlo, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Fits minimum zone circle (or NX-dimensional sphere)  to  data  (a  set  of
+points in NX-dimensional space).
+
+INPUT PARAMETERS:
+    XY      -   array[NPoints,NX] (or larger), contains dataset.
+                One row = one point in NX-dimensional space.
+    NPoints -   dataset size, NPoints>0
+    NX      -   space dimensionality, NX>0 (1, 2, 3, 4, 5 and so on)
+
+OUTPUT PARAMETERS:
+    CX      -   central point for a sphere
+    RLo     -   radius of inscribed circle
+    RHo     -   radius of circumscribed circle
+
+NOTE: this function is an easy-to-use wrapper around more powerful "expert"
+      function fitspherex().
+
+      This  wrapper  is optimized  for  ease of use and stability - at the
+      cost of somewhat lower  performance  (we  have  to  use  very  tight
+      stopping criteria for inner optimizer because we want to  make  sure
+      that it will converge on any dataset).
+
+      If you are ready to experiment with settings of  "expert"  function,
+      you can achieve ~2-4x speedup over standard "bulletproof" settings.
+
+
+  -- ALGLIB --
+     Copyright 14.04.2017 by Bochkanov Sergey
+*************************************************************************/
+void fitspheremz(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nx, real_1d_array &cx, double &rlo, double &rhi, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Fitting minimum circumscribed, maximum inscribed or minimum  zone  circles
+(or NX-dimensional spheres)  to  data  (a  set of points in NX-dimensional
+space).
+
+This  is  expert  function  which  allows  to  tweak  many  parameters  of
+underlying nonlinear solver:
+* stopping criteria for inner iterations
+* number of outer iterations
+* penalty coefficient used to handle  nonlinear  constraints  (we  convert
+  unconstrained nonsmooth optimization problem ivolving max() and/or min()
+  operations to quadratically constrained smooth one).
+
+You may tweak all these parameters or only some  of  them,  leaving  other
+ones at their default state - just specify zero  value,  and  solver  will
+fill it with appropriate default one.
+
+These comments also include some discussion of  approach  used  to  handle
+such unusual fitting problem,  its  stability,  drawbacks  of  alternative
+methods, and convergence properties.
+
+INPUT PARAMETERS:
+    XY      -   array[NPoints,NX] (or larger), contains dataset.
+                One row = one point in NX-dimensional space.
+    NPoints -   dataset size, NPoints>0
+    NX      -   space dimensionality, NX>0 (1, 2, 3, 4, 5 and so on)
+    ProblemType-used to encode problem type:
+                * 0 for least squares circle
+                * 1 for minimum circumscribed circle/sphere fitting (MC)
+                * 2 for  maximum inscribed circle/sphere fitting (MI)
+                * 3 for minimum zone circle fitting (difference between
+                    Rhi and Rlo is minimized), denoted as MZ
+    EpsX    -   stopping condition for NLC optimizer:
+                * must be non-negative
+                * use 0 to choose default value (1.0E-12 is used by default)
+                * you may specify larger values, up to 1.0E-6, if you want
+                  to   speed-up   solver;   NLC   solver  performs several
+                  preconditioned  outer  iterations,   so   final   result
+                  typically has precision much better than EpsX.
+    AULIts  -   number of outer iterations performed by NLC optimizer:
+                * must be non-negative
+                * use 0 to choose default value (20 is used by default)
+                * you may specify values smaller than 20 if you want to
+                  speed up solver; 10 often results in good combination of
+                  precision and speed; sometimes you may get good results
+                  with just 6 outer iterations.
+                Ignored for ProblemType=0.
+    Penalty -   penalty coefficient for NLC optimizer:
+                * must be non-negative
+                * use 0 to choose default value (1.0E6 in current version)
+                * it should be really large, 1.0E6...1.0E7 is a good value
+                  to start from;
+                * generally, default value is good enough
+                Ignored for ProblemType=0.
+
+OUTPUT PARAMETERS:
+    CX      -   central point for a sphere
+    RLo     -   radius:
+                * for ProblemType=2,3, radius of the inscribed sphere
+                * for ProblemType=0 - radius of the least squares sphere
+                * for ProblemType=1 - zero
+    RHo     -   radius:
+                * for ProblemType=1,3, radius of the circumscribed sphere
+                * for ProblemType=0 - radius of the least squares sphere
+                * for ProblemType=2 - zero
+
+NOTE: ON THE UNIQUENESS OF SOLUTIONS
+
+ALGLIB provides solution to several related circle fitting  problems:   MC
+(minimum circumscribed), MI (maximum inscribed)   and   MZ  (minimum zone)
+fitting, LS (least squares) fitting.
+
+It  is  important  to  note  that  among these problems only MC and LS are
+convex and have unique solution independently from starting point.
+
+As  for MI,  it  may (or  may  not, depending on dataset properties)  have
+multiple solutions, and it always  has  one degenerate solution C=infinity
+which corresponds to infinitely large radius. Thus, there are no guarantees
+that solution to  MI returned by this solver will be the best one (and  no
+one can provide you with such guarantee because problem is  NP-hard).  The
+only guarantee you have is that this solution is locally optimal, i.e.  it
+can not be improved by infinitesimally small tweaks in the parameters.
+
+It  is  also  possible  to "run away" to infinity when  started  from  bad
+initial point located outside of point cloud (or when point cloud does not
+span entire circumference/surface of the sphere).
+
+Finally,  MZ (minimum zone circle) stands somewhere between MC  and  MI in
+stability. It is somewhat regularized by "circumscribed" term of the merit
+function; however, solutions to  MZ may be non-unique, and in some unlucky
+cases it is also possible to "run away to infinity".
+
+
+NOTE: ON THE NONLINEARLY CONSTRAINED PROGRAMMING APPROACH
+
+The problem formulation for MC  (minimum circumscribed   circle;  for  the
+sake of simplicity we omit MZ and MI here) is:
+
+        [     [         ]2 ]
+    min [ max [ XY[i]-C ]  ]
+     C  [  i  [         ]  ]
+
+i.e. it is unconstrained nonsmooth optimization problem of finding  "best"
+central point, with radius R being unambiguously  determined  from  C.  In
+order to move away from non-smoothness we use following reformulation:
+
+        [   ]                  [         ]2
+    min [ R ] subject to R>=0, [ XY[i]-C ]  <= R^2
+    C,R [   ]                  [         ]
+
+i.e. it becomes smooth quadratically constrained optimization problem with
+linear target function. Such problem statement is 100% equivalent  to  the
+original nonsmooth one, but much easier  to  approach.  We solve  it  with
+MinNLC solver provided by ALGLIB.
+
+
+NOTE: ON INSTABILITY OF SEQUENTIAL LINEARIZATION APPROACH
+
+ALGLIB  has  nonlinearly  constrained  solver which proved to be stable on
+such problems. However, some authors proposed to linearize constraints  in
+the vicinity of current approximation (Ci,Ri) and to get next  approximate
+solution (Ci+1,Ri+1) as solution to linear programming problem. Obviously,
+LP problems are easier than nonlinearly constrained ones.
+
+Indeed,  such approach  to   MC/MI/MZ   resulted   in  ~10-20x increase in
+performance (when compared with NLC solver). However, it turned  out  that
+in some cases linearized model fails to predict correct direction for next
+step and tells us that we converged to solution even when we are still 2-4
+digits of precision away from it.
+
+It is important that it is not failure of LP solver - it is failure of the
+linear model;  even  when  solved  exactly,  it  fails  to  handle  subtle
+nonlinearities which arise near the solution. We validated it by comparing
+results returned by ALGLIB linear solver with that of MATLAB.
+
+In our experiments with linearization:
+* MC failed most often, at both realistic and synthetic datasets
+* MI sometimes failed, but sometimes succeeded
+* MZ often  succeeded; our guess is that presence of two independent  sets
+  of constraints (one set for Rlo and another one for Rhi) and  two  terms
+  in the target function (Rlo and Rhi) regularizes task,  so  when  linear
+  model fails to handle nonlinearities from Rlo, it uses  Rhi  as  a  hint
+  (and vice versa).
+
+Because linearization approach failed to achieve stable results, we do not
+include it in ALGLIB.
+
+
+  -- ALGLIB --
+     Copyright 14.04.2017 by Bochkanov Sergey
+*************************************************************************/
+void fitspherex(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nx, const ae_int_t problemtype, const double epsx, const ae_int_t aulits, const double penalty, real_1d_array &cx, double &rlo, double &rhi, const xparams _xparams = alglib::xdefault);
+#endif
+
+#if defined(AE_COMPILE_PARAMETRIC) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+This function  builds  non-periodic 2-dimensional parametric spline  which
+starts at (X[0],Y[0]) and ends at (X[N-1],Y[N-1]).
+
+INPUT PARAMETERS:
+    XY  -   points, array[0..N-1,0..1].
+            XY[I,0:1] corresponds to the Ith point.
+            Order of points is important!
+    N   -   points count, N>=5 for Akima splines, N>=2 for other types  of
+            splines.
+    ST  -   spline type:
+            * 0     Akima spline
+            * 1     parabolically terminated Catmull-Rom spline (Tension=0)
+            * 2     parabolically terminated cubic spline
+    PT  -   parameterization type:
+            * 0     uniform
+            * 1     chord length
+            * 2     centripetal
+
+OUTPUT PARAMETERS:
+    P   -   parametric spline interpolant
+
+
+NOTES:
+* this function  assumes  that  there all consequent points  are distinct.
+  I.e. (x0,y0)<>(x1,y1),  (x1,y1)<>(x2,y2),  (x2,y2)<>(x3,y3)  and  so on.
+  However, non-consequent points may coincide, i.e. we can  have  (x0,y0)=
+  =(x2,y2).
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************/
+void pspline2build(const real_2d_array &xy, const ae_int_t n, const ae_int_t st, const ae_int_t pt, pspline2interpolant &p, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function  builds  non-periodic 3-dimensional parametric spline  which
+starts at (X[0],Y[0],Z[0]) and ends at (X[N-1],Y[N-1],Z[N-1]).
+
+Same as PSpline2Build() function, but for 3D, so we  won't  duplicate  its
+description here.
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************/
+void pspline3build(const real_2d_array &xy, const ae_int_t n, const ae_int_t st, const ae_int_t pt, pspline3interpolant &p, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This  function  builds  periodic  2-dimensional  parametric  spline  which
+starts at (X[0],Y[0]), goes through all points to (X[N-1],Y[N-1]) and then
+back to (X[0],Y[0]).
+
+INPUT PARAMETERS:
+    XY  -   points, array[0..N-1,0..1].
+            XY[I,0:1] corresponds to the Ith point.
+            XY[N-1,0:1] must be different from XY[0,0:1].
+            Order of points is important!
+    N   -   points count, N>=3 for other types of splines.
+    ST  -   spline type:
+            * 1     Catmull-Rom spline (Tension=0) with cyclic boundary conditions
+            * 2     cubic spline with cyclic boundary conditions
+    PT  -   parameterization type:
+            * 0     uniform
+            * 1     chord length
+            * 2     centripetal
+
+OUTPUT PARAMETERS:
+    P   -   parametric spline interpolant
+
+
+NOTES:
+* this function  assumes  that there all consequent points  are  distinct.
+  I.e. (x0,y0)<>(x1,y1), (x1,y1)<>(x2,y2),  (x2,y2)<>(x3,y3)  and  so  on.
+  However, non-consequent points may coincide, i.e. we can  have  (x0,y0)=
+  =(x2,y2).
+* last point of sequence is NOT equal to the first  point.  You  shouldn't
+  make curve "explicitly periodic" by making them equal.
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************/
+void pspline2buildperiodic(const real_2d_array &xy, const ae_int_t n, const ae_int_t st, const ae_int_t pt, pspline2interpolant &p, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This  function  builds  periodic  3-dimensional  parametric  spline  which
+starts at (X[0],Y[0],Z[0]), goes through all points to (X[N-1],Y[N-1],Z[N-1])
+and then back to (X[0],Y[0],Z[0]).
+
+Same as PSpline2Build() function, but for 3D, so we  won't  duplicate  its
+description here.
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************/
+void pspline3buildperiodic(const real_2d_array &xy, const ae_int_t n, const ae_int_t st, const ae_int_t pt, pspline3interpolant &p, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function returns vector of parameter values correspoding to points.
+
+I.e. for P created from (X[0],Y[0])...(X[N-1],Y[N-1]) and U=TValues(P)  we
+have
+    (X[0],Y[0]) = PSpline2Calc(P,U[0]),
+    (X[1],Y[1]) = PSpline2Calc(P,U[1]),
+    (X[2],Y[2]) = PSpline2Calc(P,U[2]),
+    ...
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+
+OUTPUT PARAMETERS:
+    N   -   array size
+    T   -   array[0..N-1]
+
+
+NOTES:
+* for non-periodic splines U[0]=0, U[0]<U[1]<...<U[N-1], U[N-1]=1
+* for periodic splines     U[0]=0, U[0]<U[1]<...<U[N-1], U[N-1]<1
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************/
+void pspline2parametervalues(const pspline2interpolant &p, ae_int_t &n, real_1d_array &t, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function returns vector of parameter values correspoding to points.
+
+Same as PSpline2ParameterValues(), but for 3D.
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************/
+void pspline3parametervalues(const pspline3interpolant &p, ae_int_t &n, real_1d_array &t, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function  calculates  the value of the parametric spline for a  given
+value of parameter T
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+    T   -   point:
+            * T in [0,1] corresponds to interval spanned by points
+            * for non-periodic splines T<0 (or T>1) correspond to parts of
+              the curve before the first (after the last) point
+            * for periodic splines T<0 (or T>1) are projected  into  [0,1]
+              by making T=T-floor(T).
+
+OUTPUT PARAMETERS:
+    X   -   X-position
+    Y   -   Y-position
+
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************/
+void pspline2calc(const pspline2interpolant &p, const double t, double &x, double &y, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function  calculates  the value of the parametric spline for a  given
+value of parameter T.
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+    T   -   point:
+            * T in [0,1] corresponds to interval spanned by points
+            * for non-periodic splines T<0 (or T>1) correspond to parts of
+              the curve before the first (after the last) point
+            * for periodic splines T<0 (or T>1) are projected  into  [0,1]
+              by making T=T-floor(T).
+
+OUTPUT PARAMETERS:
+    X   -   X-position
+    Y   -   Y-position
+    Z   -   Z-position
+
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************/
+void pspline3calc(const pspline3interpolant &p, const double t, double &x, double &y, double &z, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function  calculates  tangent vector for a given value of parameter T
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+    T   -   point:
+            * T in [0,1] corresponds to interval spanned by points
+            * for non-periodic splines T<0 (or T>1) correspond to parts of
+              the curve before the first (after the last) point
+            * for periodic splines T<0 (or T>1) are projected  into  [0,1]
+              by making T=T-floor(T).
+
+OUTPUT PARAMETERS:
+    X    -   X-component of tangent vector (normalized)
+    Y    -   Y-component of tangent vector (normalized)
+
+NOTE:
+    X^2+Y^2 is either 1 (for non-zero tangent vector) or 0.
+
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************/
+void pspline2tangent(const pspline2interpolant &p, const double t, double &x, double &y, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function  calculates  tangent vector for a given value of parameter T
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+    T   -   point:
+            * T in [0,1] corresponds to interval spanned by points
+            * for non-periodic splines T<0 (or T>1) correspond to parts of
+              the curve before the first (after the last) point
+            * for periodic splines T<0 (or T>1) are projected  into  [0,1]
+              by making T=T-floor(T).
+
+OUTPUT PARAMETERS:
+    X    -   X-component of tangent vector (normalized)
+    Y    -   Y-component of tangent vector (normalized)
+    Z    -   Z-component of tangent vector (normalized)
+
+NOTE:
+    X^2+Y^2+Z^2 is either 1 (for non-zero tangent vector) or 0.
+
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************/
+void pspline3tangent(const pspline3interpolant &p, const double t, double &x, double &y, double &z, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function calculates derivative, i.e. it returns (dX/dT,dY/dT).
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+    T   -   point:
+            * T in [0,1] corresponds to interval spanned by points
+            * for non-periodic splines T<0 (or T>1) correspond to parts of
+              the curve before the first (after the last) point
+            * for periodic splines T<0 (or T>1) are projected  into  [0,1]
+              by making T=T-floor(T).
+
+OUTPUT PARAMETERS:
+    X   -   X-value
+    DX  -   X-derivative
+    Y   -   Y-value
+    DY  -   Y-derivative
+
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************/
+void pspline2diff(const pspline2interpolant &p, const double t, double &x, double &dx, double &y, double &dy, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function calculates derivative, i.e. it returns (dX/dT,dY/dT,dZ/dT).
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+    T   -   point:
+            * T in [0,1] corresponds to interval spanned by points
+            * for non-periodic splines T<0 (or T>1) correspond to parts of
+              the curve before the first (after the last) point
+            * for periodic splines T<0 (or T>1) are projected  into  [0,1]
+              by making T=T-floor(T).
+
+OUTPUT PARAMETERS:
+    X   -   X-value
+    DX  -   X-derivative
+    Y   -   Y-value
+    DY  -   Y-derivative
+    Z   -   Z-value
+    DZ  -   Z-derivative
+
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************/
+void pspline3diff(const pspline3interpolant &p, const double t, double &x, double &dx, double &y, double &dy, double &z, double &dz, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function calculates first and second derivative with respect to T.
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+    T   -   point:
+            * T in [0,1] corresponds to interval spanned by points
+            * for non-periodic splines T<0 (or T>1) correspond to parts of
+              the curve before the first (after the last) point
+            * for periodic splines T<0 (or T>1) are projected  into  [0,1]
+              by making T=T-floor(T).
+
+OUTPUT PARAMETERS:
+    X   -   X-value
+    DX  -   derivative
+    D2X -   second derivative
+    Y   -   Y-value
+    DY  -   derivative
+    D2Y -   second derivative
+
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************/
+void pspline2diff2(const pspline2interpolant &p, const double t, double &x, double &dx, double &d2x, double &y, double &dy, double &d2y, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function calculates first and second derivative with respect to T.
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+    T   -   point:
+            * T in [0,1] corresponds to interval spanned by points
+            * for non-periodic splines T<0 (or T>1) correspond to parts of
+              the curve before the first (after the last) point
+            * for periodic splines T<0 (or T>1) are projected  into  [0,1]
+              by making T=T-floor(T).
+
+OUTPUT PARAMETERS:
+    X   -   X-value
+    DX  -   derivative
+    D2X -   second derivative
+    Y   -   Y-value
+    DY  -   derivative
+    D2Y -   second derivative
+    Z   -   Z-value
+    DZ  -   derivative
+    D2Z -   second derivative
+
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************/
+void pspline3diff2(const pspline3interpolant &p, const double t, double &x, double &dx, double &d2x, double &y, double &dy, double &d2y, double &z, double &dz, double &d2z, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function  calculates  arc length, i.e. length of  curve  between  t=a
+and t=b.
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+    A,B -   parameter values corresponding to arc ends:
+            * B>A will result in positive length returned
+            * B<A will result in negative length returned
+
+RESULT:
+    length of arc starting at T=A and ending at T=B.
+
+
+  -- ALGLIB PROJECT --
+     Copyright 30.05.2010 by Bochkanov Sergey
+*************************************************************************/
+double pspline2arclength(const pspline2interpolant &p, const double a, const double b, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function  calculates  arc length, i.e. length of  curve  between  t=a
+and t=b.
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+    A,B -   parameter values corresponding to arc ends:
+            * B>A will result in positive length returned
+            * B<A will result in negative length returned
+
+RESULT:
+    length of arc starting at T=A and ending at T=B.
+
+
+  -- ALGLIB PROJECT --
+     Copyright 30.05.2010 by Bochkanov Sergey
+*************************************************************************/
+double pspline3arclength(const pspline3interpolant &p, const double a, const double b, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This  subroutine fits piecewise linear curve to points with Ramer-Douglas-
+Peucker algorithm. This  function  performs PARAMETRIC fit, i.e. it can be
+used to fit curves like circles.
+
+On  input  it  accepts dataset which describes parametric multidimensional
+curve X(t), with X being vector, and t taking values in [0,N), where N  is
+a number of points in dataset. As result, it returns reduced  dataset  X2,
+which can be used to build  parametric  curve  X2(t),  which  approximates
+X(t) with desired precision (or has specified number of sections).
+
+
+INPUT PARAMETERS:
+    X       -   array of multidimensional points:
+                * at least N elements, leading N elements are used if more
+                  than N elements were specified
+                * order of points is IMPORTANT because  it  is  parametric
+                  fit
+                * each row of array is one point which has D coordinates
+    N       -   number of elements in X
+    D       -   number of dimensions (elements per row of X)
+    StopM   -   stopping condition - desired number of sections:
+                * at most M sections are generated by this function
+                * less than M sections can be generated if we have N<M
+                  (or some X are non-distinct).
+                * zero StopM means that algorithm does not stop after
+                  achieving some pre-specified section count
+    StopEps -   stopping condition - desired precision:
+                * algorithm stops after error in each section is at most Eps
+                * zero Eps means that algorithm does not stop after
+                  achieving some pre-specified precision
+
+OUTPUT PARAMETERS:
+    X2      -   array of corner points for piecewise approximation,
+                has length NSections+1 or zero (for NSections=0).
+    Idx2    -   array of indexes (parameter values):
+                * has length NSections+1 or zero (for NSections=0).
+                * each element of Idx2 corresponds to same-numbered
+                  element of X2
+                * each element of Idx2 is index of  corresponding  element
+                  of X2 at original array X, i.e. I-th  row  of  X2  is
+                  Idx2[I]-th row of X.
+                * elements of Idx2 can be treated as parameter values
+                  which should be used when building new parametric curve
+                * Idx2[0]=0, Idx2[NSections]=N-1
+    NSections-  number of sections found by algorithm, NSections<=M,
+                NSections can be zero for degenerate datasets
+                (N<=1 or all X[] are non-distinct).
+
+NOTE: algorithm stops after:
+      a) dividing curve into StopM sections
+      b) achieving required precision StopEps
+      c) dividing curve into N-1 sections
+      If both StopM and StopEps are non-zero, algorithm is stopped by  the
+      FIRST criterion which is satisfied. In case both StopM  and  StopEps
+      are zero, algorithm stops because of (c).
+
+  -- ALGLIB --
+     Copyright 02.10.2014 by Bochkanov Sergey
+*************************************************************************/
+void parametricrdpfixed(const real_2d_array &x, const ae_int_t n, const ae_int_t d, const ae_int_t stopm, const double stopeps, real_2d_array &x2, integer_1d_array &idx2, ae_int_t &nsections, const xparams _xparams = alglib::xdefault);
+#endif
+
+#if defined(AE_COMPILE_RBFV1) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
+#if defined(AE_COMPILE_RBFV3) || !defined(AE_PARTIAL_BUILD)
 
 #endif
 
@@ -6963,8 +7053,304 @@ OUTPUT PARAMETERS:
 void spline2dfit(const spline2dbuilder &state, spline2dinterpolant &s, spline2dfitreport &rep, const xparams _xparams = alglib::xdefault);
 #endif
 
-#if defined(AE_COMPILE_RBFV1) || !defined(AE_PARTIAL_BUILD)
+#if defined(AE_COMPILE_RBFV2) || !defined(AE_PARTIAL_BUILD)
 
+#endif
+
+#if defined(AE_COMPILE_SPLINE3D) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+This subroutine calculates the value of the trilinear or tricubic spline at
+the given point (X,Y,Z).
+
+INPUT PARAMETERS:
+    C   -   coefficients table.
+            Built by BuildBilinearSpline or BuildBicubicSpline.
+    X, Y,
+    Z   -   point
+
+Result:
+    S(x,y,z)
+
+  -- ALGLIB PROJECT --
+     Copyright 26.04.2012 by Bochkanov Sergey
+*************************************************************************/
+double spline3dcalc(const spline3dinterpolant &c, const double x, const double y, const double z, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This subroutine performs linear transformation of the spline argument.
+
+INPUT PARAMETERS:
+    C       -   spline interpolant
+    AX, BX  -   transformation coefficients: x = A*u + B
+    AY, BY  -   transformation coefficients: y = A*v + B
+    AZ, BZ  -   transformation coefficients: z = A*w + B
+
+OUTPUT PARAMETERS:
+    C   -   transformed spline
+
+  -- ALGLIB PROJECT --
+     Copyright 26.04.2012 by Bochkanov Sergey
+*************************************************************************/
+void spline3dlintransxyz(const spline3dinterpolant &c, const double ax, const double bx, const double ay, const double by, const double az, const double bz, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This subroutine performs linear transformation of the spline.
+
+INPUT PARAMETERS:
+    C   -   spline interpolant.
+    A, B-   transformation coefficients: S2(x,y) = A*S(x,y,z) + B
+
+OUTPUT PARAMETERS:
+    C   -   transformed spline
+
+  -- ALGLIB PROJECT --
+     Copyright 26.04.2012 by Bochkanov Sergey
+*************************************************************************/
+void spline3dlintransf(const spline3dinterpolant &c, const double a, const double b, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Trilinear spline resampling
+
+INPUT PARAMETERS:
+    A           -   array[0..OldXCount*OldYCount*OldZCount-1], function
+                    values at the old grid, :
+                        A[0]        x=0,y=0,z=0
+                        A[1]        x=1,y=0,z=0
+                        A[..]       ...
+                        A[..]       x=oldxcount-1,y=0,z=0
+                        A[..]       x=0,y=1,z=0
+                        A[..]       ...
+                        ...
+    OldZCount   -   old Z-count, OldZCount>1
+    OldYCount   -   old Y-count, OldYCount>1
+    OldXCount   -   old X-count, OldXCount>1
+    NewZCount   -   new Z-count, NewZCount>1
+    NewYCount   -   new Y-count, NewYCount>1
+    NewXCount   -   new X-count, NewXCount>1
+
+OUTPUT PARAMETERS:
+    B           -   array[0..NewXCount*NewYCount*NewZCount-1], function
+                    values at the new grid:
+                        B[0]        x=0,y=0,z=0
+                        B[1]        x=1,y=0,z=0
+                        B[..]       ...
+                        B[..]       x=newxcount-1,y=0,z=0
+                        B[..]       x=0,y=1,z=0
+                        B[..]       ...
+                        ...
+
+  -- ALGLIB routine --
+     26.04.2012
+     Copyright by Bochkanov Sergey
+*************************************************************************/
+void spline3dresampletrilinear(const real_1d_array &a, const ae_int_t oldzcount, const ae_int_t oldycount, const ae_int_t oldxcount, const ae_int_t newzcount, const ae_int_t newycount, const ae_int_t newxcount, real_1d_array &b, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This subroutine builds trilinear vector-valued spline.
+
+INPUT PARAMETERS:
+    X   -   spline abscissas,  array[0..N-1]
+    Y   -   spline ordinates,  array[0..M-1]
+    Z   -   spline applicates, array[0..L-1]
+    F   -   function values, array[0..M*N*L*D-1]:
+            * first D elements store D values at (X[0],Y[0],Z[0])
+            * next D elements store D values at (X[1],Y[0],Z[0])
+            * next D elements store D values at (X[2],Y[0],Z[0])
+            * ...
+            * next D elements store D values at (X[0],Y[1],Z[0])
+            * next D elements store D values at (X[1],Y[1],Z[0])
+            * next D elements store D values at (X[2],Y[1],Z[0])
+            * ...
+            * next D elements store D values at (X[0],Y[0],Z[1])
+            * next D elements store D values at (X[1],Y[0],Z[1])
+            * next D elements store D values at (X[2],Y[0],Z[1])
+            * ...
+            * general form - D function values at (X[i],Y[j]) are stored
+              at F[D*(N*(M*K+J)+I)...D*(N*(M*K+J)+I)+D-1].
+    M,N,
+    L   -   grid size, M>=2, N>=2, L>=2
+    D   -   vector dimension, D>=1
+
+OUTPUT PARAMETERS:
+    C   -   spline interpolant
+
+  -- ALGLIB PROJECT --
+     Copyright 26.04.2012 by Bochkanov Sergey
+*************************************************************************/
+void spline3dbuildtrilinearv(const real_1d_array &x, const ae_int_t n, const real_1d_array &y, const ae_int_t m, const real_1d_array &z, const ae_int_t l, const real_1d_array &f, const ae_int_t d, spline3dinterpolant &c, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This subroutine calculates bilinear or bicubic vector-valued spline at the
+given point (X,Y,Z).
+
+INPUT PARAMETERS:
+    C   -   spline interpolant.
+    X, Y,
+    Z   -   point
+    F   -   output buffer, possibly preallocated array. In case array size
+            is large enough to store result, it is not reallocated.  Array
+            which is too short will be reallocated
+
+OUTPUT PARAMETERS:
+    F   -   array[D] (or larger) which stores function values
+
+  -- ALGLIB PROJECT --
+     Copyright 26.04.2012 by Bochkanov Sergey
+*************************************************************************/
+void spline3dcalcvbuf(const spline3dinterpolant &c, const double x, const double y, const double z, real_1d_array &f, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This subroutine calculates trilinear or tricubic vector-valued spline at the
+given point (X,Y,Z).
+
+INPUT PARAMETERS:
+    C   -   spline interpolant.
+    X, Y,
+    Z   -   point
+
+OUTPUT PARAMETERS:
+    F   -   array[D] which stores function values.  F is out-parameter and
+            it  is  reallocated  after  call to this function. In case you
+            want  to    reuse  previously  allocated  F,   you   may   use
+            Spline2DCalcVBuf(),  which  reallocates  F only when it is too
+            small.
+
+  -- ALGLIB PROJECT --
+     Copyright 26.04.2012 by Bochkanov Sergey
+*************************************************************************/
+void spline3dcalcv(const spline3dinterpolant &c, const double x, const double y, const double z, real_1d_array &f, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This subroutine unpacks tri-dimensional spline into the coefficients table
+
+INPUT PARAMETERS:
+    C   -   spline interpolant.
+
+Result:
+    N   -   grid size (X)
+    M   -   grid size (Y)
+    L   -   grid size (Z)
+    D   -   number of components
+    SType-  spline type. Currently, only one spline type is supported:
+            trilinear spline, as indicated by SType=1.
+    Tbl -   spline coefficients: [0..(N-1)*(M-1)*(L-1)*D-1, 0..13].
+            For T=0..D-1 (component index), I = 0...N-2 (x index),
+            J=0..M-2 (y index), K=0..L-2 (z index):
+                Q := T + I*D + J*D*(N-1) + K*D*(N-1)*(M-1),
+
+                Q-th row stores decomposition for T-th component of the
+                vector-valued function
+
+                Tbl[Q,0] = X[i]
+                Tbl[Q,1] = X[i+1]
+                Tbl[Q,2] = Y[j]
+                Tbl[Q,3] = Y[j+1]
+                Tbl[Q,4] = Z[k]
+                Tbl[Q,5] = Z[k+1]
+
+                Tbl[Q,6] = C000
+                Tbl[Q,7] = C100
+                Tbl[Q,8] = C010
+                Tbl[Q,9] = C110
+                Tbl[Q,10]= C001
+                Tbl[Q,11]= C101
+                Tbl[Q,12]= C011
+                Tbl[Q,13]= C111
+            On each grid square spline is equals to:
+                S(x) = SUM(c[i,j,k]*(x^i)*(y^j)*(z^k), i=0..1, j=0..1, k=0..1)
+                t = x-x[j]
+                u = y-y[i]
+                v = z-z[k]
+
+            NOTE: format of Tbl is given for SType=1. Future versions of
+                  ALGLIB can use different formats for different values of
+                  SType.
+
+  -- ALGLIB PROJECT --
+     Copyright 26.04.2012 by Bochkanov Sergey
+*************************************************************************/
+void spline3dunpackv(const spline3dinterpolant &c, ae_int_t &n, ae_int_t &m, ae_int_t &l, ae_int_t &d, ae_int_t &stype, real_2d_array &tbl, const xparams _xparams = alglib::xdefault);
+#endif
+
+#if defined(AE_COMPILE_INTCOMP) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+This function is left for backward compatibility.
+Use fitspheremc() instead.
+
+
+  -- ALGLIB --
+     Copyright 14.04.2017 by Bochkanov Sergey
+*************************************************************************/
+void nsfitspheremcc(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nx, real_1d_array &cx, double &rhi, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function is left for backward compatibility.
+Use fitspheremi() instead.
+
+  -- ALGLIB --
+     Copyright 14.04.2017 by Bochkanov Sergey
+*************************************************************************/
+void nsfitspheremic(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nx, real_1d_array &cx, double &rlo, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function is left for backward compatibility.
+Use fitspheremz() instead.
+
+  -- ALGLIB --
+     Copyright 14.04.2017 by Bochkanov Sergey
+*************************************************************************/
+void nsfitspheremzc(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nx, real_1d_array &cx, double &rlo, double &rhi, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function is left for backward compatibility.
+Use fitspherex() instead.
+
+  -- ALGLIB --
+     Copyright 14.04.2017 by Bochkanov Sergey
+*************************************************************************/
+void nsfitspherex(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nx, const ae_int_t problemtype, const double epsx, const ae_int_t aulits, const double penalty, real_1d_array &cx, double &rlo, double &rhi, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function is an obsolete and deprecated version of fitting by
+penalized cubic spline.
+
+It was superseded by spline1dfit(), which is an orders of magnitude faster
+and more memory-efficient implementation.
+
+Do NOT use this function in the new code!
+
+  -- ALGLIB PROJECT --
+     Copyright 18.08.2009 by Bochkanov Sergey
+*************************************************************************/
+void spline1dfitpenalized(const real_1d_array &x, const real_1d_array &y, const ae_int_t n, const ae_int_t m, const double rho, ae_int_t &info, spline1dinterpolant &s, spline1dfitreport &rep, const xparams _xparams = alglib::xdefault);
+void spline1dfitpenalized(const real_1d_array &x, const real_1d_array &y, const ae_int_t m, const double rho, ae_int_t &info, spline1dinterpolant &s, spline1dfitreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function is an obsolete and deprecated version of fitting by
+penalized cubic spline.
+
+It was superseded by spline1dfit(), which is an orders of magnitude faster
+and more memory-efficient implementation.
+
+Do NOT use this function in the new code!
+
+  -- ALGLIB PROJECT --
+     Copyright 19.10.2010 by Bochkanov Sergey
+*************************************************************************/
+void spline1dfitpenalizedw(const real_1d_array &x, const real_1d_array &y, const real_1d_array &w, const ae_int_t n, const ae_int_t m, const double rho, ae_int_t &info, spline1dinterpolant &s, spline1dfitreport &rep, const xparams _xparams = alglib::xdefault);
+void spline1dfitpenalizedw(const real_1d_array &x, const real_1d_array &y, const real_1d_array &w, const ae_int_t m, const double rho, ae_int_t &info, spline1dinterpolant &s, spline1dfitreport &rep, const xparams _xparams = alglib::xdefault);
 #endif
 
 #if defined(AE_COMPILE_RBF) || !defined(AE_PARTIAL_BUILD)
@@ -7030,30 +7416,28 @@ rbfbuildmodel() which will update model according to your specification.
 
 USAGE:
 1. User creates model with rbfcreate()
-2. User adds dataset with rbfsetpoints() (points do NOT have to  be  on  a
-   regular grid) or rbfsetpointsandscales().
-3. (OPTIONAL) User chooses polynomial term by calling:
-   * rbflinterm() to set linear term
+2. User adds dataset with rbfsetpoints() or rbfsetpointsandscales()
+3. User selects RBF solver by calling:
+   * rbfsetalgohierarchical() - for a HRBF solver,  a  hierarchical large-
+     scale Gaussian RBFs  (works  well  for  uniformly  distributed  point
+     clouds, but may fail when the data are non-uniform; use other solvers
+     below in such cases)
+   * rbfsetalgothinplatespline() - for a large-scale DDM-RBF  solver  with
+     thin plate spline basis function being used
+   * rbfsetalgobiharmonic() -  for  a  large-scale  DDM-RBF  solver   with
+     biharmonic basis function being used
+   * rbfsetalgomultiquadricauto() -  for a large-scale DDM-RBF solver with
+     multiquadric basis function being used (automatic  selection  of  the
+     scale parameter Alpha)
+   * rbfsetalgomultiquadricmanual() -  for a  large-scale  DDM-RBF  solver
+     with multiquadric basis function being used (manual selection  of the
+     scale parameter Alpha)
+4. (OPTIONAL) User chooses polynomial term by calling:
+   * rbflinterm() to set linear term (default)
    * rbfconstterm() to set constant term
    * rbfzeroterm() to set zero term
-   By default, linear term is used.
-4. User tweaks algorithm properties with  rbfsetalgohierarchical()  method
-   (or chooses one of the legacy algorithms - QNN  (rbfsetalgoqnn)  or  ML
-   (rbfsetalgomultilayer)).
 5. User calls rbfbuildmodel() function which rebuilds model  according  to
    the specification
-6. User may call rbfcalc() to calculate model value at the specified point,
-   rbfgridcalc() to  calculate   model  values at the points of the regular
-   grid. User may extract model coefficients with rbfunpack() call.
-
-IMPORTANT: we recommend you to use latest model construction  algorithm  -
-           hierarchical RBFs, which is activated by rbfsetalgohierarchical()
-           function. This algorithm is the fastest one, and  most  memory-
-           efficient.
-           However,  it  is  incompatible  with older versions  of  ALGLIB
-           (pre-3.11). So, if you serialize hierarchical model,  you  will
-           be unable to load it in pre-3.11 ALGLIB. Other model types (QNN
-           and RBF-ML) are still backward-compatible.
 
 INPUT PARAMETERS:
     NX      -   dimension of the space, NX>=1
@@ -7065,26 +7449,9 @@ OUTPUT PARAMETERS:
 NOTE 1: memory requirements. RBF models require amount of memory  which is
         proportional  to the number of data points. Some additional memory
         is allocated during model construction, but most of this memory is
-        freed after model coefficients  are  calculated.  Amount  of  this
-        additional memory depends on model  construction  algorithm  being
-        used.
-
-NOTE 2: prior to ALGLIB version 3.11, RBF models supported  only  NX=2  or
-        NX=3. Any  attempt  to  create  single-dimensional  or  more  than
-        3-dimensional RBF model resulted in exception.
-
-        ALGLIB 3.11 supports any NX>0, but models created with  NX!=2  and
-        NX!=3 are incompatible with (a) older versions of ALGLIB, (b)  old
-        model construction algorithms (QNN or RBF-ML).
-
-        So, if you create a model with NX=2 or NX=3,  then,  depending  on
-        specific  model construction algorithm being chosen, you will (QNN
-        and RBF-ML) or will not (HierarchicalRBF) get backward compatibility
-        with older versions of ALGLIB. You have a choice here.
-
-        However, if you create a model with NX neither 2 nor 3,  you  have
-        no backward compatibility from the start, and you  are  forced  to
-        use hierarchical RBFs and ALGLIB 3.11 or later.
+        freed after the model  coefficients  are   calculated.  Amount  of
+        this additional memory depends  on  model  construction  algorithm
+        being used.
 
   -- ALGLIB --
      Copyright 13.12.2011, 20.06.2016 by Bochkanov Sergey
@@ -7096,11 +7463,21 @@ void rbfcreate(const ae_int_t nx, const ae_int_t ny, rbfmodel &s, const xparams 
 This function creates buffer  structure  which  can  be  used  to  perform
 parallel  RBF  model  evaluations  (with  one  RBF  model  instance  being
 used from multiple threads, as long as  different  threads  use  different
-instances of buffer).
+instances of the buffer).
 
 This buffer object can be used with  rbftscalcbuf()  function  (here  "ts"
 stands for "thread-safe", "buf" is a suffix which denotes  function  which
 reuses previously allocated output space).
+
+A buffer creation function (this function) is also thread-safe.  I.e.  you
+may safely create multiple buffers for the same  RBF  model  from multiple
+threads.
+
+NOTE: the  buffer  object  is  just  a  collection of several preallocated
+      dynamic arrays and precomputed values. If you  delete  its  "parent"
+      RBF model when the buffer is still alive, nothing  bad  will  happen
+      (no dangling pointers or resource leaks).  The  buffer  will  simply
+      become useless.
 
 How to use it:
 * create RBF model structure with rbfcreate()
@@ -7111,13 +7488,15 @@ How to use it:
   for more information)
 * call rbftscalcbuf() from different threads,  with  each  thread  working
   with its own copy of buffer object.
+* it is recommended to reuse buffer as much  as  possible  because  buffer
+  creation involves allocation of several large dynamic arrays.  It  is  a
+  huge waste of resource to use it just once.
 
 INPUT PARAMETERS
     S           -   RBF model
 
 OUTPUT PARAMETERS
     Buf         -   external buffer.
-
 
 IMPORTANT: buffer object should be used only with  RBF model object  which
            was used to initialize buffer. Any attempt to use buffer   with
@@ -7195,14 +7574,9 @@ scale vector.
 This function overrides results of the previous calls, i.e. multiple calls
 of this function will result in only the last set being added.
 
-IMPORTANT: only HierarchicalRBF algorithm can work with scaled points. So,
-           using this function results in RBF models which can be used  in
-           ALGLIB 3.11 or later. Previous versions of the library will  be
-           unable  to unserialize models produced by HierarchicalRBF algo.
-
-           Any attempt to use this function with RBF-ML or QNN  algorithms
-           will result  in  -3  error  code   being   returned  (incorrect
-           algorithm).
+IMPORTANT: only modern RBF algorithms  support  variable  scaling.  Legacy
+           algorithms like RBF-ML or QNN algorithms  will  result  in   -3
+           completion code being returned (incorrect algorithm).
 
 INPUT PARAMETERS:
     R       -   RBF model, initialized by rbfcreate() call.
@@ -7238,62 +7612,9 @@ void rbfsetpointsandscales(const rbfmodel &r, const real_2d_array &xy, const rea
 
 
 /*************************************************************************
-DEPRECATED:since version 3.11 ALGLIB includes new RBF  model  construction
-           algorithm, Hierarchical  RBF.  This  algorithm  is  faster  and
-           requires less memory than QNN and RBF-ML. It is especially good
-           for large-scale interpolation problems. So, we recommend you to
-           consider Hierarchical RBF as default option.
-
-==========================================================================
-
-This  function  sets  RBF interpolation algorithm. ALGLIB supports several
-RBF algorithms with different properties.
-
-This algorithm is called RBF-QNN and  it  is  good  for  point  sets  with
-following properties:
-a) all points are distinct
-b) all points are well separated.
-c) points  distribution  is  approximately  uniform.  There is no "contour
-   lines", clusters of points, or other small-scale structures.
-
-Algorithm description:
-1) interpolation centers are allocated to data points
-2) interpolation radii are calculated as distances to the  nearest centers
-   times Q coefficient (where Q is a value from [0.75,1.50]).
-3) after  performing (2) radii are transformed in order to avoid situation
-   when single outlier has very large radius and  influences  many  points
-   across all dataset. Transformation has following form:
-       new_r[i] = min(r[i],Z*median(r[]))
-   where r[i] is I-th radius, median()  is a median  radius across  entire
-   dataset, Z is user-specified value which controls amount  of  deviation
-   from median radius.
-
-When (a) is violated,  we  will  be unable to build RBF model. When (b) or
-(c) are violated, model will be built, but interpolation quality  will  be
-low. See http://www.alglib.net/interpolation/ for more information on this
-subject.
-
-This algorithm is used by default.
-
-Additional Q parameter controls smoothness properties of the RBF basis:
-* Q<0.75 will give perfectly conditioned basis,  but  terrible  smoothness
-  properties (RBF interpolant will have sharp peaks around function values)
-* Q around 1.0 gives good balance between smoothness and condition number
-* Q>1.5 will lead to badly conditioned systems and slow convergence of the
-  underlying linear solver (although smoothness will be very good)
-* Q>2.0 will effectively make optimizer useless because it won't  converge
-  within reasonable amount of iterations. It is possible to set such large
-  Q, but it is advised not to do so.
-
-INPUT PARAMETERS:
-    S       -   RBF model, initialized by RBFCreate() call
-    Q       -   Q parameter, Q>0, recommended value - 1.0
-    Z       -   Z parameter, Z>0, recommended value - 5.0
-
-NOTE: this   function  has   some   serialization-related  subtleties.  We
-      recommend you to study serialization examples from ALGLIB  Reference
-      Manual if you want to perform serialization of your models.
-
+DEPRECATED: this function is deprecated. ALGLIB  includes  new  RBF  model
+            construction algorithms: DDM-RBF (since version 3.19) and HRBF
+            (since version 3.11).
 
   -- ALGLIB --
      Copyright 13.12.2011 by Bochkanov Sergey
@@ -7303,99 +7624,9 @@ void rbfsetalgoqnn(const rbfmodel &s, const xparams _xparams = alglib::xdefault)
 
 
 /*************************************************************************
-DEPRECATED:since version 3.11 ALGLIB includes new RBF  model  construction
-           algorithm, Hierarchical  RBF.  This  algorithm  is  faster  and
-           requires less memory than QNN and RBF-ML. It is especially good
-           for large-scale interpolation problems. So, we recommend you to
-           consider Hierarchical RBF as default option.
-
-==========================================================================
-
-This  function  sets  RBF interpolation algorithm. ALGLIB supports several
-RBF algorithms with different properties.
-
-This  algorithm is called RBF-ML. It builds  multilayer  RBF  model,  i.e.
-model with subsequently decreasing  radii,  which  allows  us  to  combine
-smoothness (due to  large radii of  the first layers) with  exactness (due
-to small radii of the last layers) and fast convergence.
-
-Internally RBF-ML uses many different  means  of acceleration, from sparse
-matrices  to  KD-trees,  which  results in algorithm whose working time is
-roughly proportional to N*log(N)*Density*RBase^2*NLayers,  where  N  is  a
-number of points, Density is an average density if points per unit of  the
-interpolation space, RBase is an initial radius, NLayers is  a  number  of
-layers.
-
-RBF-ML is good for following kinds of interpolation problems:
-1. "exact" problems (perfect fit) with well separated points
-2. least squares problems with arbitrary distribution of points (algorithm
-   gives  perfect  fit  where it is possible, and resorts to least squares
-   fit in the hard areas).
-3. noisy problems where  we  want  to  apply  some  controlled  amount  of
-   smoothing.
-
-INPUT PARAMETERS:
-    S       -   RBF model, initialized by RBFCreate() call
-    RBase   -   RBase parameter, RBase>0
-    NLayers -   NLayers parameter, NLayers>0, recommended value  to  start
-                with - about 5.
-    LambdaV -   regularization value, can be useful when  solving  problem
-                in the least squares sense.  Optimal  lambda  is  problem-
-                dependent and require trial and error. In our  experience,
-                good lambda can be as large as 0.1, and you can use  0.001
-                as initial guess.
-                Default  value  - 0.01, which is used when LambdaV is  not
-                given.  You  can  specify  zero  value,  but  it  is   not
-                recommended to do so.
-
-TUNING ALGORITHM
-
-In order to use this algorithm you have to choose three parameters:
-* initial radius RBase
-* number of layers in the model NLayers
-* regularization coefficient LambdaV
-
-Initial radius is easy to choose - you can pick any number  several  times
-larger  than  the  average  distance between points. Algorithm won't break
-down if you choose radius which is too large (model construction time will
-increase, but model will be built correctly).
-
-Choose such number of layers that RLast=RBase/2^(NLayers-1)  (radius  used
-by  the  last  layer)  will  be  smaller than the typical distance between
-points.  In  case  model  error  is  too large, you can increase number of
-layers.  Having  more  layers  will make model construction and evaluation
-proportionally slower, but it will allow you to have model which precisely
-fits your data. From the other side, if you want to  suppress  noise,  you
-can DECREASE number of layers to make your model less flexible.
-
-Regularization coefficient LambdaV controls smoothness of  the  individual
-models built for each layer. We recommend you to use default value in case
-you don't want to tune this parameter,  because  having  non-zero  LambdaV
-accelerates and stabilizes internal iterative algorithm. In case you  want
-to suppress noise you can use  LambdaV  as  additional  parameter  (larger
-value = more smoothness) to tune.
-
-TYPICAL ERRORS
-
-1. Using  initial  radius  which is too large. Memory requirements  of the
-   RBF-ML are roughly proportional to N*Density*RBase^2 (where Density  is
-   an average density of points per unit of the interpolation  space).  In
-   the extreme case of the very large RBase we will need O(N^2)  units  of
-   memory - and many layers in order to decrease radius to some reasonably
-   small value.
-
-2. Using too small number of layers - RBF models with large radius are not
-   flexible enough to reproduce small variations in the  target  function.
-   You  need  many  layers  with  different radii, from large to small, in
-   order to have good model.
-
-3. Using  initial  radius  which  is  too  small.  You will get model with
-   "holes" in the areas which are too far away from interpolation centers.
-   However, algorithm will work correctly (and quickly) in this case.
-
-4. Using too many layers - you will get too large and too slow model. This
-   model  will  perfectly  reproduce  your function, but maybe you will be
-   able to achieve similar results with less layers (and less memory).
+DEPRECATED: this function is deprecated. ALGLIB  includes  new  RBF  model
+            construction algorithms: DDM-RBF (since version 3.19) and HRBF
+            (since version 3.11).
 
   -- ALGLIB --
      Copyright 02.03.2012 by Bochkanov Sergey
@@ -7405,8 +7636,7 @@ void rbfsetalgomultilayer(const rbfmodel &s, const double rbase, const ae_int_t 
 
 
 /*************************************************************************
-This  function  sets  RBF interpolation algorithm. ALGLIB supports several
-RBF algorithms with different properties.
+This function chooses HRBF solver, a 2nd version of ALGLIB RBFs.
 
 This  algorithm is called Hierarchical RBF. It  similar  to  its  previous
 incarnation, RBF-ML, i.e.  it  also  builds  a  sequence  of  models  with
@@ -7417,22 +7647,16 @@ and evaluation, as well as smaller memory footprint during construction.
 This algorithm has following important features:
 * ability to handle millions of points
 * controllable smoothing via nonlinearity penalization
-* support for NX-dimensional models with NX=1 or NX>3 (unlike QNN or RBF-ML)
 * support for specification of per-dimensional  radii  via  scale  vector,
   which is set by means of rbfsetpointsandscales() function. This  feature
   is useful if you solve  spatio-temporal  interpolation  problems,  where
   different radii are required for spatial and temporal dimensions.
 
 Running times are roughly proportional to:
-* N*log(N)*NLayers - for model construction
-* N*NLayers - for model evaluation
+* N*log(N)*NLayers - for the model construction
+* N*NLayers - for the model evaluation
 You may see that running time does not depend on search radius  or  points
-density, just on number of layers in the hierarchy.
-
-IMPORTANT: this model construction algorithm was introduced in ALGLIB 3.11
-           and  produces  models  which  are  INCOMPATIBLE  with  previous
-           versions of ALGLIB. You can  not  unserialize  models  produced
-           with this function in ALGLIB 3.10 or earlier.
+density, just on the number of layers in the hierarchy.
 
 INPUT PARAMETERS:
     S       -   RBF model, initialized by rbfcreate() call
@@ -7499,16 +7723,255 @@ void rbfsetalgohierarchical(const rbfmodel &s, const double rbase, const ae_int_
 
 
 /*************************************************************************
+This function chooses a thin plate  spline  DDM-RBF  solver,  a  fast  RBF
+solver with f(r)=r^2*ln(r) basis function.
+
+This algorithm has following important features:
+* easy setup - no tunable parameters
+* C1 continuous RBF model (gradient is defined everywhere, but Hessian  is
+  undefined at nodes), high-quality interpolation
+* fast  model construction algorithm with O(N) memory and  O(N^2)  running
+  time requirements. Hundreds of thousands of points can be  handled  with
+  this algorithm.
+* controllable smoothing via optional nonlinearity penalty
+
+INPUT PARAMETERS:
+    S       -   RBF model, initialized by rbfcreate() call
+    LambdaV -   smoothing parameter, LambdaV>=0, defaults to 0.0:
+                * LambdaV=0 means that no smoothing is applied,  i.e.  the
+                  spline tries to pass through all dataset points exactly
+                * LambdaV>0 means that a smoothing thin  plate  spline  is
+                  built, with larger LambdaV corresponding to models  with
+                  less nonlinearities. Smoothing spline reproduces  target
+                  values at nodes with small error; from the  other  side,
+                  it is much more stable.
+                  Recommended values:
+                  * 1.0E-6 for minimal stability improving smoothing
+                  * 1.0E-3 a good value to start experiments; first results
+                    are visible
+                  * 1.0 for strong smoothing
+
+IMPORTANT: this model construction algorithm was introduced in ALGLIB 3.19
+           and  produces  models  which  are  INCOMPATIBLE  with  previous
+           versions of ALGLIB. You can  not  unserialize  models  produced
+           with this function in ALGLIB 3.18 or earlier.
+
+NOTE:      polyharmonic RBFs, including thin plate splines,  are  somewhat
+           slower than compactly supported RBFs built with  HRBF algorithm
+           due to the fact that non-compact basis function does not vanish
+           far away from the nodes. From the other side, polyharmonic RBFs
+           often produce much better results than HRBFs.
+
+NOTE:      this algorithm supports specification of per-dimensional  radii
+           via scale vector, which is set by means of rbfsetpointsandscales()
+           function. This feature is useful if  you solve  spatio-temporal
+           interpolation problems where different radii are  required  for
+           spatial and temporal dimensions.
+
+  -- ALGLIB --
+     Copyright 12.12.2021 by Bochkanov Sergey
+*************************************************************************/
+void rbfsetalgothinplatespline(const rbfmodel &s, const double lambdav, const xparams _xparams = alglib::xdefault);
+void rbfsetalgothinplatespline(const rbfmodel &s, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function chooses a multiquadric DDM-RBF solver,  a  fast  RBF  solver
+with f(r)=sqrt(r^2+Alpha^2) as a basis function,  with  manual  choice  of
+the scale parameter Alpha.
+
+This algorithm has following important features:
+* C2 continuous RBF model (when Alpha>0 is used; for Alpha=0 the model  is
+  merely C0 continuous)
+* fast  model construction algorithm with O(N) memory and  O(N^2)  running
+  time requirements. Hundreds of thousands of points can be  handled  with
+  this algorithm.
+* controllable smoothing via optional nonlinearity penalty
+
+One important point is that  this  algorithm  includes  tunable  parameter
+Alpha, which should be carefully chosen. Selecting too  large  value  will
+result in extremely badly  conditioned  problems  (interpolation  accuracy
+may degrade up to complete breakdown) whilst selecting too small value may
+produce models that are precise but nearly nonsmooth at the nodes.
+
+Good value to  start  from  is  mean  distance  between  nodes. Generally,
+choosing too small Alpha is better than choosing too large - in the former
+case you still have model that reproduces target values at the nodes.
+
+In most cases, better option is to choose good Alpha automatically - it is
+done by another version of the same algorithm that is activated by calling
+rbfsetalgomultiquadricauto() method.
+
+INPUT PARAMETERS:
+    S       -   RBF model, initialized by rbfcreate() call
+    Alpha   -   basis function parameter, Alpha>=0:
+                * Alpha>0  means that multiquadric algorithm is used which
+                  produces C2-continuous RBF model
+                * Alpha=0  means that the multiquadric kernel  effectively
+                  becomes a biharmonic one: f=r. As a  result,  the  model
+                  becomes nonsmooth at nodes, and hence is C0 continuous
+    LambdaV -   smoothing parameter, LambdaV>=0, defaults to 0.0:
+                * LambdaV=0 means that no smoothing is applied,  i.e.  the
+                  spline tries to pass through all dataset points exactly
+                * LambdaV>0 means that a multiquadric spline is built with
+                  larger  LambdaV   corresponding   to  models  with  less
+                  nonlinearities.  Smoothing   spline   reproduces  target
+                  values at nodes with small error; from the  other  side,
+                  it is much more stable.
+                  Recommended values:
+                  * 1.0E-6 for minimal stability improving smoothing
+                  * 1.0E-3 a good value to start experiments; first results
+                    are visible
+                  * 1.0 for strong smoothing
+
+IMPORTANT: this model construction algorithm was introduced in ALGLIB 3.19
+           and  produces  models  which  are  INCOMPATIBLE  with  previous
+           versions of ALGLIB. You can  not  unserialize  models  produced
+           with this function in ALGLIB 3.18 or earlier.
+
+NOTE:      polyharmonic RBFs, including thin plate splines,  are  somewhat
+           slower than compactly supported RBFs built with  HRBF algorithm
+           due to the fact that non-compact basis function does not vanish
+           far away from the nodes. From the other side, polyharmonic RBFs
+           often produce much better results than HRBFs.
+
+NOTE:      this algorithm supports specification of per-dimensional  radii
+           via scale vector, which is set by means of rbfsetpointsandscales()
+           function. This feature is useful if  you solve  spatio-temporal
+           interpolation problems where different radii are  required  for
+           spatial and temporal dimensions.
+
+  -- ALGLIB --
+     Copyright 12.12.2021 by Bochkanov Sergey
+*************************************************************************/
+void rbfsetalgomultiquadricmanual(const rbfmodel &s, const double alpha, const double lambdav, const xparams _xparams = alglib::xdefault);
+void rbfsetalgomultiquadricmanual(const rbfmodel &s, const double alpha, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function chooses a multiquadric DDM-RBF solver,  a  fast  RBF  solver
+with f(r)=sqrt(r^2+Alpha^2)  as  a  basis  function,  with   Alpha   being
+automatically determined.
+
+This algorithm has following important features:
+* easy setup - no need to tune Alpha, good value is automatically assigned
+* C2 continuous RBF model
+* fast  model construction algorithm with O(N) memory and  O(N^2)  running
+  time requirements. Hundreds of thousands of points can be  handled  with
+  this algorithm.
+* controllable smoothing via optional nonlinearity penalty
+
+This algorithm automatically selects Alpha  as  a  mean  distance  to  the
+nearest neighbor (ignoring neighbors that are too close).
+
+INPUT PARAMETERS:
+    S       -   RBF model, initialized by rbfcreate() call
+    LambdaV -   smoothing parameter, LambdaV>=0, defaults to 0.0:
+                * LambdaV=0 means that no smoothing is applied,  i.e.  the
+                  spline tries to pass through all dataset points exactly
+                * LambdaV>0 means that a multiquadric spline is built with
+                  larger  LambdaV   corresponding   to  models  with  less
+                  nonlinearities.  Smoothing   spline   reproduces  target
+                  values at nodes with small error; from the  other  side,
+                  it is much more stable.
+                  Recommended values:
+                  * 1.0E-6 for minimal stability improving smoothing
+                  * 1.0E-3 a good value to start experiments; first results
+                    are visible
+                  * 1.0 for strong smoothing
+
+IMPORTANT: this model construction algorithm was introduced in ALGLIB 3.19
+           and  produces  models  which  are  INCOMPATIBLE  with  previous
+           versions of ALGLIB. You can  not  unserialize  models  produced
+           with this function in ALGLIB 3.18 or earlier.
+
+NOTE:      polyharmonic RBFs, including thin plate splines,  are  somewhat
+           slower than compactly supported RBFs built with  HRBF algorithm
+           due to the fact that non-compact basis function does not vanish
+           far away from the nodes. From the other side, polyharmonic RBFs
+           often produce much better results than HRBFs.
+
+NOTE:      this algorithm supports specification of per-dimensional  radii
+           via scale vector, which is set by means of rbfsetpointsandscales()
+           function. This feature is useful if  you solve  spatio-temporal
+           interpolation problems where different radii are  required  for
+           spatial and temporal dimensions.
+
+  -- ALGLIB --
+     Copyright 12.12.2021 by Bochkanov Sergey
+*************************************************************************/
+void rbfsetalgomultiquadricauto(const rbfmodel &s, const double lambdav, const xparams _xparams = alglib::xdefault);
+void rbfsetalgomultiquadricauto(const rbfmodel &s, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This  function  chooses  a  biharmonic DDM-RBF solver, a fast  RBF  solver
+with f(r)=r as a basis function.
+
+This algorithm has following important features:
+* no tunable parameters
+* C0 continuous RBF model (the model has discontinuous derivatives at  the
+  interpolation nodes)
+* fast  model construction algorithm with O(N) memory and  O(N^2)  running
+  time requirements. Hundreds of thousands of points can be  handled  with
+  this algorithm.
+* controllable smoothing via optional nonlinearity penalty
+
+INPUT PARAMETERS:
+    S       -   RBF model, initialized by rbfcreate() call
+    LambdaV -   smoothing parameter, LambdaV>=0, defaults to 0.0:
+                * LambdaV=0 means that no smoothing is applied,  i.e.  the
+                  spline tries to pass through all dataset points exactly
+                * LambdaV>0 means that a multiquadric spline is built with
+                  larger  LambdaV   corresponding   to  models  with  less
+                  nonlinearities.  Smoothing   spline   reproduces  target
+                  values at nodes with small error; from the  other  side,
+                  it is much more stable.
+                  Recommended values:
+                  * 1.0E-6 for minimal stability improving smoothing
+                  * 1.0E-3 a good value to start experiments; first results
+                    are visible
+                  * 1.0 for strong smoothing
+
+IMPORTANT: this model construction algorithm was introduced in ALGLIB 3.19
+           and  produces  models  which  are  INCOMPATIBLE  with  previous
+           versions of ALGLIB. You can  not  unserialize  models  produced
+           with this function in ALGLIB 3.18 or earlier.
+
+NOTE:      polyharmonic RBFs, including thin plate splines,  are  somewhat
+           slower than compactly supported RBFs built with  HRBF algorithm
+           due to the fact that non-compact basis function does not vanish
+           far away from the nodes. From the other side, polyharmonic RBFs
+           often produce much better results than HRBFs.
+
+NOTE:      this algorithm supports specification of per-dimensional  radii
+           via scale vector, which is set by means of rbfsetpointsandscales()
+           function. This feature is useful if  you solve  spatio-temporal
+           interpolation problems where different radii are  required  for
+           spatial and temporal dimensions.
+
+  -- ALGLIB --
+     Copyright 12.12.2021 by Bochkanov Sergey
+*************************************************************************/
+void rbfsetalgobiharmonic(const rbfmodel &s, const double lambdav, const xparams _xparams = alglib::xdefault);
+void rbfsetalgobiharmonic(const rbfmodel &s, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
 This function sets linear term (model is a sum of radial  basis  functions
 plus linear polynomial). This function won't have effect until  next  call
 to RBFBuildModel().
 
+Using linear term is a default option and it is the best one - it provides
+best convergence guarantees for all RBF model  types: legacy  RBF-QNN  and
+RBF-ML, Gaussian HRBFs and all types of DDM-RBF models.
+
+Other options, like constant or zero term, work for HRBFs,  almost  always
+work for DDM-RBFs but provide no stability  guarantees  in the latter case
+(e.g. the solver may fail on some carefully prepared problems).
+
 INPUT PARAMETERS:
     S       -   RBF model, initialized by RBFCreate() call
-
-NOTE: this   function  has   some   serialization-related  subtleties.  We
-      recommend you to study serialization examples from ALGLIB  Reference
-      Manual if you want to perform serialization of your models.
 
   -- ALGLIB --
      Copyright 13.12.2011 by Bochkanov Sergey
@@ -7521,12 +7984,14 @@ This function sets constant term (model is a sum of radial basis functions
 plus constant).  This  function  won't  have  effect  until  next  call to
 RBFBuildModel().
 
+IMPORTANT: thin plate splines require  polynomial term to be  linear,  not
+           constant,  in  order  to  provide   interpolation   guarantees.
+           Although  failures  are  exceptionally  rare,  some  small  toy
+           problems may result in degenerate linear systems. Thus,  it  is
+           advised to use linear term when one fits data with TPS.
+
 INPUT PARAMETERS:
     S       -   RBF model, initialized by RBFCreate() call
-
-NOTE: this   function  has   some   serialization-related  subtleties.  We
-      recommend you to study serialization examples from ALGLIB  Reference
-      Manual if you want to perform serialization of your models.
 
   -- ALGLIB --
      Copyright 13.12.2011 by Bochkanov Sergey
@@ -7539,12 +8004,20 @@ This  function  sets  zero  term (model is a sum of radial basis functions
 without polynomial term). This function won't have effect until next  call
 to RBFBuildModel().
 
+IMPORTANT: only  Gaussian  RBFs  (HRBF  algorithm)  provide  interpolation
+           guarantees when no polynomial term is used.  Most  other  RBFs,
+           including   biharmonic  splines,   thin   plate   splines   and
+           multiquadrics, require at least constant term  (biharmonic  and
+           multiquadric) or linear one (thin plate splines)  in  order  to
+           guarantee non-degeneracy of linear systems being solved.
+
+           Although  failures  are  exceptionally  rare,  some  small  toy
+           problems still may result in degenerate linear systems. Thus,it
+           is advised to use constant/linear term, unless one is 100% sure
+           that he needs zero term.
+
 INPUT PARAMETERS:
     S       -   RBF model, initialized by RBFCreate() call
-
-NOTE: this   function  has   some   serialization-related  subtleties.  We
-      recommend you to study serialization examples from ALGLIB  Reference
-      Manual if you want to perform serialization of your models.
 
   -- ALGLIB --
      Copyright 13.12.2011 by Bochkanov Sergey
@@ -7637,8 +8110,9 @@ INPUT PARAMETERS:
                   * -4 - nonconvergence of the internal SVD solver
                   * -3   incorrect model construction algorithm was chosen:
                          QNN or RBF-ML, combined with one of the incompatible
-                         features - NX=1 or NX>3; points with per-dimension
-                         scales.
+                         features:
+                         * NX=1 or NX>3
+                         * points with per-dimension scales.
                   *  1 - successful termination
                   *  8 - a termination request was submitted via
                          rbfrequesttermination() function.
@@ -7667,23 +8141,22 @@ void rbfbuildmodel(const rbfmodel &s, rbfreport &rep, const xparams _xparams = a
 
 
 /*************************************************************************
-This function calculates values of the RBF model in the given point.
+This function calculates values of the 1-dimensional RBF model with scalar
+output (NY=1) at the given point.
 
 IMPORTANT: this function works only with modern  (hierarchical)  RBFs.  It
            can not be used with legacy (version 1) RBFs because older  RBF
            code does not support 1-dimensional models.
 
-This function should be used when we have NY=1 (scalar function) and  NX=1
-(1-dimensional space). If you have 3-dimensional space, use rbfcalc3(). If
-you  have  2-dimensional  space,  use  rbfcalc3().  If  you  have  general
-situation (NX-dimensional space, NY-dimensional function)  you  should use
-generic rbfcalc().
-
-If you want to perform parallel model evaluation  from  multiple  threads,
-use rbftscalcbuf() with per-thread buffer object.
+IMPORTANT: THIS FUNCTION IS THREAD-UNSAFE. It uses fields of  rbfmodel  as
+           temporary arrays, i.e. it is  impossible  to  perform  parallel
+           evaluation on the same rbfmodel object (parallel calls of  this
+           function for independent rbfmodel objects are safe).
+           If you want to perform parallel model evaluation  from multiple
+           threads, use rbftscalcbuf() with per-thread buffer object.
 
 This function returns 0.0 when:
-* model is not initialized
+* the model is not initialized
 * NX<>1
 * NY<>1
 
@@ -7701,19 +8174,15 @@ double rbfcalc1(const rbfmodel &s, const double x0, const xparams _xparams = alg
 
 
 /*************************************************************************
-This function calculates values of the RBF model in the given point.
+This function calculates values of the 2-dimensional RBF model with scalar
+output (NY=1) at the given point.
 
-This function should be used when we have NY=1 (scalar function) and  NX=2
-(2-dimensional space). If you have 3-dimensional space, use rbfcalc3(). If
-you have general situation (NX-dimensional space, NY-dimensional function)
-you should use generic rbfcalc().
-
-If  you  want  to  calculate  function  values  many times, consider using
-rbfgridcalc2v(), which is far more efficient than many subsequent calls to
-rbfcalc2().
-
-If you want to perform parallel model evaluation  from  multiple  threads,
-use rbftscalcbuf() with per-thread buffer object.
+IMPORTANT: THIS FUNCTION IS THREAD-UNSAFE. It uses fields of  rbfmodel  as
+           temporary arrays, i.e. it is  impossible  to  perform  parallel
+           evaluation on the same rbfmodel object (parallel calls of  this
+           function for independent rbfmodel objects are safe).
+           If you want to perform parallel model evaluation  from multiple
+           threads, use rbftscalcbuf() with per-thread buffer object.
 
 This function returns 0.0 when:
 * model is not initialized
@@ -7735,19 +8204,15 @@ double rbfcalc2(const rbfmodel &s, const double x0, const double x1, const xpara
 
 
 /*************************************************************************
-This function calculates value of the RBF model in the given point.
+This function calculates values of the 3-dimensional RBF model with scalar
+output (NY=1) at the given point.
 
-This function should be used when we have NY=1 (scalar function) and  NX=3
-(3-dimensional space). If you have 2-dimensional space, use rbfcalc2(). If
-you have general situation (NX-dimensional space, NY-dimensional function)
-you should use generic rbfcalc().
-
-If  you  want  to  calculate  function  values  many times, consider using
-rbfgridcalc3v(), which is far more efficient than many subsequent calls to
-rbfcalc3().
-
-If you want to perform parallel model evaluation  from  multiple  threads,
-use rbftscalcbuf() with per-thread buffer object.
+IMPORTANT: THIS FUNCTION IS THREAD-UNSAFE. It uses fields of  rbfmodel  as
+           temporary arrays, i.e. it is  impossible  to  perform  parallel
+           evaluation on the same rbfmodel object (parallel calls of  this
+           function for independent rbfmodel objects are safe).
+           If you want to perform parallel model evaluation  from multiple
+           threads, use rbftscalcbuf() with per-thread buffer object.
 
 This function returns 0.0 when:
 * model is not initialized
@@ -7770,6 +8235,111 @@ double rbfcalc3(const rbfmodel &s, const double x0, const double x1, const doubl
 
 
 /*************************************************************************
+This function calculates value and derivatives of  the  1-dimensional  RBF
+model with scalar output (NY=1) at the given point.
+
+IMPORTANT: THIS FUNCTION IS THREAD-UNSAFE. It uses fields of  rbfmodel  as
+           temporary arrays, i.e. it is  impossible  to  perform  parallel
+           evaluation on the same rbfmodel object (parallel calls of  this
+           function for independent rbfmodel objects are safe).
+           If you want to perform parallel model evaluation  from multiple
+           threads, use rbftscalcbuf() with per-thread buffer object.
+
+This function returns 0.0 in Y and/or DY in the following cases:
+* the model is not initialized (Y=0, DY=0)
+* NX<>1 or NY<>1 (Y=0, DY=0)
+* the gradient is undefined at the trial point. Some basis  functions have
+  discontinuous derivatives at the interpolation nodes:
+  * biharmonic splines f=r have no Hessian and no gradient at the nodes
+  In these cases only DY is set to zero (Y is still returned)
+
+INPUT PARAMETERS:
+    S       -   RBF model
+    X0      -   first coordinate, finite number
+
+OUTPUT PARAMETERS:
+    Y       -   value of the model or 0.0 (as defined above)
+    DY0     -   derivative with respect to X0
+
+  -- ALGLIB --
+     Copyright 13.12.2021 by Bochkanov Sergey
+*************************************************************************/
+void rbfdiff1(const rbfmodel &s, const double x0, double &y, double &dy0, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function calculates value and derivatives of  the  2-dimensional  RBF
+model with scalar output (NY=1) at the given point.
+
+IMPORTANT: THIS FUNCTION IS THREAD-UNSAFE. It uses fields of  rbfmodel  as
+           temporary arrays, i.e. it is  impossible  to  perform  parallel
+           evaluation on the same rbfmodel object (parallel calls of  this
+           function for independent rbfmodel objects are safe).
+           If you want to perform parallel model evaluation  from multiple
+           threads, use rbftscalcbuf() with per-thread buffer object.
+
+This function returns 0.0 in Y and/or DY in the following cases:
+* the model is not initialized (Y=0, DY=0)
+* NX<>2 or NY<>1 (Y=0, DY=0)
+* the gradient is undefined at the trial point. Some basis  functions have
+  discontinuous derivatives at the interpolation nodes:
+  * biharmonic splines f=r have no Hessian and no gradient at the nodes
+  In these cases only DY is set to zero (Y is still returned)
+
+INPUT PARAMETERS:
+    S       -   RBF model
+    X0      -   first coordinate, finite number
+    X1      -   second coordinate, finite number
+
+OUTPUT PARAMETERS:
+    Y       -   value of the model or 0.0 (as defined above)
+    DY0     -   derivative with respect to X0
+    DY1     -   derivative with respect to X1
+
+  -- ALGLIB --
+     Copyright 13.12.2021 by Bochkanov Sergey
+*************************************************************************/
+void rbfdiff2(const rbfmodel &s, const double x0, const double x1, double &y, double &dy0, double &dy1, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function calculates value and derivatives of  the  3-dimensional  RBF
+model with scalar output (NY=1) at the given point.
+
+IMPORTANT: THIS FUNCTION IS THREAD-UNSAFE. It uses fields of  rbfmodel  as
+           temporary arrays, i.e. it is  impossible  to  perform  parallel
+           evaluation on the same rbfmodel object (parallel calls of  this
+           function for independent rbfmodel objects are safe).
+           If you want to perform parallel model evaluation  from multiple
+           threads, use rbftscalcbuf() with per-thread buffer object.
+
+This function returns 0.0 in Y and/or DY in the following cases:
+* the model is not initialized (Y=0, DY=0)
+* NX<>3 or NY<>1 (Y=0, DY=0)
+* the gradient is undefined at the trial point. Some basis  functions have
+  discontinuous derivatives at the interpolation nodes:
+  * biharmonic splines f=r have no Hessian and no gradient at the nodes
+  In these cases only DY is set to zero (Y is still returned)
+
+INPUT PARAMETERS:
+    S       -   RBF model
+    X0      -   first coordinate, finite number
+    X1      -   second coordinate, finite number
+    X2      -   third coordinate, finite number
+
+OUTPUT PARAMETERS:
+    Y       -   value of the model or 0.0 (as defined above)
+    DY0     -   derivative with respect to X0
+    DY1     -   derivative with respect to X1
+    DY2     -   derivative with respect to X2
+
+  -- ALGLIB --
+     Copyright 13.12.2021 by Bochkanov Sergey
+*************************************************************************/
+void rbfdiff3(const rbfmodel &s, const double x0, const double x1, const double x2, double &y, double &dy0, double &dy1, double &dy2, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
 This function calculates values of the RBF model at the given point.
 
 This is general function which can be used for arbitrary NX (dimension  of
@@ -7777,8 +8347,12 @@ the space of arguments) and NY (dimension of the function itself). However
 when  you  have  NY=1  you  may  find more convenient to use rbfcalc2() or
 rbfcalc3().
 
-If you want to perform parallel model evaluation  from  multiple  threads,
-use rbftscalcbuf() with per-thread buffer object.
+IMPORTANT: THIS FUNCTION IS THREAD-UNSAFE. It uses fields of  rbfmodel  as
+           temporary arrays, i.e. it is  impossible  to  perform  parallel
+           evaluation on the same rbfmodel object (parallel calls of  this
+           function for independent rbfmodel objects are safe).
+           If you want to perform parallel model evaluation  from multiple
+           threads, use rbftscalcbuf() with per-thread buffer object.
 
 This function returns 0.0 when model is not initialized.
 
@@ -7801,13 +8375,130 @@ void rbfcalc(const rbfmodel &s, const real_1d_array &x, real_1d_array &y, const 
 
 
 /*************************************************************************
+This function calculates values of the RBF model and  its  derivatives  at
+the given point.
+
+This is general function which can be used for arbitrary NX (dimension  of
+the space of arguments) and NY (dimension of the function itself). However
+if you have NX=3 and NY=1, you may find more convenient to use rbfdiff3().
+
+IMPORTANT: THIS FUNCTION IS THREAD-UNSAFE. It uses fields of  rbfmodel  as
+           temporary arrays, i.e. it is  impossible  to  perform  parallel
+           evaluation on the same rbfmodel object (parallel calls of  this
+           function for independent rbfmodel objects are safe).
+
+           If you want to perform parallel model evaluation  from multiple
+           threads, use rbftsdiffbuf() with per-thread buffer object.
+
+This function returns 0.0 in Y and/or DY in the following cases:
+* the model is not initialized (Y=0, DY=0)
+* the gradient is undefined at the trial point. Some basis  functions have
+  discontinuous derivatives at the interpolation nodes:
+  * biharmonic splines f=r have no Hessian and no gradient at the nodes
+  In these cases only DY is set to zero (Y is still returned)
+
+INPUT PARAMETERS:
+    S       -   RBF model
+    X       -   coordinates, array[NX].
+                X may have more than NX elements, in this case only
+                leading NX will be used.
+
+OUTPUT PARAMETERS:
+    Y       -   function value, array[NY]. Y is out-parameter and
+                reallocated after call to this function. In case you  want
+                to reuse previously allocated Y, you may use RBFDiffBuf(),
+                which reallocates Y only when it is too small.
+    DY      -   derivatives, array[NX*NY]:
+                * Y[I*NX+J] with 0<=I<NY and 0<=J<NX  stores derivative of
+                  function component I with respect to input J.
+                * for NY=1 it is simply NX-dimensional gradient of the
+                  scalar NX-dimensional function
+                DY is out-parameter and reallocated  after  call  to  this
+                function. In case you want to reuse  previously  allocated
+                DY, you may use RBFDiffBuf(), which  reallocates  DY  only
+                when it is too small to store the result.
+
+  -- ALGLIB --
+     Copyright 13.12.2021 by Bochkanov Sergey
+*************************************************************************/
+void rbfdiff(const rbfmodel &s, const real_1d_array &x, real_1d_array &y, real_1d_array &dy, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function calculates values of the RBF model and  its first and second
+derivatives (Hessian matrix) at the given point.
+
+This function supports both scalar (NY=1) and vector-valued (NY>1) RBFs.
+
+IMPORTANT: THIS FUNCTION IS THREAD-UNSAFE. It uses fields of  rbfmodel  as
+           temporary arrays, i.e. it is  impossible  to  perform  parallel
+           evaluation on the same rbfmodel object (parallel calls of  this
+           function for independent rbfmodel objects are safe).
+
+           If you want to perform parallel model evaluation  from multiple
+           threads, use rbftshessbuf() with per-thread buffer object.
+
+This function returns 0 in Y and/or DY and/or D2Y in the following cases:
+* the model is not initialized (Y=0, DY=0, D2Y=0)
+* the gradient and/or Hessian is undefined at the trial point.  Some basis
+  functions have discontinuous derivatives at the interpolation nodes:
+  * thin plate splines have no Hessian at the nodes
+  * biharmonic splines f=r have no Hessian and no gradient at the  nodes
+  In these cases only corresponding derivative is set  to  zero,  and  the
+  rest of the derivatives is still returned.
+
+INPUT PARAMETERS:
+    S       -   RBF model
+    X       -   coordinates, array[NX].
+                X may have more than NX elements, in this case only
+                leading NX will be used.
+
+OUTPUT PARAMETERS:
+    Y       -   function value, array[NY].
+                Y is out-parameter and  reallocated  after  call  to  this
+                function. In case you  want to reuse previously  allocated
+                Y, you may use RBFHessBuf(), which reallocates Y only when
+                it is too small.
+    DY      -   first derivatives, array[NY*NX]:
+                * Y[I*NX+J] with 0<=I<NY and 0<=J<NX  stores derivative of
+                  function component I with respect to input J.
+                * for NY=1 it is simply NX-dimensional gradient of the
+                  scalar NX-dimensional function
+                DY is out-parameter and reallocated  after  call  to  this
+                function. In case you want to reuse  previously  allocated
+                DY, you may use RBFHessBuf(), which  reallocates  DY  only
+                when it is too small to store the result.
+    D2Y     -   second derivatives, array[NY*NX*NX]:
+                * for NY=1 it is NX*NX array that stores  Hessian  matrix,
+                  with Y[I*NX+J]=Y[J*NX+I].
+                * for  a  vector-valued  RBF  with  NY>1  it  contains  NY
+                  subsequently stored Hessians: an element Y[K*NX*NX+I*NX+J]
+                  with  0<=K<NY,  0<=I<NX  and  0<=J<NX    stores   second
+                  derivative of the function #K  with  respect  to  inputs
+                  #I and #J.
+                D2Y is out-parameter and reallocated  after  call  to this
+                function. In case you want to reuse  previously  allocated
+                D2Y, you may use RBFHessBuf(), which  reallocates D2Y only
+                when it is too small to store the result.
+
+  -- ALGLIB --
+     Copyright 13.12.2021 by Bochkanov Sergey
+*************************************************************************/
+void rbfhess(const rbfmodel &s, const real_1d_array &x, real_1d_array &y, real_1d_array &dy, real_1d_array &d2y, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
 This function calculates values of the RBF model at the given point.
 
 Same as rbfcalc(), but does not reallocate Y when in is large enough to
 store function values.
 
-If you want to perform parallel model evaluation  from  multiple  threads,
-use rbftscalcbuf() with per-thread buffer object.
+IMPORTANT: THIS FUNCTION IS THREAD-UNSAFE. It uses fields of  rbfmodel  as
+           temporary arrays, i.e. it is  impossible  to  perform  parallel
+           evaluation on the same rbfmodel object (parallel calls of  this
+           function for independent rbfmodel objects are safe).
+           If you want to perform parallel model evaluation  from multiple
+           threads, use rbftscalcbuf() with per-thread buffer object.
 
 INPUT PARAMETERS:
     S       -   RBF model
@@ -7824,6 +8515,111 @@ OUTPUT PARAMETERS:
      Copyright 13.12.2011 by Bochkanov Sergey
 *************************************************************************/
 void rbfcalcbuf(const rbfmodel &s, const real_1d_array &x, real_1d_array &y, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function calculates values of the RBF model and  its  derivatives  at
+the given point. It is a buffered version of the RBFDiff() which tries  to
+reuse possibly preallocated output arrays Y/DY as much as possible.
+
+This is general function which can be used for arbitrary NX (dimension  of
+the space of arguments) and NY (dimension of the function itself). However
+if you have NX=1, 2 or 3 and NY=1, you may find  more  convenient  to  use
+rbfdiff1(), rbfdiff2() or rbfdiff3().
+
+IMPORTANT: THIS FUNCTION IS THREAD-UNSAFE. It uses fields of  rbfmodel  as
+           temporary arrays, i.e. it is  impossible  to  perform  parallel
+           evaluation on the same rbfmodel object (parallel calls of  this
+           function for independent rbfmodel objects are safe).
+
+           If you want to perform parallel model evaluation  from multiple
+           threads, use rbftsdiffbuf() with per-thread buffer object.
+
+This function returns 0.0 in Y and/or DY in the following cases:
+* the model is not initialized (Y=0, DY=0)
+* the gradient is undefined at the trial point. Some basis  functions have
+  discontinuous derivatives at the interpolation nodes:
+  * biharmonic splines f=r have no Hessian and no gradient at the nodes
+  In these cases only DY is set to zero (Y is still returned)
+
+INPUT PARAMETERS:
+    S       -   RBF model
+    X       -   coordinates, array[NX].
+                X may have more than NX elements, in this case only
+                leading NX will be used.
+    Y, DY   -   possibly preallocated arrays; if array size is large enough
+                to store results, this function does not  reallocate  array
+                to fit output size exactly.
+
+OUTPUT PARAMETERS:
+    Y       -   function value, array[NY].
+    DY      -   derivatives, array[NX*NY]:
+                * Y[I*NX+J] with 0<=I<NY and 0<=J<NX  stores derivative of
+                  function component I with respect to input J.
+                * for NY=1 it is simply NX-dimensional gradient of the
+                  scalar NX-dimensional function
+
+  -- ALGLIB --
+     Copyright 13.12.2021 by Bochkanov Sergey
+*************************************************************************/
+void rbfdiffbuf(const rbfmodel &s, const real_1d_array &x, real_1d_array &y, real_1d_array &dy, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function calculates values of the RBF model and  its first and second
+derivatives (Hessian matrix) at the given point. It is a buffered  version
+that reuses memory  allocated  in  output  buffers  Y/DY/D2Y  as  much  as
+possible.
+
+This function supports both scalar (NY=1) and vector-valued (NY>1) RBFs.
+
+IMPORTANT: THIS FUNCTION IS THREAD-UNSAFE. It uses fields of  rbfmodel  as
+           temporary arrays, i.e. it is  impossible  to  perform  parallel
+           evaluation on the same rbfmodel object (parallel calls of  this
+           function for independent rbfmodel objects are safe).
+
+           If you want to perform parallel model evaluation  from multiple
+           threads, use rbftshessbuf() with per-thread buffer object.
+
+This function returns 0 in Y and/or DY and/or D2Y in the following cases:
+* the model is not initialized (Y=0, DY=0, D2Y=0)
+* the gradient and/or Hessian is undefined at the trial point.  Some basis
+  functions have discontinuous derivatives at the interpolation nodes:
+  * thin plate splines have no Hessian at the nodes
+  * biharmonic splines f=r have no Hessian and no gradient at the  nodes
+  In these cases only corresponding derivative is set  to  zero,  and  the
+  rest of the derivatives is still returned.
+
+INPUT PARAMETERS:
+    S       -   RBF model
+    X       -   coordinates, array[NX].
+                X may have more than NX elements, in this case only
+                leading NX will be used.
+    Y,DY,D2Y-   possible preallocated output arrays. If these  arrays  are
+                smaller than  required  to  store  the  result,  they  are
+                automatically reallocated. If array is large enough, it is
+                not resized.
+
+OUTPUT PARAMETERS:
+    Y       -   function value, array[NY].
+    DY      -   first derivatives, array[NY*NX]:
+                * Y[I*NX+J] with 0<=I<NY and 0<=J<NX  stores derivative of
+                  function component I with respect to input J.
+                * for NY=1 it is simply NX-dimensional gradient of the
+                  scalar NX-dimensional function
+    D2Y     -   second derivatives, array[NY*NX*NX]:
+                * for NY=1 it is NX*NX array that stores  Hessian  matrix,
+                  with Y[I*NX+J]=Y[J*NX+I].
+                * for  a  vector-valued  RBF  with  NY>1  it  contains  NY
+                  subsequently stored Hessians: an element Y[K*NX*NX+I*NX+J]
+                  with  0<=K<NY,  0<=I<NX  and  0<=J<NX    stores   second
+                  derivative of the function #K  with  respect  to  inputs
+                  #I and #J.
+
+  -- ALGLIB --
+     Copyright 13.12.2021 by Bochkanov Sergey
+*************************************************************************/
+void rbfhessbuf(const rbfmodel &s, const real_1d_array &x, real_1d_array &y, real_1d_array &dy, real_1d_array &d2y, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -7852,6 +8648,102 @@ OUTPUT PARAMETERS:
      Copyright 13.12.2011 by Bochkanov Sergey
 *************************************************************************/
 void rbftscalcbuf(const rbfmodel &s, const rbfcalcbuffer &buf, const real_1d_array &x, real_1d_array &y, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function calculates values of the RBF model and  its  derivatives  at
+the given point, using external buffer object (internal temporaries of the
+RBF model are not modified).
+
+This function allows to use same RBF model object  in  different  threads,
+assuming  that  different   threads  use different instances of the buffer
+structure.
+
+This function returns 0.0 in Y and/or DY in the following cases:
+* the model is not initialized (Y=0, DY=0)
+* the gradient is undefined at the trial point. Some basis  functions have
+  discontinuous derivatives at the interpolation nodes:
+  * biharmonic splines f=r have no Hessian and no gradient at the nodes
+  In these cases only DY is set to zero (Y is still returned)
+
+INPUT PARAMETERS:
+    S       -   RBF model, may be shared between different threads
+    Buf     -   buffer object created for this particular instance of  RBF
+                model with rbfcreatecalcbuffer().
+    X       -   coordinates, array[NX].
+                X may have more than NX elements, in this case only
+                leading NX will be used.
+    Y, DY   -   possibly preallocated arrays; if array size is large enough
+                to store results, this function does not  reallocate  array
+                to fit output size exactly.
+
+OUTPUT PARAMETERS:
+    Y       -   function value, array[NY].
+    DY      -   derivatives, array[NX*NY]:
+                * Y[I*NX+J] with 0<=I<NY and 0<=J<NX  stores derivative of
+                  function component I with respect to input J.
+                * for NY=1 it is simply NX-dimensional gradient of the
+                  scalar NX-dimensional function
+                Zero is returned when the first derivative is undefined.
+
+  -- ALGLIB --
+     Copyright 13.12.2021 by Bochkanov Sergey
+*************************************************************************/
+void rbftsdiffbuf(const rbfmodel &s, const rbfcalcbuffer &buf, const real_1d_array &x, real_1d_array &y, real_1d_array &dy, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function calculates values of the RBF model and  its first and second
+derivatives (Hessian matrix) at the given  point,  using  external  buffer
+object (internal temporaries of the RBF  model  are  not  modified).
+
+This function allows to use same RBF model object  in  different  threads,
+assuming  that  different   threads  use different instances of the buffer
+structure.
+
+This function returns 0 in Y and/or DY and/or D2Y in the following cases:
+* the model is not initialized (Y=0, DY=0, D2Y=0)
+* the gradient and/or Hessian is undefined at the trial point.  Some basis
+  functions have discontinuous derivatives at the interpolation nodes:
+  * thin plate splines have no Hessian at the nodes
+  * biharmonic splines f=r have no Hessian and no gradient at the  nodes
+  In these cases only corresponding derivative is set  to  zero,  and  the
+  rest of the derivatives is still returned.
+
+INPUT PARAMETERS:
+    S       -   RBF model, may be shared between different threads
+    Buf     -   buffer object created for this particular instance of  RBF
+                model with rbfcreatecalcbuffer().
+    X       -   coordinates, array[NX].
+                X may have more than NX elements, in this case only
+                leading NX will be used.
+    Y,DY,D2Y-   possible preallocated output arrays. If these  arrays  are
+                smaller than  required  to  store  the  result,  they  are
+                automatically reallocated. If array is large enough, it is
+                not resized.
+
+OUTPUT PARAMETERS:
+    Y       -   function value, array[NY].
+    DY      -   first derivatives, array[NY*NX]:
+                * Y[I*NX+J] with 0<=I<NY and 0<=J<NX  stores derivative of
+                  function component I with respect to input J.
+                * for NY=1 it is simply NX-dimensional gradient of the
+                  scalar NX-dimensional function
+                Zero is returned when the first derivative is undefined.
+    D2Y     -   second derivatives, array[NY*NX*NX]:
+                * for NY=1 it is NX*NX array that stores  Hessian  matrix,
+                  with Y[I*NX+J]=Y[J*NX+I].
+                * for  a  vector-valued  RBF  with  NY>1  it  contains  NY
+                  subsequently stored Hessians: an element Y[K*NX*NX+I*NX+J]
+                  with  0<=K<NY,  0<=I<NX  and  0<=J<NX    stores   second
+                  derivative of the function #K  with  respect  to  inputs
+                  #I and #J.
+                Zero is returned when the second derivative is undefined.
+
+  -- ALGLIB --
+     Copyright 13.12.2021 by Bochkanov Sergey
+*************************************************************************/
+void rbftshessbuf(const rbfmodel &s, const rbfcalcbuffer &buf, const real_1d_array &x, real_1d_array &y, real_1d_array &dy, real_1d_array &d2y, const xparams _xparams = alglib::xdefault);
 
 
 /*************************************************************************
@@ -8177,16 +9069,42 @@ INPUT PARAMETERS:
 OUTPUT PARAMETERS:
     NX      -   dimensionality of argument
     NY      -   dimensionality of the target function
-    XWR     -   model information, array[NC,NX+NY+1].
-                One row of the array corresponds to one basis function:
+    XWR     -   model  information ,  2D  array.  One  row  of  the  array
+                corresponds to one basis function.
+
+                For ModelVersion=1 we have NX+NY+1 columns:
                 * first NX columns  - coordinates of the center
-                * next NY columns   - weights, one per dimension of the
-                                      function being modelled
-                For ModelVersion=1:
+                * next  NY columns  - weights, one per dimension of the
+                                      function being modeled
                 * last column       - radius, same for all dimensions of
-                                      the function being modelled
-                For ModelVersion=2:
+                                      the function being modeled
+
+                For ModelVersion=2 we have NX+NY+NX columns:
+                * first NX columns  - coordinates of the center
+                * next  NY columns  - weights, one per dimension of the
+                                      function being modeled
                 * last NX columns   - radii, one per dimension
+
+                For ModelVersion=3 we have NX+NY+NX+3 columns:
+                * first NX columns  - coordinates of the center
+                * next  NY columns  - weights, one per dimension of the
+                                      function being modeled
+                * next NX columns   - radii, one per dimension
+                * next column       - basis function type:
+                                      * 1  for f=r
+                                      * 2  for f=r^2*ln(r)
+                                      * 10 for multiquadric f=sqrt(r^2+alpha^2)
+                * next column       - basis function parameter:
+                                      * alpha, for basis function type 10
+                                      * ignored (zero) for other basis function types
+                * next column       - point index in the original dataset,
+                                      or -1 for an artificial node created
+                                      by the solver. The algorithm may reorder
+                                      the nodes, drop some nodes or add
+                                      artificial nodes. Thus, one parsing
+                                      this column should expect all these
+                                      kinds of alterations in the dataset.
+
     NC      -   number of the centers
     V       -   polynomial  term , array[NY,NX+1]. One row per one
                 dimension of the function being modelled. First NX
@@ -8197,6 +9115,8 @@ OUTPUT PARAMETERS:
                   compatible with ALGLIB 3.10 or earlier.
                 * 2 - for models created by HierarchicalRBF, requires
                   ALGLIB 3.11 or later
+                * 3 - for models created by DDM-RBF, requires
+                  ALGLIB 3.19 or later
 
   -- ALGLIB --
      Copyright 13.12.2011 by Bochkanov Sergey
@@ -8268,80 +9188,6 @@ INPUT PARAMETERS:
 *************************************************************************/
 void rbfrequesttermination(const rbfmodel &s, const xparams _xparams = alglib::xdefault);
 #endif
-
-#if defined(AE_COMPILE_INTCOMP) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-This function is left for backward compatibility.
-Use fitspheremc() instead.
-
-
-  -- ALGLIB --
-     Copyright 14.04.2017 by Bochkanov Sergey
-*************************************************************************/
-void nsfitspheremcc(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nx, real_1d_array &cx, double &rhi, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function is left for backward compatibility.
-Use fitspheremi() instead.
-
-  -- ALGLIB --
-     Copyright 14.04.2017 by Bochkanov Sergey
-*************************************************************************/
-void nsfitspheremic(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nx, real_1d_array &cx, double &rlo, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function is left for backward compatibility.
-Use fitspheremz() instead.
-
-  -- ALGLIB --
-     Copyright 14.04.2017 by Bochkanov Sergey
-*************************************************************************/
-void nsfitspheremzc(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nx, real_1d_array &cx, double &rlo, double &rhi, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function is left for backward compatibility.
-Use fitspherex() instead.
-
-  -- ALGLIB --
-     Copyright 14.04.2017 by Bochkanov Sergey
-*************************************************************************/
-void nsfitspherex(const real_2d_array &xy, const ae_int_t npoints, const ae_int_t nx, const ae_int_t problemtype, const double epsx, const ae_int_t aulits, const double penalty, real_1d_array &cx, double &rlo, double &rhi, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function is an obsolete and deprecated version of fitting by
-penalized cubic spline.
-
-It was superseded by spline1dfit(), which is an orders of magnitude faster
-and more memory-efficient implementation.
-
-Do NOT use this function in the new code!
-
-  -- ALGLIB PROJECT --
-     Copyright 18.08.2009 by Bochkanov Sergey
-*************************************************************************/
-void spline1dfitpenalized(const real_1d_array &x, const real_1d_array &y, const ae_int_t n, const ae_int_t m, const double rho, ae_int_t &info, spline1dinterpolant &s, spline1dfitreport &rep, const xparams _xparams = alglib::xdefault);
-void spline1dfitpenalized(const real_1d_array &x, const real_1d_array &y, const ae_int_t m, const double rho, ae_int_t &info, spline1dinterpolant &s, spline1dfitreport &rep, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function is an obsolete and deprecated version of fitting by
-penalized cubic spline.
-
-It was superseded by spline1dfit(), which is an orders of magnitude faster
-and more memory-efficient implementation.
-
-Do NOT use this function in the new code!
-
-  -- ALGLIB PROJECT --
-     Copyright 19.10.2010 by Bochkanov Sergey
-*************************************************************************/
-void spline1dfitpenalizedw(const real_1d_array &x, const real_1d_array &y, const real_1d_array &w, const ae_int_t n, const ae_int_t m, const double rho, ae_int_t &info, spline1dinterpolant &s, spline1dfitreport &rep, const xparams _xparams = alglib::xdefault);
-void spline1dfitpenalizedw(const real_1d_array &x, const real_1d_array &y, const real_1d_array &w, const ae_int_t m, const double rho, ae_int_t &info, spline1dinterpolant &s, spline1dfitreport &rep, const xparams _xparams = alglib::xdefault);
-#endif
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -8351,6 +9197,55 @@ void spline1dfitpenalizedw(const real_1d_array &x, const real_1d_array &y, const
 /////////////////////////////////////////////////////////////////////////
 namespace alglib_impl
 {
+#if defined(AE_COMPILE_RATINT) || !defined(AE_PARTIAL_BUILD)
+double barycentriccalc(barycentricinterpolant* b,
+     double t,
+     ae_state *_state);
+void barycentricdiff1(barycentricinterpolant* b,
+     double t,
+     double* f,
+     double* df,
+     ae_state *_state);
+void barycentricdiff2(barycentricinterpolant* b,
+     double t,
+     double* f,
+     double* df,
+     double* d2f,
+     ae_state *_state);
+void barycentriclintransx(barycentricinterpolant* b,
+     double ca,
+     double cb,
+     ae_state *_state);
+void barycentriclintransy(barycentricinterpolant* b,
+     double ca,
+     double cb,
+     ae_state *_state);
+void barycentricunpack(barycentricinterpolant* b,
+     ae_int_t* n,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* w,
+     ae_state *_state);
+void barycentricbuildxyw(/* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* w,
+     ae_int_t n,
+     barycentricinterpolant* b,
+     ae_state *_state);
+void barycentricbuildfloaterhormann(/* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_int_t n,
+     ae_int_t d,
+     barycentricinterpolant* b,
+     ae_state *_state);
+void barycentriccopy(barycentricinterpolant* b,
+     barycentricinterpolant* b2,
+     ae_state *_state);
+void _barycentricinterpolant_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _barycentricinterpolant_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _barycentricinterpolant_clear(void* _p);
+void _barycentricinterpolant_destroy(void* _p);
+#endif
 #if defined(AE_COMPILE_IDW) || !defined(AE_PARTIAL_BUILD)
 void idwcreatecalcbuffer(idwmodel* s,
      idwcalcbuffer* buf,
@@ -8422,110 +9317,6 @@ void _idwreport_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make
 void _idwreport_clear(void* _p);
 void _idwreport_destroy(void* _p);
 #endif
-#if defined(AE_COMPILE_RATINT) || !defined(AE_PARTIAL_BUILD)
-double barycentriccalc(barycentricinterpolant* b,
-     double t,
-     ae_state *_state);
-void barycentricdiff1(barycentricinterpolant* b,
-     double t,
-     double* f,
-     double* df,
-     ae_state *_state);
-void barycentricdiff2(barycentricinterpolant* b,
-     double t,
-     double* f,
-     double* df,
-     double* d2f,
-     ae_state *_state);
-void barycentriclintransx(barycentricinterpolant* b,
-     double ca,
-     double cb,
-     ae_state *_state);
-void barycentriclintransy(barycentricinterpolant* b,
-     double ca,
-     double cb,
-     ae_state *_state);
-void barycentricunpack(barycentricinterpolant* b,
-     ae_int_t* n,
-     /* Real    */ ae_vector* x,
-     /* Real    */ ae_vector* y,
-     /* Real    */ ae_vector* w,
-     ae_state *_state);
-void barycentricbuildxyw(/* Real    */ ae_vector* x,
-     /* Real    */ ae_vector* y,
-     /* Real    */ ae_vector* w,
-     ae_int_t n,
-     barycentricinterpolant* b,
-     ae_state *_state);
-void barycentricbuildfloaterhormann(/* Real    */ ae_vector* x,
-     /* Real    */ ae_vector* y,
-     ae_int_t n,
-     ae_int_t d,
-     barycentricinterpolant* b,
-     ae_state *_state);
-void barycentriccopy(barycentricinterpolant* b,
-     barycentricinterpolant* b2,
-     ae_state *_state);
-void _barycentricinterpolant_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _barycentricinterpolant_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _barycentricinterpolant_clear(void* _p);
-void _barycentricinterpolant_destroy(void* _p);
-#endif
-#if defined(AE_COMPILE_FITSPHERE) || !defined(AE_PARTIAL_BUILD)
-void fitspherels(/* Real    */ ae_matrix* xy,
-     ae_int_t npoints,
-     ae_int_t nx,
-     /* Real    */ ae_vector* cx,
-     double* r,
-     ae_state *_state);
-void fitspheremc(/* Real    */ ae_matrix* xy,
-     ae_int_t npoints,
-     ae_int_t nx,
-     /* Real    */ ae_vector* cx,
-     double* rhi,
-     ae_state *_state);
-void fitspheremi(/* Real    */ ae_matrix* xy,
-     ae_int_t npoints,
-     ae_int_t nx,
-     /* Real    */ ae_vector* cx,
-     double* rlo,
-     ae_state *_state);
-void fitspheremz(/* Real    */ ae_matrix* xy,
-     ae_int_t npoints,
-     ae_int_t nx,
-     /* Real    */ ae_vector* cx,
-     double* rlo,
-     double* rhi,
-     ae_state *_state);
-void fitspherex(/* Real    */ ae_matrix* xy,
-     ae_int_t npoints,
-     ae_int_t nx,
-     ae_int_t problemtype,
-     double epsx,
-     ae_int_t aulits,
-     double penalty,
-     /* Real    */ ae_vector* cx,
-     double* rlo,
-     double* rhi,
-     ae_state *_state);
-void fitsphereinternal(/* Real    */ ae_matrix* xy,
-     ae_int_t npoints,
-     ae_int_t nx,
-     ae_int_t problemtype,
-     ae_int_t solvertype,
-     double epsx,
-     ae_int_t aulits,
-     double penalty,
-     /* Real    */ ae_vector* cx,
-     double* rlo,
-     double* rhi,
-     fitsphereinternalreport* rep,
-     ae_state *_state);
-void _fitsphereinternalreport_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _fitsphereinternalreport_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _fitsphereinternalreport_clear(void* _p);
-void _fitsphereinternalreport_destroy(void* _p);
-#endif
 #if defined(AE_COMPILE_INTFITSERV) || !defined(AE_PARTIAL_BUILD)
 void lsfitscalexy(/* Real    */ ae_vector* x,
      /* Real    */ ae_vector* y,
@@ -8557,6 +9348,71 @@ void buildpriorterm1(/* Real    */ ae_vector* xy1,
      ae_int_t modeltype,
      double priorval,
      /* Real    */ ae_matrix* v,
+     ae_state *_state);
+#endif
+#if defined(AE_COMPILE_POLINT) || !defined(AE_PARTIAL_BUILD)
+void polynomialbar2cheb(barycentricinterpolant* p,
+     double a,
+     double b,
+     /* Real    */ ae_vector* t,
+     ae_state *_state);
+void polynomialcheb2bar(/* Real    */ ae_vector* t,
+     ae_int_t n,
+     double a,
+     double b,
+     barycentricinterpolant* p,
+     ae_state *_state);
+void polynomialbar2pow(barycentricinterpolant* p,
+     double c,
+     double s,
+     /* Real    */ ae_vector* a,
+     ae_state *_state);
+void polynomialpow2bar(/* Real    */ ae_vector* a,
+     ae_int_t n,
+     double c,
+     double s,
+     barycentricinterpolant* p,
+     ae_state *_state);
+void polynomialbuild(/* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_int_t n,
+     barycentricinterpolant* p,
+     ae_state *_state);
+void polynomialbuildeqdist(double a,
+     double b,
+     /* Real    */ ae_vector* y,
+     ae_int_t n,
+     barycentricinterpolant* p,
+     ae_state *_state);
+void polynomialbuildcheb1(double a,
+     double b,
+     /* Real    */ ae_vector* y,
+     ae_int_t n,
+     barycentricinterpolant* p,
+     ae_state *_state);
+void polynomialbuildcheb2(double a,
+     double b,
+     /* Real    */ ae_vector* y,
+     ae_int_t n,
+     barycentricinterpolant* p,
+     ae_state *_state);
+double polynomialcalceqdist(double a,
+     double b,
+     /* Real    */ ae_vector* f,
+     ae_int_t n,
+     double t,
+     ae_state *_state);
+double polynomialcalccheb1(double a,
+     double b,
+     /* Real    */ ae_vector* f,
+     ae_int_t n,
+     double t,
+     ae_state *_state);
+double polynomialcalccheb2(double a,
+     double b,
+     /* Real    */ ae_vector* f,
+     ae_int_t n,
+     double t,
      ae_state *_state);
 #endif
 #if defined(AE_COMPILE_SPLINE1D) || !defined(AE_PARTIAL_BUILD)
@@ -8751,254 +9607,6 @@ void _spline1dfitreport_init(void* _p, ae_state *_state, ae_bool make_automatic)
 void _spline1dfitreport_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
 void _spline1dfitreport_clear(void* _p);
 void _spline1dfitreport_destroy(void* _p);
-#endif
-#if defined(AE_COMPILE_PARAMETRIC) || !defined(AE_PARTIAL_BUILD)
-void pspline2build(/* Real    */ ae_matrix* xy,
-     ae_int_t n,
-     ae_int_t st,
-     ae_int_t pt,
-     pspline2interpolant* p,
-     ae_state *_state);
-void pspline3build(/* Real    */ ae_matrix* xy,
-     ae_int_t n,
-     ae_int_t st,
-     ae_int_t pt,
-     pspline3interpolant* p,
-     ae_state *_state);
-void pspline2buildperiodic(/* Real    */ ae_matrix* xy,
-     ae_int_t n,
-     ae_int_t st,
-     ae_int_t pt,
-     pspline2interpolant* p,
-     ae_state *_state);
-void pspline3buildperiodic(/* Real    */ ae_matrix* xy,
-     ae_int_t n,
-     ae_int_t st,
-     ae_int_t pt,
-     pspline3interpolant* p,
-     ae_state *_state);
-void pspline2parametervalues(pspline2interpolant* p,
-     ae_int_t* n,
-     /* Real    */ ae_vector* t,
-     ae_state *_state);
-void pspline3parametervalues(pspline3interpolant* p,
-     ae_int_t* n,
-     /* Real    */ ae_vector* t,
-     ae_state *_state);
-void pspline2calc(pspline2interpolant* p,
-     double t,
-     double* x,
-     double* y,
-     ae_state *_state);
-void pspline3calc(pspline3interpolant* p,
-     double t,
-     double* x,
-     double* y,
-     double* z,
-     ae_state *_state);
-void pspline2tangent(pspline2interpolant* p,
-     double t,
-     double* x,
-     double* y,
-     ae_state *_state);
-void pspline3tangent(pspline3interpolant* p,
-     double t,
-     double* x,
-     double* y,
-     double* z,
-     ae_state *_state);
-void pspline2diff(pspline2interpolant* p,
-     double t,
-     double* x,
-     double* dx,
-     double* y,
-     double* dy,
-     ae_state *_state);
-void pspline3diff(pspline3interpolant* p,
-     double t,
-     double* x,
-     double* dx,
-     double* y,
-     double* dy,
-     double* z,
-     double* dz,
-     ae_state *_state);
-void pspline2diff2(pspline2interpolant* p,
-     double t,
-     double* x,
-     double* dx,
-     double* d2x,
-     double* y,
-     double* dy,
-     double* d2y,
-     ae_state *_state);
-void pspline3diff2(pspline3interpolant* p,
-     double t,
-     double* x,
-     double* dx,
-     double* d2x,
-     double* y,
-     double* dy,
-     double* d2y,
-     double* z,
-     double* dz,
-     double* d2z,
-     ae_state *_state);
-double pspline2arclength(pspline2interpolant* p,
-     double a,
-     double b,
-     ae_state *_state);
-double pspline3arclength(pspline3interpolant* p,
-     double a,
-     double b,
-     ae_state *_state);
-void parametricrdpfixed(/* Real    */ ae_matrix* x,
-     ae_int_t n,
-     ae_int_t d,
-     ae_int_t stopm,
-     double stopeps,
-     /* Real    */ ae_matrix* x2,
-     /* Integer */ ae_vector* idx2,
-     ae_int_t* nsections,
-     ae_state *_state);
-void _pspline2interpolant_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _pspline2interpolant_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _pspline2interpolant_clear(void* _p);
-void _pspline2interpolant_destroy(void* _p);
-void _pspline3interpolant_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _pspline3interpolant_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _pspline3interpolant_clear(void* _p);
-void _pspline3interpolant_destroy(void* _p);
-#endif
-#if defined(AE_COMPILE_SPLINE3D) || !defined(AE_PARTIAL_BUILD)
-double spline3dcalc(spline3dinterpolant* c,
-     double x,
-     double y,
-     double z,
-     ae_state *_state);
-void spline3dlintransxyz(spline3dinterpolant* c,
-     double ax,
-     double bx,
-     double ay,
-     double by,
-     double az,
-     double bz,
-     ae_state *_state);
-void spline3dlintransf(spline3dinterpolant* c,
-     double a,
-     double b,
-     ae_state *_state);
-void spline3dcopy(spline3dinterpolant* c,
-     spline3dinterpolant* cc,
-     ae_state *_state);
-void spline3dresampletrilinear(/* Real    */ ae_vector* a,
-     ae_int_t oldzcount,
-     ae_int_t oldycount,
-     ae_int_t oldxcount,
-     ae_int_t newzcount,
-     ae_int_t newycount,
-     ae_int_t newxcount,
-     /* Real    */ ae_vector* b,
-     ae_state *_state);
-void spline3dbuildtrilinearv(/* Real    */ ae_vector* x,
-     ae_int_t n,
-     /* Real    */ ae_vector* y,
-     ae_int_t m,
-     /* Real    */ ae_vector* z,
-     ae_int_t l,
-     /* Real    */ ae_vector* f,
-     ae_int_t d,
-     spline3dinterpolant* c,
-     ae_state *_state);
-void spline3dcalcvbuf(spline3dinterpolant* c,
-     double x,
-     double y,
-     double z,
-     /* Real    */ ae_vector* f,
-     ae_state *_state);
-void spline3dcalcv(spline3dinterpolant* c,
-     double x,
-     double y,
-     double z,
-     /* Real    */ ae_vector* f,
-     ae_state *_state);
-void spline3dunpackv(spline3dinterpolant* c,
-     ae_int_t* n,
-     ae_int_t* m,
-     ae_int_t* l,
-     ae_int_t* d,
-     ae_int_t* stype,
-     /* Real    */ ae_matrix* tbl,
-     ae_state *_state);
-void _spline3dinterpolant_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _spline3dinterpolant_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _spline3dinterpolant_clear(void* _p);
-void _spline3dinterpolant_destroy(void* _p);
-#endif
-#if defined(AE_COMPILE_POLINT) || !defined(AE_PARTIAL_BUILD)
-void polynomialbar2cheb(barycentricinterpolant* p,
-     double a,
-     double b,
-     /* Real    */ ae_vector* t,
-     ae_state *_state);
-void polynomialcheb2bar(/* Real    */ ae_vector* t,
-     ae_int_t n,
-     double a,
-     double b,
-     barycentricinterpolant* p,
-     ae_state *_state);
-void polynomialbar2pow(barycentricinterpolant* p,
-     double c,
-     double s,
-     /* Real    */ ae_vector* a,
-     ae_state *_state);
-void polynomialpow2bar(/* Real    */ ae_vector* a,
-     ae_int_t n,
-     double c,
-     double s,
-     barycentricinterpolant* p,
-     ae_state *_state);
-void polynomialbuild(/* Real    */ ae_vector* x,
-     /* Real    */ ae_vector* y,
-     ae_int_t n,
-     barycentricinterpolant* p,
-     ae_state *_state);
-void polynomialbuildeqdist(double a,
-     double b,
-     /* Real    */ ae_vector* y,
-     ae_int_t n,
-     barycentricinterpolant* p,
-     ae_state *_state);
-void polynomialbuildcheb1(double a,
-     double b,
-     /* Real    */ ae_vector* y,
-     ae_int_t n,
-     barycentricinterpolant* p,
-     ae_state *_state);
-void polynomialbuildcheb2(double a,
-     double b,
-     /* Real    */ ae_vector* y,
-     ae_int_t n,
-     barycentricinterpolant* p,
-     ae_state *_state);
-double polynomialcalceqdist(double a,
-     double b,
-     /* Real    */ ae_vector* f,
-     ae_int_t n,
-     double t,
-     ae_state *_state);
-double polynomialcalccheb1(double a,
-     double b,
-     /* Real    */ ae_vector* f,
-     ae_int_t n,
-     double t,
-     ae_state *_state);
-double polynomialcalccheb2(double a,
-     double b,
-     /* Real    */ ae_vector* f,
-     ae_int_t n,
-     double t,
-     ae_state *_state);
 #endif
 #if defined(AE_COMPILE_LSFIT) || !defined(AE_PARTIAL_BUILD)
 void lstfitpiecewiselinearrdpfixed(/* Real    */ ae_vector* x,
@@ -9309,86 +9917,249 @@ void _lsfitstate_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool mak
 void _lsfitstate_clear(void* _p);
 void _lsfitstate_destroy(void* _p);
 #endif
-#if defined(AE_COMPILE_RBFV2) || !defined(AE_PARTIAL_BUILD)
-void rbfv2create(ae_int_t nx,
+#if defined(AE_COMPILE_FITSPHERE) || !defined(AE_PARTIAL_BUILD)
+void fitspherels(/* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_int_t nx,
+     /* Real    */ ae_vector* cx,
+     double* r,
+     ae_state *_state);
+void fitspheremc(/* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_int_t nx,
+     /* Real    */ ae_vector* cx,
+     double* rhi,
+     ae_state *_state);
+void fitspheremi(/* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_int_t nx,
+     /* Real    */ ae_vector* cx,
+     double* rlo,
+     ae_state *_state);
+void fitspheremz(/* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_int_t nx,
+     /* Real    */ ae_vector* cx,
+     double* rlo,
+     double* rhi,
+     ae_state *_state);
+void fitspherex(/* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_int_t nx,
+     ae_int_t problemtype,
+     double epsx,
+     ae_int_t aulits,
+     double penalty,
+     /* Real    */ ae_vector* cx,
+     double* rlo,
+     double* rhi,
+     ae_state *_state);
+void fitsphereinternal(/* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_int_t nx,
+     ae_int_t problemtype,
+     ae_int_t solvertype,
+     double epsx,
+     ae_int_t aulits,
+     double penalty,
+     /* Real    */ ae_vector* cx,
+     double* rlo,
+     double* rhi,
+     fitsphereinternalreport* rep,
+     ae_state *_state);
+void _fitsphereinternalreport_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _fitsphereinternalreport_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _fitsphereinternalreport_clear(void* _p);
+void _fitsphereinternalreport_destroy(void* _p);
+#endif
+#if defined(AE_COMPILE_PARAMETRIC) || !defined(AE_PARTIAL_BUILD)
+void pspline2build(/* Real    */ ae_matrix* xy,
+     ae_int_t n,
+     ae_int_t st,
+     ae_int_t pt,
+     pspline2interpolant* p,
+     ae_state *_state);
+void pspline3build(/* Real    */ ae_matrix* xy,
+     ae_int_t n,
+     ae_int_t st,
+     ae_int_t pt,
+     pspline3interpolant* p,
+     ae_state *_state);
+void pspline2buildperiodic(/* Real    */ ae_matrix* xy,
+     ae_int_t n,
+     ae_int_t st,
+     ae_int_t pt,
+     pspline2interpolant* p,
+     ae_state *_state);
+void pspline3buildperiodic(/* Real    */ ae_matrix* xy,
+     ae_int_t n,
+     ae_int_t st,
+     ae_int_t pt,
+     pspline3interpolant* p,
+     ae_state *_state);
+void pspline2parametervalues(pspline2interpolant* p,
+     ae_int_t* n,
+     /* Real    */ ae_vector* t,
+     ae_state *_state);
+void pspline3parametervalues(pspline3interpolant* p,
+     ae_int_t* n,
+     /* Real    */ ae_vector* t,
+     ae_state *_state);
+void pspline2calc(pspline2interpolant* p,
+     double t,
+     double* x,
+     double* y,
+     ae_state *_state);
+void pspline3calc(pspline3interpolant* p,
+     double t,
+     double* x,
+     double* y,
+     double* z,
+     ae_state *_state);
+void pspline2tangent(pspline2interpolant* p,
+     double t,
+     double* x,
+     double* y,
+     ae_state *_state);
+void pspline3tangent(pspline3interpolant* p,
+     double t,
+     double* x,
+     double* y,
+     double* z,
+     ae_state *_state);
+void pspline2diff(pspline2interpolant* p,
+     double t,
+     double* x,
+     double* dx,
+     double* y,
+     double* dy,
+     ae_state *_state);
+void pspline3diff(pspline3interpolant* p,
+     double t,
+     double* x,
+     double* dx,
+     double* y,
+     double* dy,
+     double* z,
+     double* dz,
+     ae_state *_state);
+void pspline2diff2(pspline2interpolant* p,
+     double t,
+     double* x,
+     double* dx,
+     double* d2x,
+     double* y,
+     double* dy,
+     double* d2y,
+     ae_state *_state);
+void pspline3diff2(pspline3interpolant* p,
+     double t,
+     double* x,
+     double* dx,
+     double* d2x,
+     double* y,
+     double* dy,
+     double* d2y,
+     double* z,
+     double* dz,
+     double* d2z,
+     ae_state *_state);
+double pspline2arclength(pspline2interpolant* p,
+     double a,
+     double b,
+     ae_state *_state);
+double pspline3arclength(pspline3interpolant* p,
+     double a,
+     double b,
+     ae_state *_state);
+void parametricrdpfixed(/* Real    */ ae_matrix* x,
+     ae_int_t n,
+     ae_int_t d,
+     ae_int_t stopm,
+     double stopeps,
+     /* Real    */ ae_matrix* x2,
+     /* Integer */ ae_vector* idx2,
+     ae_int_t* nsections,
+     ae_state *_state);
+void _pspline2interpolant_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _pspline2interpolant_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _pspline2interpolant_clear(void* _p);
+void _pspline2interpolant_destroy(void* _p);
+void _pspline3interpolant_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _pspline3interpolant_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _pspline3interpolant_clear(void* _p);
+void _pspline3interpolant_destroy(void* _p);
+#endif
+#if defined(AE_COMPILE_RBFV1) || !defined(AE_PARTIAL_BUILD)
+void rbfv1create(ae_int_t nx,
      ae_int_t ny,
-     rbfv2model* s,
+     rbfv1model* s,
      ae_state *_state);
-void rbfv2createcalcbuffer(rbfv2model* s,
-     rbfv2calcbuffer* buf,
+void rbfv1createcalcbuffer(rbfv1model* s,
+     rbfv1calcbuffer* buf,
      ae_state *_state);
-void rbfv2buildhierarchical(/* Real    */ ae_matrix* x,
+void rbfv1buildmodel(/* Real    */ ae_matrix* x,
      /* Real    */ ae_matrix* y,
      ae_int_t n,
-     /* Real    */ ae_vector* scalevec,
      ae_int_t aterm,
-     ae_int_t nh,
-     double rbase,
-     double lambdans,
-     rbfv2model* s,
-     ae_int_t* progress10000,
-     ae_bool* terminationrequest,
-     rbfv2report* rep,
+     ae_int_t algorithmtype,
+     ae_int_t nlayers,
+     double radvalue,
+     double radzvalue,
+     double lambdav,
+     double epsort,
+     double epserr,
+     ae_int_t maxits,
+     rbfv1model* s,
+     rbfv1report* rep,
      ae_state *_state);
-void rbfv2alloc(ae_serializer* s, rbfv2model* model, ae_state *_state);
-void rbfv2serialize(ae_serializer* s, rbfv2model* model, ae_state *_state);
-void rbfv2unserialize(ae_serializer* s,
-     rbfv2model* model,
+void rbfv1alloc(ae_serializer* s, rbfv1model* model, ae_state *_state);
+void rbfv1serialize(ae_serializer* s, rbfv1model* model, ae_state *_state);
+void rbfv1unserialize(ae_serializer* s,
+     rbfv1model* model,
      ae_state *_state);
-double rbfv2farradius(ae_int_t bf, ae_state *_state);
-double rbfv2nearradius(ae_int_t bf, ae_state *_state);
-double rbfv2basisfunc(ae_int_t bf, double d2, ae_state *_state);
-void rbfv2basisfuncdiff2(ae_int_t bf,
-     double d2,
-     double* f,
-     double* df,
-     double* d2f,
-     ae_state *_state);
-double rbfv2calc1(rbfv2model* s, double x0, ae_state *_state);
-double rbfv2calc2(rbfv2model* s, double x0, double x1, ae_state *_state);
-double rbfv2calc3(rbfv2model* s,
+double rbfv1calc2(rbfv1model* s, double x0, double x1, ae_state *_state);
+double rbfv1calc3(rbfv1model* s,
      double x0,
      double x1,
      double x2,
      ae_state *_state);
-void rbfv2calcbuf(rbfv2model* s,
+void rbfv1calcbuf(rbfv1model* s,
      /* Real    */ ae_vector* x,
      /* Real    */ ae_vector* y,
      ae_state *_state);
-void rbfv2tscalcbuf(rbfv2model* s,
-     rbfv2calcbuffer* buf,
+void rbfv1tscalcbuf(rbfv1model* s,
+     rbfv1calcbuffer* buf,
      /* Real    */ ae_vector* x,
      /* Real    */ ae_vector* y,
      ae_state *_state);
-void rbfv2gridcalc2(rbfv2model* s,
+void rbfv1tsdiffbuf(rbfv1model* s,
+     rbfv1calcbuffer* buf,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* dy,
+     ae_state *_state);
+void rbfv1tshessbuf(rbfv1model* s,
+     rbfv1calcbuffer* buf,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* dy,
+     /* Real    */ ae_vector* d2y,
+     ae_state *_state);
+void rbfv1gridcalc2(rbfv1model* s,
      /* Real    */ ae_vector* x0,
      ae_int_t n0,
      /* Real    */ ae_vector* x1,
      ae_int_t n1,
      /* Real    */ ae_matrix* y,
      ae_state *_state);
-void rbfv2gridcalcvx(rbfv2model* s,
+void rbfv1gridcalc3vrec(rbfv1model* s,
      /* Real    */ ae_vector* x0,
      ae_int_t n0,
      /* Real    */ ae_vector* x1,
      ae_int_t n1,
      /* Real    */ ae_vector* x2,
      ae_int_t n2,
-     /* Real    */ ae_vector* x3,
-     ae_int_t n3,
-     /* Boolean */ ae_vector* flagy,
-     ae_bool sparsey,
-     /* Real    */ ae_vector* y,
-     ae_state *_state);
-void rbfv2partialgridcalcrec(rbfv2model* s,
-     /* Real    */ ae_vector* x0,
-     ae_int_t n0,
-     /* Real    */ ae_vector* x1,
-     ae_int_t n1,
-     /* Real    */ ae_vector* x2,
-     ae_int_t n2,
-     /* Real    */ ae_vector* x3,
-     ae_int_t n3,
      /* Integer */ ae_vector* blocks0,
      ae_int_t block0a,
      ae_int_t block0b,
@@ -9398,25 +10169,20 @@ void rbfv2partialgridcalcrec(rbfv2model* s,
      /* Integer */ ae_vector* blocks2,
      ae_int_t block2a,
      ae_int_t block2b,
-     /* Integer */ ae_vector* blocks3,
-     ae_int_t block3a,
-     ae_int_t block3b,
      /* Boolean */ ae_vector* flagy,
      ae_bool sparsey,
-     ae_int_t levelidx,
+     double searchradius,
      double avgfuncpernode,
      ae_shared_pool* bufpool,
      /* Real    */ ae_vector* y,
      ae_state *_state);
-ae_bool _trypexec_rbfv2partialgridcalcrec(rbfv2model* s,
+ae_bool _trypexec_rbfv1gridcalc3vrec(rbfv1model* s,
     /* Real    */ ae_vector* x0,
     ae_int_t n0,
     /* Real    */ ae_vector* x1,
     ae_int_t n1,
     /* Real    */ ae_vector* x2,
     ae_int_t n2,
-    /* Real    */ ae_vector* x3,
-    ae_int_t n3,
     /* Integer */ ae_vector* blocks0,
     ae_int_t block0a,
     ae_int_t block0b,
@@ -9426,38 +10192,157 @@ ae_bool _trypexec_rbfv2partialgridcalcrec(rbfv2model* s,
     /* Integer */ ae_vector* blocks2,
     ae_int_t block2a,
     ae_int_t block2b,
-    /* Integer */ ae_vector* blocks3,
-    ae_int_t block3a,
-    ae_int_t block3b,
     /* Boolean */ ae_vector* flagy,
     ae_bool sparsey,
-    ae_int_t levelidx,
+    double searchradius,
     double avgfuncpernode,
     ae_shared_pool* bufpool,
     /* Real    */ ae_vector* y, ae_state *_state);
-void rbfv2unpack(rbfv2model* s,
+void rbfv1unpack(rbfv1model* s,
      ae_int_t* nx,
      ae_int_t* ny,
      /* Real    */ ae_matrix* xwr,
      ae_int_t* nc,
      /* Real    */ ae_matrix* v,
      ae_state *_state);
-void _rbfv2calcbuffer_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _rbfv2calcbuffer_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _rbfv2calcbuffer_clear(void* _p);
-void _rbfv2calcbuffer_destroy(void* _p);
-void _rbfv2model_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _rbfv2model_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _rbfv2model_clear(void* _p);
-void _rbfv2model_destroy(void* _p);
-void _rbfv2gridcalcbuffer_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _rbfv2gridcalcbuffer_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _rbfv2gridcalcbuffer_clear(void* _p);
-void _rbfv2gridcalcbuffer_destroy(void* _p);
-void _rbfv2report_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _rbfv2report_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _rbfv2report_clear(void* _p);
-void _rbfv2report_destroy(void* _p);
+void _rbfv1calcbuffer_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _rbfv1calcbuffer_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _rbfv1calcbuffer_clear(void* _p);
+void _rbfv1calcbuffer_destroy(void* _p);
+void _rbfv1model_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _rbfv1model_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _rbfv1model_clear(void* _p);
+void _rbfv1model_destroy(void* _p);
+void _gridcalc3v1buf_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _gridcalc3v1buf_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _gridcalc3v1buf_clear(void* _p);
+void _gridcalc3v1buf_destroy(void* _p);
+void _rbfv1report_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _rbfv1report_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _rbfv1report_clear(void* _p);
+void _rbfv1report_destroy(void* _p);
+#endif
+#if defined(AE_COMPILE_RBFV3) || !defined(AE_PARTIAL_BUILD)
+void rbfv3create(ae_int_t nx,
+     ae_int_t ny,
+     ae_int_t bf,
+     double bfp,
+     rbfv3model* s,
+     ae_state *_state);
+void rbfv3createcalcbuffer(rbfv3model* s,
+     rbfv3calcbuffer* buf,
+     ae_state *_state);
+void rbfv3build(/* Real    */ ae_matrix* xraw,
+     /* Real    */ ae_matrix* yraw,
+     ae_int_t nraw,
+     /* Real    */ ae_vector* scaleraw,
+     ae_int_t bftype,
+     double bfparamraw,
+     double lambdavraw,
+     ae_int_t aterm,
+     rbfv3model* s,
+     ae_int_t* progress10000,
+     ae_bool* terminationrequest,
+     rbfv3report* rep,
+     ae_state *_state);
+void rbfv3alloc(ae_serializer* s, rbfv3model* model, ae_state *_state);
+void rbfv3serialize(ae_serializer* s, rbfv3model* model, ae_state *_state);
+void rbfv3unserialize(ae_serializer* s,
+     rbfv3model* model,
+     ae_state *_state);
+double rbfv3calc1(rbfv3model* s, double x0, ae_state *_state);
+double rbfv3calc2(rbfv3model* s, double x0, double x1, ae_state *_state);
+double rbfv3calc3(rbfv3model* s,
+     double x0,
+     double x1,
+     double x2,
+     ae_state *_state);
+void rbfv3calcbuf(rbfv3model* s,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_state *_state);
+void rbfv3tscalcbuf(rbfv3model* s,
+     rbfv3calcbuffer* buf,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_state *_state);
+void rbfv3tsdiffbuf(rbfv3model* s,
+     rbfv3calcbuffer* buf,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* dy,
+     ae_state *_state);
+void rbfv3tshessbuf(rbfv3model* s,
+     rbfv3calcbuffer* buf,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* dy,
+     /* Real    */ ae_vector* d2y,
+     ae_state *_state);
+void rbfv3gridcalcvx(rbfv3model* s,
+     /* Real    */ ae_vector* x0,
+     ae_int_t n0,
+     /* Real    */ ae_vector* x1,
+     ae_int_t n1,
+     /* Real    */ ae_vector* x2,
+     ae_int_t n2,
+     /* Real    */ ae_vector* x3,
+     ae_int_t n3,
+     /* Boolean */ ae_vector* flagy,
+     ae_bool sparsey,
+     /* Real    */ ae_vector* y,
+     ae_state *_state);
+void rbfv3unpack(rbfv3model* s,
+     ae_int_t* nx,
+     ae_int_t* ny,
+     /* Real    */ ae_matrix* xwr,
+     ae_int_t* nc,
+     /* Real    */ ae_matrix* v,
+     ae_state *_state);
+void _rbf3evaluator_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _rbf3evaluator_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _rbf3evaluator_clear(void* _p);
+void _rbf3evaluator_destroy(void* _p);
+void _rbf3evaluatorbuffer_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _rbf3evaluatorbuffer_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _rbf3evaluatorbuffer_clear(void* _p);
+void _rbf3evaluatorbuffer_destroy(void* _p);
+void _rbfv3calcbuffer_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _rbfv3calcbuffer_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _rbfv3calcbuffer_clear(void* _p);
+void _rbfv3calcbuffer_destroy(void* _p);
+void _acbfbuilder_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _acbfbuilder_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _acbfbuilder_clear(void* _p);
+void _acbfbuilder_destroy(void* _p);
+void _acbfbuffer_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _acbfbuffer_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _acbfbuffer_clear(void* _p);
+void _acbfbuffer_destroy(void* _p);
+void _acbfchunk_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _acbfchunk_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _acbfchunk_clear(void* _p);
+void _acbfchunk_destroy(void* _p);
+void _rbf3ddmbuffer_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _rbf3ddmbuffer_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _rbf3ddmbuffer_clear(void* _p);
+void _rbf3ddmbuffer_destroy(void* _p);
+void _rbf3ddmsubproblem_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _rbf3ddmsubproblem_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _rbf3ddmsubproblem_clear(void* _p);
+void _rbf3ddmsubproblem_destroy(void* _p);
+void _rbf3ddmsolver_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _rbf3ddmsolver_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _rbf3ddmsolver_clear(void* _p);
+void _rbf3ddmsolver_destroy(void* _p);
+void _rbfv3model_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _rbfv3model_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _rbfv3model_clear(void* _p);
+void _rbfv3model_destroy(void* _p);
+void _rbfv3report_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _rbfv3report_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _rbfv3report_clear(void* _p);
+void _rbfv3report_destroy(void* _p);
 #endif
 #if defined(AE_COMPILE_SPLINE2D) || !defined(AE_PARTIAL_BUILD)
 double spline2dcalc(spline2dinterpolant* c,
@@ -9636,63 +10521,99 @@ void _spline2dfastddmbuf_init_copy(void* _dst, void* _src, ae_state *_state, ae_
 void _spline2dfastddmbuf_clear(void* _p);
 void _spline2dfastddmbuf_destroy(void* _p);
 #endif
-#if defined(AE_COMPILE_RBFV1) || !defined(AE_PARTIAL_BUILD)
-void rbfv1create(ae_int_t nx,
+#if defined(AE_COMPILE_RBFV2) || !defined(AE_PARTIAL_BUILD)
+void rbfv2create(ae_int_t nx,
      ae_int_t ny,
-     rbfv1model* s,
+     rbfv2model* s,
      ae_state *_state);
-void rbfv1createcalcbuffer(rbfv1model* s,
-     rbfv1calcbuffer* buf,
+void rbfv2createcalcbuffer(rbfv2model* s,
+     rbfv2calcbuffer* buf,
      ae_state *_state);
-void rbfv1buildmodel(/* Real    */ ae_matrix* x,
+void rbfv2buildhierarchical(/* Real    */ ae_matrix* x,
      /* Real    */ ae_matrix* y,
      ae_int_t n,
+     /* Real    */ ae_vector* scalevec,
      ae_int_t aterm,
-     ae_int_t algorithmtype,
-     ae_int_t nlayers,
-     double radvalue,
-     double radzvalue,
-     double lambdav,
-     double epsort,
-     double epserr,
-     ae_int_t maxits,
-     rbfv1model* s,
-     rbfv1report* rep,
+     ae_int_t nh,
+     double rbase,
+     double lambdans,
+     rbfv2model* s,
+     ae_int_t* progress10000,
+     ae_bool* terminationrequest,
+     rbfv2report* rep,
      ae_state *_state);
-void rbfv1alloc(ae_serializer* s, rbfv1model* model, ae_state *_state);
-void rbfv1serialize(ae_serializer* s, rbfv1model* model, ae_state *_state);
-void rbfv1unserialize(ae_serializer* s,
-     rbfv1model* model,
+void rbfv2alloc(ae_serializer* s, rbfv2model* model, ae_state *_state);
+void rbfv2serialize(ae_serializer* s, rbfv2model* model, ae_state *_state);
+void rbfv2unserialize(ae_serializer* s,
+     rbfv2model* model,
      ae_state *_state);
-double rbfv1calc2(rbfv1model* s, double x0, double x1, ae_state *_state);
-double rbfv1calc3(rbfv1model* s,
+double rbfv2farradius(ae_int_t bf, ae_state *_state);
+double rbfv2nearradius(ae_int_t bf, ae_state *_state);
+double rbfv2basisfunc(ae_int_t bf, double d2, ae_state *_state);
+void rbfv2basisfuncdiff2(ae_int_t bf,
+     double d2,
+     double* f,
+     double* df,
+     double* d2f,
+     ae_state *_state);
+double rbfv2calc1(rbfv2model* s, double x0, ae_state *_state);
+double rbfv2calc2(rbfv2model* s, double x0, double x1, ae_state *_state);
+double rbfv2calc3(rbfv2model* s,
      double x0,
      double x1,
      double x2,
      ae_state *_state);
-void rbfv1calcbuf(rbfv1model* s,
+void rbfv2calcbuf(rbfv2model* s,
      /* Real    */ ae_vector* x,
      /* Real    */ ae_vector* y,
      ae_state *_state);
-void rbfv1tscalcbuf(rbfv1model* s,
-     rbfv1calcbuffer* buf,
+void rbfv2tscalcbuf(rbfv2model* s,
+     rbfv2calcbuffer* buf,
      /* Real    */ ae_vector* x,
      /* Real    */ ae_vector* y,
      ae_state *_state);
-void rbfv1gridcalc2(rbfv1model* s,
+void rbfv2tsdiffbuf(rbfv2model* s,
+     rbfv2calcbuffer* buf,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* dy,
+     ae_state *_state);
+void rbfv2tshessbuf(rbfv2model* s,
+     rbfv2calcbuffer* buf,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* dy,
+     /* Real    */ ae_vector* d2y,
+     ae_state *_state);
+void rbfv2gridcalc2(rbfv2model* s,
      /* Real    */ ae_vector* x0,
      ae_int_t n0,
      /* Real    */ ae_vector* x1,
      ae_int_t n1,
      /* Real    */ ae_matrix* y,
      ae_state *_state);
-void rbfv1gridcalc3vrec(rbfv1model* s,
+void rbfv2gridcalcvx(rbfv2model* s,
      /* Real    */ ae_vector* x0,
      ae_int_t n0,
      /* Real    */ ae_vector* x1,
      ae_int_t n1,
      /* Real    */ ae_vector* x2,
      ae_int_t n2,
+     /* Real    */ ae_vector* x3,
+     ae_int_t n3,
+     /* Boolean */ ae_vector* flagy,
+     ae_bool sparsey,
+     /* Real    */ ae_vector* y,
+     ae_state *_state);
+void rbfv2partialgridcalcrec(rbfv2model* s,
+     /* Real    */ ae_vector* x0,
+     ae_int_t n0,
+     /* Real    */ ae_vector* x1,
+     ae_int_t n1,
+     /* Real    */ ae_vector* x2,
+     ae_int_t n2,
+     /* Real    */ ae_vector* x3,
+     ae_int_t n3,
      /* Integer */ ae_vector* blocks0,
      ae_int_t block0a,
      ae_int_t block0b,
@@ -9702,20 +10623,25 @@ void rbfv1gridcalc3vrec(rbfv1model* s,
      /* Integer */ ae_vector* blocks2,
      ae_int_t block2a,
      ae_int_t block2b,
+     /* Integer */ ae_vector* blocks3,
+     ae_int_t block3a,
+     ae_int_t block3b,
      /* Boolean */ ae_vector* flagy,
      ae_bool sparsey,
-     double searchradius,
+     ae_int_t levelidx,
      double avgfuncpernode,
      ae_shared_pool* bufpool,
      /* Real    */ ae_vector* y,
      ae_state *_state);
-ae_bool _trypexec_rbfv1gridcalc3vrec(rbfv1model* s,
+ae_bool _trypexec_rbfv2partialgridcalcrec(rbfv2model* s,
     /* Real    */ ae_vector* x0,
     ae_int_t n0,
     /* Real    */ ae_vector* x1,
     ae_int_t n1,
     /* Real    */ ae_vector* x2,
     ae_int_t n2,
+    /* Real    */ ae_vector* x3,
+    ae_int_t n3,
     /* Integer */ ae_vector* blocks0,
     ae_int_t block0a,
     ae_int_t block0b,
@@ -9725,35 +10651,154 @@ ae_bool _trypexec_rbfv1gridcalc3vrec(rbfv1model* s,
     /* Integer */ ae_vector* blocks2,
     ae_int_t block2a,
     ae_int_t block2b,
+    /* Integer */ ae_vector* blocks3,
+    ae_int_t block3a,
+    ae_int_t block3b,
     /* Boolean */ ae_vector* flagy,
     ae_bool sparsey,
-    double searchradius,
+    ae_int_t levelidx,
     double avgfuncpernode,
     ae_shared_pool* bufpool,
     /* Real    */ ae_vector* y, ae_state *_state);
-void rbfv1unpack(rbfv1model* s,
+void rbfv2unpack(rbfv2model* s,
      ae_int_t* nx,
      ae_int_t* ny,
      /* Real    */ ae_matrix* xwr,
      ae_int_t* nc,
      /* Real    */ ae_matrix* v,
      ae_state *_state);
-void _rbfv1calcbuffer_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _rbfv1calcbuffer_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _rbfv1calcbuffer_clear(void* _p);
-void _rbfv1calcbuffer_destroy(void* _p);
-void _rbfv1model_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _rbfv1model_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _rbfv1model_clear(void* _p);
-void _rbfv1model_destroy(void* _p);
-void _gridcalc3v1buf_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _gridcalc3v1buf_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _gridcalc3v1buf_clear(void* _p);
-void _gridcalc3v1buf_destroy(void* _p);
-void _rbfv1report_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _rbfv1report_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _rbfv1report_clear(void* _p);
-void _rbfv1report_destroy(void* _p);
+void _rbfv2calcbuffer_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _rbfv2calcbuffer_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _rbfv2calcbuffer_clear(void* _p);
+void _rbfv2calcbuffer_destroy(void* _p);
+void _rbfv2model_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _rbfv2model_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _rbfv2model_clear(void* _p);
+void _rbfv2model_destroy(void* _p);
+void _rbfv2gridcalcbuffer_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _rbfv2gridcalcbuffer_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _rbfv2gridcalcbuffer_clear(void* _p);
+void _rbfv2gridcalcbuffer_destroy(void* _p);
+void _rbfv2report_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _rbfv2report_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _rbfv2report_clear(void* _p);
+void _rbfv2report_destroy(void* _p);
+#endif
+#if defined(AE_COMPILE_SPLINE3D) || !defined(AE_PARTIAL_BUILD)
+double spline3dcalc(spline3dinterpolant* c,
+     double x,
+     double y,
+     double z,
+     ae_state *_state);
+void spline3dlintransxyz(spline3dinterpolant* c,
+     double ax,
+     double bx,
+     double ay,
+     double by,
+     double az,
+     double bz,
+     ae_state *_state);
+void spline3dlintransf(spline3dinterpolant* c,
+     double a,
+     double b,
+     ae_state *_state);
+void spline3dcopy(spline3dinterpolant* c,
+     spline3dinterpolant* cc,
+     ae_state *_state);
+void spline3dresampletrilinear(/* Real    */ ae_vector* a,
+     ae_int_t oldzcount,
+     ae_int_t oldycount,
+     ae_int_t oldxcount,
+     ae_int_t newzcount,
+     ae_int_t newycount,
+     ae_int_t newxcount,
+     /* Real    */ ae_vector* b,
+     ae_state *_state);
+void spline3dbuildtrilinearv(/* Real    */ ae_vector* x,
+     ae_int_t n,
+     /* Real    */ ae_vector* y,
+     ae_int_t m,
+     /* Real    */ ae_vector* z,
+     ae_int_t l,
+     /* Real    */ ae_vector* f,
+     ae_int_t d,
+     spline3dinterpolant* c,
+     ae_state *_state);
+void spline3dcalcvbuf(spline3dinterpolant* c,
+     double x,
+     double y,
+     double z,
+     /* Real    */ ae_vector* f,
+     ae_state *_state);
+void spline3dcalcv(spline3dinterpolant* c,
+     double x,
+     double y,
+     double z,
+     /* Real    */ ae_vector* f,
+     ae_state *_state);
+void spline3dunpackv(spline3dinterpolant* c,
+     ae_int_t* n,
+     ae_int_t* m,
+     ae_int_t* l,
+     ae_int_t* d,
+     ae_int_t* stype,
+     /* Real    */ ae_matrix* tbl,
+     ae_state *_state);
+void _spline3dinterpolant_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _spline3dinterpolant_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _spline3dinterpolant_clear(void* _p);
+void _spline3dinterpolant_destroy(void* _p);
+#endif
+#if defined(AE_COMPILE_INTCOMP) || !defined(AE_PARTIAL_BUILD)
+void nsfitspheremcc(/* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_int_t nx,
+     /* Real    */ ae_vector* cx,
+     double* rhi,
+     ae_state *_state);
+void nsfitspheremic(/* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_int_t nx,
+     /* Real    */ ae_vector* cx,
+     double* rlo,
+     ae_state *_state);
+void nsfitspheremzc(/* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_int_t nx,
+     /* Real    */ ae_vector* cx,
+     double* rlo,
+     double* rhi,
+     ae_state *_state);
+void nsfitspherex(/* Real    */ ae_matrix* xy,
+     ae_int_t npoints,
+     ae_int_t nx,
+     ae_int_t problemtype,
+     double epsx,
+     ae_int_t aulits,
+     double penalty,
+     /* Real    */ ae_vector* cx,
+     double* rlo,
+     double* rhi,
+     ae_state *_state);
+void spline1dfitpenalized(/* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_int_t n,
+     ae_int_t m,
+     double rho,
+     ae_int_t* info,
+     spline1dinterpolant* s,
+     spline1dfitreport* rep,
+     ae_state *_state);
+void spline1dfitpenalizedw(/* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* w,
+     ae_int_t n,
+     ae_int_t m,
+     double rho,
+     ae_int_t* info,
+     spline1dinterpolant* s,
+     spline1dfitreport* rep,
+     ae_state *_state);
 #endif
 #if defined(AE_COMPILE_RBF) || !defined(AE_PARTIAL_BUILD)
 void rbfcreate(ae_int_t nx, ae_int_t ny, rbfmodel* s, ae_state *_state);
@@ -9780,6 +10825,17 @@ void rbfsetalgohierarchical(rbfmodel* s,
      ae_int_t nlayers,
      double lambdans,
      ae_state *_state);
+void rbfsetalgothinplatespline(rbfmodel* s,
+     double lambdav,
+     ae_state *_state);
+void rbfsetalgomultiquadricmanual(rbfmodel* s,
+     double alpha,
+     double lambdav,
+     ae_state *_state);
+void rbfsetalgomultiquadricauto(rbfmodel* s,
+     double lambdav,
+     ae_state *_state);
+void rbfsetalgobiharmonic(rbfmodel* s, double lambdav, ae_state *_state);
 void rbfsetlinterm(rbfmodel* s, ae_state *_state);
 void rbfsetconstterm(rbfmodel* s, ae_state *_state);
 void rbfsetzeroterm(rbfmodel* s, ae_state *_state);
@@ -9799,18 +10855,74 @@ double rbfcalc3(rbfmodel* s,
      double x1,
      double x2,
      ae_state *_state);
+void rbfdiff1(rbfmodel* s,
+     double x0,
+     double* y,
+     double* dy0,
+     ae_state *_state);
+void rbfdiff2(rbfmodel* s,
+     double x0,
+     double x1,
+     double* y,
+     double* dy0,
+     double* dy1,
+     ae_state *_state);
+void rbfdiff3(rbfmodel* s,
+     double x0,
+     double x1,
+     double x2,
+     double* y,
+     double* dy0,
+     double* dy1,
+     double* dy2,
+     ae_state *_state);
 void rbfcalc(rbfmodel* s,
      /* Real    */ ae_vector* x,
      /* Real    */ ae_vector* y,
+     ae_state *_state);
+void rbfdiff(rbfmodel* s,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* dy,
+     ae_state *_state);
+void rbfhess(rbfmodel* s,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* dy,
+     /* Real    */ ae_vector* d2y,
      ae_state *_state);
 void rbfcalcbuf(rbfmodel* s,
      /* Real    */ ae_vector* x,
      /* Real    */ ae_vector* y,
      ae_state *_state);
+void rbfdiffbuf(rbfmodel* s,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* dy,
+     ae_state *_state);
+void rbfhessbuf(rbfmodel* s,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* dy,
+     /* Real    */ ae_vector* d2y,
+     ae_state *_state);
 void rbftscalcbuf(rbfmodel* s,
      rbfcalcbuffer* buf,
      /* Real    */ ae_vector* x,
      /* Real    */ ae_vector* y,
+     ae_state *_state);
+void rbftsdiffbuf(rbfmodel* s,
+     rbfcalcbuffer* buf,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* dy,
+     ae_state *_state);
+void rbftshessbuf(rbfmodel* s,
+     rbfcalcbuffer* buf,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* dy,
+     /* Real    */ ae_vector* d2y,
      ae_state *_state);
 void rbfgridcalc2(rbfmodel* s,
      /* Real    */ ae_vector* x0,
@@ -9899,57 +11011,6 @@ void _rbfreport_init(void* _p, ae_state *_state, ae_bool make_automatic);
 void _rbfreport_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
 void _rbfreport_clear(void* _p);
 void _rbfreport_destroy(void* _p);
-#endif
-#if defined(AE_COMPILE_INTCOMP) || !defined(AE_PARTIAL_BUILD)
-void nsfitspheremcc(/* Real    */ ae_matrix* xy,
-     ae_int_t npoints,
-     ae_int_t nx,
-     /* Real    */ ae_vector* cx,
-     double* rhi,
-     ae_state *_state);
-void nsfitspheremic(/* Real    */ ae_matrix* xy,
-     ae_int_t npoints,
-     ae_int_t nx,
-     /* Real    */ ae_vector* cx,
-     double* rlo,
-     ae_state *_state);
-void nsfitspheremzc(/* Real    */ ae_matrix* xy,
-     ae_int_t npoints,
-     ae_int_t nx,
-     /* Real    */ ae_vector* cx,
-     double* rlo,
-     double* rhi,
-     ae_state *_state);
-void nsfitspherex(/* Real    */ ae_matrix* xy,
-     ae_int_t npoints,
-     ae_int_t nx,
-     ae_int_t problemtype,
-     double epsx,
-     ae_int_t aulits,
-     double penalty,
-     /* Real    */ ae_vector* cx,
-     double* rlo,
-     double* rhi,
-     ae_state *_state);
-void spline1dfitpenalized(/* Real    */ ae_vector* x,
-     /* Real    */ ae_vector* y,
-     ae_int_t n,
-     ae_int_t m,
-     double rho,
-     ae_int_t* info,
-     spline1dinterpolant* s,
-     spline1dfitreport* rep,
-     ae_state *_state);
-void spline1dfitpenalizedw(/* Real    */ ae_vector* x,
-     /* Real    */ ae_vector* y,
-     /* Real    */ ae_vector* w,
-     ae_int_t n,
-     ae_int_t m,
-     double rho,
-     ae_int_t* info,
-     spline1dinterpolant* s,
-     spline1dfitreport* rep,
-     ae_state *_state);
 #endif
 
 }

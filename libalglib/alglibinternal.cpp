@@ -1,5 +1,5 @@
 /*************************************************************************
-ALGLIB 3.17.0 (source code generated 2020-12-27)
+ALGLIB 3.19.0 (source code generated 2022-06-07)
 Copyright (c) Sergey Bochkanov (ALGLIB project).
 
 >>> SOURCE LICENSE >>>
@@ -50,11 +50,50 @@ namespace alglib
 /////////////////////////////////////////////////////////////////////////
 namespace alglib_impl
 {
-#if defined(AE_COMPILE_SCODES) || !defined(AE_PARTIAL_BUILD)
+#if defined(AE_COMPILE_APSERV) || !defined(AE_PARTIAL_BUILD)
 
 
 #endif
-#if defined(AE_COMPILE_APSERV) || !defined(AE_PARTIAL_BUILD)
+#if defined(AE_COMPILE_ABLASF) || !defined(AE_PARTIAL_BUILD)
+#ifdef ALGLIB_NO_FAST_KERNELS
+static ae_bool ablasf_rgemm32basecase(ae_int_t m,
+     ae_int_t n,
+     ae_int_t k,
+     double alpha,
+     /* Real    */ ae_matrix* a,
+     ae_int_t ia,
+     ae_int_t ja,
+     ae_int_t optypea,
+     /* Real    */ ae_matrix* b,
+     ae_int_t ib,
+     ae_int_t jb,
+     ae_int_t optypeb,
+     double beta,
+     /* Real    */ ae_matrix* c,
+     ae_int_t ic,
+     ae_int_t jc,
+     ae_state *_state);
+#endif
+
+
+#endif
+#if defined(AE_COMPILE_HBLAS) || !defined(AE_PARTIAL_BUILD)
+
+
+#endif
+#if defined(AE_COMPILE_CREFLECTIONS) || !defined(AE_PARTIAL_BUILD)
+
+
+#endif
+#if defined(AE_COMPILE_SBLAS) || !defined(AE_PARTIAL_BUILD)
+
+
+#endif
+#if defined(AE_COMPILE_ABLASMKL) || !defined(AE_PARTIAL_BUILD)
+
+
+#endif
+#if defined(AE_COMPILE_SCODES) || !defined(AE_PARTIAL_BUILD)
 
 
 #endif
@@ -81,19 +120,15 @@ static void tsort_tagsortfastrec(/* Real    */ ae_vector* a,
 
 
 #endif
-#if defined(AE_COMPILE_ABLASF) || !defined(AE_PARTIAL_BUILD)
-
-
-#endif
-#if defined(AE_COMPILE_ABLASMKL) || !defined(AE_PARTIAL_BUILD)
-
-
-#endif
-#if defined(AE_COMPILE_CREFLECTIONS) || !defined(AE_PARTIAL_BUILD)
+#if defined(AE_COMPILE_BLAS) || !defined(AE_PARTIAL_BUILD)
 
 
 #endif
 #if defined(AE_COMPILE_ROTATIONS) || !defined(AE_PARTIAL_BUILD)
+
+
+#endif
+#if defined(AE_COMPILE_BASICSTATOPS) || !defined(AE_PARTIAL_BUILD)
 
 
 #endif
@@ -113,15 +148,14 @@ static ae_bool safesolve_cbasicsolveandupdate(ae_complex alpha,
 
 
 #endif
-#if defined(AE_COMPILE_HBLAS) || !defined(AE_PARTIAL_BUILD)
-
-
-#endif
-#if defined(AE_COMPILE_SBLAS) || !defined(AE_PARTIAL_BUILD)
-
-
-#endif
-#if defined(AE_COMPILE_BLAS) || !defined(AE_PARTIAL_BUILD)
+#if defined(AE_COMPILE_XBLAS) || !defined(AE_PARTIAL_BUILD)
+static void xblas_xsum(/* Real    */ ae_vector* w,
+     double mx,
+     ae_int_t n,
+     double* r,
+     double* rerr,
+     ae_state *_state);
+static double xblas_xfastpow(double r, ae_int_t n, ae_state *_state);
 
 
 #endif
@@ -149,30 +183,7 @@ static void linmin_mcstep(double* stx,
 
 
 #endif
-#if defined(AE_COMPILE_XBLAS) || !defined(AE_PARTIAL_BUILD)
-static void xblas_xsum(/* Real    */ ae_vector* w,
-     double mx,
-     ae_int_t n,
-     double* r,
-     double* rerr,
-     ae_state *_state);
-static double xblas_xfastpow(double r, ae_int_t n, ae_state *_state);
-
-
-#endif
-#if defined(AE_COMPILE_BASICSTATOPS) || !defined(AE_PARTIAL_BUILD)
-
-
-#endif
-#if defined(AE_COMPILE_HPCCORES) || !defined(AE_PARTIAL_BUILD)
-static ae_bool hpccores_hpcpreparechunkedgradientx(/* Real    */ ae_vector* weights,
-     ae_int_t wcount,
-     /* Real    */ ae_vector* hpcbuf,
-     ae_state *_state);
-static ae_bool hpccores_hpcfinalizechunkedgradientx(/* Real    */ ae_vector* buf,
-     ae_int_t wcount,
-     /* Real    */ ae_vector* grad,
-     ae_state *_state);
+#if defined(AE_COMPILE_NEARUNITYUNIT) || !defined(AE_PARTIAL_BUILD)
 
 
 #endif
@@ -349,15 +360,6 @@ static void ftbase_ffticltrec(/* Real    */ ae_vector* a,
      ae_int_t m,
      ae_int_t n,
      ae_state *_state);
-static void ftbase_fftirltrec(/* Real    */ ae_vector* a,
-     ae_int_t astart,
-     ae_int_t astride,
-     /* Real    */ ae_vector* b,
-     ae_int_t bstart,
-     ae_int_t bstride,
-     ae_int_t m,
-     ae_int_t n,
-     ae_state *_state);
 static void ftbase_ftbasefindsmoothrec(ae_int_t n,
      ae_int_t seed,
      ae_int_t leastfactor,
@@ -366,7 +368,15 @@ static void ftbase_ftbasefindsmoothrec(ae_int_t n,
 
 
 #endif
-#if defined(AE_COMPILE_NEARUNITYUNIT) || !defined(AE_PARTIAL_BUILD)
+#if defined(AE_COMPILE_HPCCORES) || !defined(AE_PARTIAL_BUILD)
+static ae_bool hpccores_hpcpreparechunkedgradientx(/* Real    */ ae_vector* weights,
+     ae_int_t wcount,
+     /* Real    */ ae_vector* hpcbuf,
+     ae_state *_state);
+static ae_bool hpccores_hpcfinalizechunkedgradientx(/* Real    */ ae_vector* buf,
+     ae_int_t wcount,
+     /* Real    */ ae_vector* grad,
+     ae_state *_state);
 
 
 #endif
@@ -375,90 +385,6 @@ static void ftbase_ftbasefindsmoothrec(ae_int_t n,
 
 #endif
 
-#if defined(AE_COMPILE_SCODES) || !defined(AE_PARTIAL_BUILD)
-
-
-ae_int_t getrdfserializationcode(ae_state *_state)
-{
-    ae_int_t result;
-
-
-    result = 1;
-    return result;
-}
-
-
-ae_int_t getkdtreeserializationcode(ae_state *_state)
-{
-    ae_int_t result;
-
-
-    result = 2;
-    return result;
-}
-
-
-ae_int_t getmlpserializationcode(ae_state *_state)
-{
-    ae_int_t result;
-
-
-    result = 3;
-    return result;
-}
-
-
-ae_int_t getmlpeserializationcode(ae_state *_state)
-{
-    ae_int_t result;
-
-
-    result = 4;
-    return result;
-}
-
-
-ae_int_t getrbfserializationcode(ae_state *_state)
-{
-    ae_int_t result;
-
-
-    result = 5;
-    return result;
-}
-
-
-ae_int_t getspline2dserializationcode(ae_state *_state)
-{
-    ae_int_t result;
-
-
-    result = 6;
-    return result;
-}
-
-
-ae_int_t getidwserializationcode(ae_state *_state)
-{
-    ae_int_t result;
-
-
-    result = 7;
-    return result;
-}
-
-
-ae_int_t getknnserializationcode(ae_state *_state)
-{
-    ae_int_t result;
-
-
-    result = 108;
-    return result;
-}
-
-
-#endif
 #if defined(AE_COMPILE_APSERV) || !defined(AE_PARTIAL_BUILD)
 
 
@@ -2001,7 +1927,7 @@ double safeminposrv(double x, double y, double v, ae_state *_state)
     double result;
 
 
-    if( ae_fp_greater_eq(y,(double)(1)) )
+    if( y>=1 )
     {
         
         /*
@@ -2009,7 +1935,7 @@ double safeminposrv(double x, double y, double v, ae_state *_state)
          */
         r = x/y;
         result = v;
-        if( ae_fp_greater(v,r) )
+        if( v>r )
         {
             result = r;
         }
@@ -2024,7 +1950,7 @@ double safeminposrv(double x, double y, double v, ae_state *_state)
         /*
          * Y<1, we can safely multiply by Y
          */
-        if( ae_fp_less(x,v*y) )
+        if( x<v*y )
         {
             result = x/y;
         }
@@ -2443,7 +2369,7 @@ double rmul2(double v0, double v1, ae_state *_state)
 
 /*************************************************************************
 This function returns product of three real numbers. It is convenient when
-you have to perform typecast-and-product of two INTEGERS.
+you have to perform typecast-and-product of three INTEGERS.
 *************************************************************************/
 double rmul3(double v0, double v1, double v2, ae_state *_state)
 {
@@ -2451,6 +2377,20 @@ double rmul3(double v0, double v1, double v2, ae_state *_state)
 
 
     result = v0*v1*v2;
+    return result;
+}
+
+
+/*************************************************************************
+This function returns product of four real numbers. It is convenient when
+you have to perform typecast-and-product of four INTEGERS.
+*************************************************************************/
+double rmul4(double v0, double v1, double v2, double v3, ae_state *_state)
+{
+    double result;
+
+
+    result = v0*v1*v2*v3;
     return result;
 }
 
@@ -3531,6 +3471,68 @@ void tracevectorautoprec(/* Real    */ ae_vector* a,
 
 
 /*************************************************************************
+Outputs row A[I,J0..J1-1] to trace log using either:
+a)  6-digit exponential format (no trace flags is set)
+b) 15-ditit exponential format ('PREC.E15' trace flag is set)
+b)  6-ditit fixed-point format ('PREC.F6' trace flag is set)
+
+This function checks trace flags every time it is called.
+*************************************************************************/
+void tracerowautoprec(/* Real    */ ae_matrix* a,
+     ae_int_t i,
+     ae_int_t j0,
+     ae_int_t j1,
+     ae_state *_state)
+{
+    ae_int_t j;
+    ae_int_t prectouse;
+
+
+    
+    /*
+     * Determine precision to use
+     */
+    prectouse = 0;
+    if( ae_is_trace_enabled("PREC.E15") )
+    {
+        prectouse = 1;
+    }
+    if( ae_is_trace_enabled("PREC.F6") )
+    {
+        prectouse = 2;
+    }
+    
+    /*
+     * Output
+     */
+    ae_trace("[ ");
+    for(j=j0; j<=j1-1; j++)
+    {
+        if( prectouse==0 )
+        {
+            ae_trace("%14.6e",
+                (double)(a->ptr.pp_double[i][j]));
+        }
+        if( prectouse==1 )
+        {
+            ae_trace("%23.15e",
+                (double)(a->ptr.pp_double[i][j]));
+        }
+        if( prectouse==2 )
+        {
+            ae_trace("%13.6f",
+                (double)(a->ptr.pp_double[i][j]));
+        }
+        if( j<j1-1 )
+        {
+            ae_trace(" ");
+        }
+    }
+    ae_trace(" ]");
+}
+
+
+/*************************************************************************
 Unscales/unshifts vector A[N] by computing A*Scl+Sft and outputs result to
 trace log using either:
 a)  6-digit exponential format (no trace flags is set)
@@ -3678,7 +3680,32 @@ void tracerownrm1autoprec(/* Real    */ ae_matrix* a,
 
 
 /*************************************************************************
-Outputs vector A[I0,I1-1] to trace log using E8 precision
+Outputs vector A[I0,I1-1] to trace log using E3 precision
+*************************************************************************/
+void tracevectore3(/* Real    */ ae_vector* a,
+     ae_int_t i0,
+     ae_int_t i1,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    ae_trace("[ ");
+    for(i=i0; i<=i1-1; i++)
+    {
+        ae_trace("%11.3e",
+            (double)(a->ptr.p_double[i]));
+        if( i<i1-1 )
+        {
+            ae_trace(" ");
+        }
+    }
+    ae_trace(" ]");
+}
+
+
+/*************************************************************************
+Outputs vector A[I0,I1-1] to trace log using E6 precision
 *************************************************************************/
 void tracevectore6(/* Real    */ ae_vector* a,
      ae_int_t i0,
@@ -4088,1615 +4115,10 @@ void _scomplexarray_destroy(void* _p)
 
 
 #endif
-#if defined(AE_COMPILE_TSORT) || !defined(AE_PARTIAL_BUILD)
-
-
-/*************************************************************************
-This function sorts array of real keys by ascending.
-
-Its results are:
-* sorted array A
-* permutation tables P1, P2
-
-Algorithm outputs permutation tables using two formats:
-* as usual permutation of [0..N-1]. If P1[i]=j, then sorted A[i]  contains
-  value which was moved there from J-th position.
-* as a sequence of pairwise permutations. Sorted A[] may  be  obtained  by
-  swaping A[i] and A[P2[i]] for all i from 0 to N-1.
-  
-INPUT PARAMETERS:
-    A       -   unsorted array
-    N       -   array size
-
-OUPUT PARAMETERS:
-    A       -   sorted array
-    P1, P2  -   permutation tables, array[N]
-    
-NOTES:
-    this function assumes that A[] is finite; it doesn't checks that
-    condition. All other conditions (size of input arrays, etc.) are not
-    checked too.
-
-  -- ALGLIB --
-     Copyright 14.05.2008 by Bochkanov Sergey
-*************************************************************************/
-void tagsort(/* Real    */ ae_vector* a,
-     ae_int_t n,
-     /* Integer */ ae_vector* p1,
-     /* Integer */ ae_vector* p2,
-     ae_state *_state)
-{
-    ae_frame _frame_block;
-    apbuffers buf;
-
-    ae_frame_make(_state, &_frame_block);
-    memset(&buf, 0, sizeof(buf));
-    ae_vector_clear(p1);
-    ae_vector_clear(p2);
-    _apbuffers_init(&buf, _state, ae_true);
-
-    tagsortbuf(a, n, p1, p2, &buf, _state);
-    ae_frame_leave(_state);
-}
-
-
-/*************************************************************************
-Buffered variant of TagSort, which accepts preallocated output arrays as
-well as special structure for buffered allocations. If arrays are too
-short, they are reallocated. If they are large enough, no memory
-allocation is done.
-
-It is intended to be used in the performance-critical parts of code, where
-additional allocations can lead to severe performance degradation
-
-  -- ALGLIB --
-     Copyright 14.05.2008 by Bochkanov Sergey
-*************************************************************************/
-void tagsortbuf(/* Real    */ ae_vector* a,
-     ae_int_t n,
-     /* Integer */ ae_vector* p1,
-     /* Integer */ ae_vector* p2,
-     apbuffers* buf,
-     ae_state *_state)
-{
-    ae_int_t i;
-    ae_int_t lv;
-    ae_int_t lp;
-    ae_int_t rv;
-    ae_int_t rp;
-
-
-    
-    /*
-     * Special cases
-     */
-    if( n<=0 )
-    {
-        return;
-    }
-    if( n==1 )
-    {
-        ivectorsetlengthatleast(p1, 1, _state);
-        ivectorsetlengthatleast(p2, 1, _state);
-        p1->ptr.p_int[0] = 0;
-        p2->ptr.p_int[0] = 0;
-        return;
-    }
-    
-    /*
-     * General case, N>1: prepare permutations table P1
-     */
-    ivectorsetlengthatleast(p1, n, _state);
-    for(i=0; i<=n-1; i++)
-    {
-        p1->ptr.p_int[i] = i;
-    }
-    
-    /*
-     * General case, N>1: sort, update P1
-     */
-    rvectorsetlengthatleast(&buf->ra0, n, _state);
-    ivectorsetlengthatleast(&buf->ia0, n, _state);
-    tagsortfasti(a, p1, &buf->ra0, &buf->ia0, n, _state);
-    
-    /*
-     * General case, N>1: fill permutations table P2
-     *
-     * To fill P2 we maintain two arrays:
-     * * PV (Buf.IA0), Position(Value). PV[i] contains position of I-th key at the moment
-     * * VP (Buf.IA1), Value(Position). VP[i] contains key which has position I at the moment
-     *
-     * At each step we making permutation of two items:
-     *   Left, which is given by position/value pair LP/LV
-     *   and Right, which is given by RP/RV
-     * and updating PV[] and VP[] correspondingly.
-     */
-    ivectorsetlengthatleast(&buf->ia0, n, _state);
-    ivectorsetlengthatleast(&buf->ia1, n, _state);
-    ivectorsetlengthatleast(p2, n, _state);
-    for(i=0; i<=n-1; i++)
-    {
-        buf->ia0.ptr.p_int[i] = i;
-        buf->ia1.ptr.p_int[i] = i;
-    }
-    for(i=0; i<=n-1; i++)
-    {
-        
-        /*
-         * calculate LP, LV, RP, RV
-         */
-        lp = i;
-        lv = buf->ia1.ptr.p_int[lp];
-        rv = p1->ptr.p_int[i];
-        rp = buf->ia0.ptr.p_int[rv];
-        
-        /*
-         * Fill P2
-         */
-        p2->ptr.p_int[i] = rp;
-        
-        /*
-         * update PV and VP
-         */
-        buf->ia1.ptr.p_int[lp] = rv;
-        buf->ia1.ptr.p_int[rp] = lv;
-        buf->ia0.ptr.p_int[lv] = rp;
-        buf->ia0.ptr.p_int[rv] = lp;
-    }
-}
-
-
-/*************************************************************************
-Same as TagSort, but optimized for real keys and integer labels.
-
-A is sorted, and same permutations are applied to B.
-
-NOTES:
-1.  this function assumes that A[] is finite; it doesn't checks that
-    condition. All other conditions (size of input arrays, etc.) are not
-    checked too.
-2.  this function uses two buffers, BufA and BufB, each is N elements large.
-    They may be preallocated (which will save some time) or not, in which
-    case function will automatically allocate memory.
-
-  -- ALGLIB --
-     Copyright 11.12.2008 by Bochkanov Sergey
-*************************************************************************/
-void tagsortfasti(/* Real    */ ae_vector* a,
-     /* Integer */ ae_vector* b,
-     /* Real    */ ae_vector* bufa,
-     /* Integer */ ae_vector* bufb,
-     ae_int_t n,
-     ae_state *_state)
-{
-    ae_int_t i;
-    ae_int_t j;
-    ae_bool isascending;
-    ae_bool isdescending;
-    double tmpr;
-    ae_int_t tmpi;
-
-
-    
-    /*
-     * Special case
-     */
-    if( n<=1 )
-    {
-        return;
-    }
-    
-    /*
-     * Test for already sorted set
-     */
-    isascending = ae_true;
-    isdescending = ae_true;
-    for(i=1; i<=n-1; i++)
-    {
-        isascending = isascending&&a->ptr.p_double[i]>=a->ptr.p_double[i-1];
-        isdescending = isdescending&&a->ptr.p_double[i]<=a->ptr.p_double[i-1];
-    }
-    if( isascending )
-    {
-        return;
-    }
-    if( isdescending )
-    {
-        for(i=0; i<=n-1; i++)
-        {
-            j = n-1-i;
-            if( j<=i )
-            {
-                break;
-            }
-            tmpr = a->ptr.p_double[i];
-            a->ptr.p_double[i] = a->ptr.p_double[j];
-            a->ptr.p_double[j] = tmpr;
-            tmpi = b->ptr.p_int[i];
-            b->ptr.p_int[i] = b->ptr.p_int[j];
-            b->ptr.p_int[j] = tmpi;
-        }
-        return;
-    }
-    
-    /*
-     * General case
-     */
-    if( bufa->cnt<n )
-    {
-        ae_vector_set_length(bufa, n, _state);
-    }
-    if( bufb->cnt<n )
-    {
-        ae_vector_set_length(bufb, n, _state);
-    }
-    tsort_tagsortfastirec(a, b, bufa, bufb, 0, n-1, _state);
-}
-
-
-/*************************************************************************
-Same as TagSort, but optimized for real keys and real labels.
-
-A is sorted, and same permutations are applied to B.
-
-NOTES:
-1.  this function assumes that A[] is finite; it doesn't checks that
-    condition. All other conditions (size of input arrays, etc.) are not
-    checked too.
-2.  this function uses two buffers, BufA and BufB, each is N elements large.
-    They may be preallocated (which will save some time) or not, in which
-    case function will automatically allocate memory.
-
-  -- ALGLIB --
-     Copyright 11.12.2008 by Bochkanov Sergey
-*************************************************************************/
-void tagsortfastr(/* Real    */ ae_vector* a,
-     /* Real    */ ae_vector* b,
-     /* Real    */ ae_vector* bufa,
-     /* Real    */ ae_vector* bufb,
-     ae_int_t n,
-     ae_state *_state)
-{
-    ae_int_t i;
-    ae_int_t j;
-    ae_bool isascending;
-    ae_bool isdescending;
-    double tmpr;
-
-
-    
-    /*
-     * Special case
-     */
-    if( n<=1 )
-    {
-        return;
-    }
-    
-    /*
-     * Test for already sorted set
-     */
-    isascending = ae_true;
-    isdescending = ae_true;
-    for(i=1; i<=n-1; i++)
-    {
-        isascending = isascending&&a->ptr.p_double[i]>=a->ptr.p_double[i-1];
-        isdescending = isdescending&&a->ptr.p_double[i]<=a->ptr.p_double[i-1];
-    }
-    if( isascending )
-    {
-        return;
-    }
-    if( isdescending )
-    {
-        for(i=0; i<=n-1; i++)
-        {
-            j = n-1-i;
-            if( j<=i )
-            {
-                break;
-            }
-            tmpr = a->ptr.p_double[i];
-            a->ptr.p_double[i] = a->ptr.p_double[j];
-            a->ptr.p_double[j] = tmpr;
-            tmpr = b->ptr.p_double[i];
-            b->ptr.p_double[i] = b->ptr.p_double[j];
-            b->ptr.p_double[j] = tmpr;
-        }
-        return;
-    }
-    
-    /*
-     * General case
-     */
-    if( bufa->cnt<n )
-    {
-        ae_vector_set_length(bufa, n, _state);
-    }
-    if( bufb->cnt<n )
-    {
-        ae_vector_set_length(bufb, n, _state);
-    }
-    tsort_tagsortfastrrec(a, b, bufa, bufb, 0, n-1, _state);
-}
-
-
-/*************************************************************************
-Same as TagSort, but optimized for real keys without labels.
-
-A is sorted, and that's all.
-
-NOTES:
-1.  this function assumes that A[] is finite; it doesn't checks that
-    condition. All other conditions (size of input arrays, etc.) are not
-    checked too.
-2.  this function uses buffer, BufA, which is N elements large. It may be
-    preallocated (which will save some time) or not, in which case
-    function will automatically allocate memory.
-
-  -- ALGLIB --
-     Copyright 11.12.2008 by Bochkanov Sergey
-*************************************************************************/
-void tagsortfast(/* Real    */ ae_vector* a,
-     /* Real    */ ae_vector* bufa,
-     ae_int_t n,
-     ae_state *_state)
-{
-    ae_int_t i;
-    ae_int_t j;
-    ae_bool isascending;
-    ae_bool isdescending;
-    double tmpr;
-
-
-    
-    /*
-     * Special case
-     */
-    if( n<=1 )
-    {
-        return;
-    }
-    
-    /*
-     * Test for already sorted set
-     */
-    isascending = ae_true;
-    isdescending = ae_true;
-    for(i=1; i<=n-1; i++)
-    {
-        isascending = isascending&&a->ptr.p_double[i]>=a->ptr.p_double[i-1];
-        isdescending = isdescending&&a->ptr.p_double[i]<=a->ptr.p_double[i-1];
-    }
-    if( isascending )
-    {
-        return;
-    }
-    if( isdescending )
-    {
-        for(i=0; i<=n-1; i++)
-        {
-            j = n-1-i;
-            if( j<=i )
-            {
-                break;
-            }
-            tmpr = a->ptr.p_double[i];
-            a->ptr.p_double[i] = a->ptr.p_double[j];
-            a->ptr.p_double[j] = tmpr;
-        }
-        return;
-    }
-    
-    /*
-     * General case
-     */
-    if( bufa->cnt<n )
-    {
-        ae_vector_set_length(bufa, n, _state);
-    }
-    tsort_tagsortfastrec(a, bufa, 0, n-1, _state);
-}
-
-
-/*************************************************************************
-Sorting function optimized for integer keys and real labels, can be used
-to sort middle of the array
-
-A is sorted, and same permutations are applied to B.
-
-NOTES:
-    this function assumes that A[] is finite; it doesn't checks that
-    condition. All other conditions (size of input arrays, etc.) are not
-    checked too.
-
-  -- ALGLIB --
-     Copyright 11.12.2008 by Bochkanov Sergey
-*************************************************************************/
-void tagsortmiddleir(/* Integer */ ae_vector* a,
-     /* Real    */ ae_vector* b,
-     ae_int_t offset,
-     ae_int_t n,
-     ae_state *_state)
-{
-    ae_int_t i;
-    ae_int_t k;
-    ae_int_t t;
-    ae_int_t tmp;
-    double tmpr;
-    ae_int_t p0;
-    ae_int_t p1;
-    ae_int_t at;
-    ae_int_t ak;
-    ae_int_t ak1;
-    double bt;
-
-
-    
-    /*
-     * Special cases
-     */
-    if( n<=1 )
-    {
-        return;
-    }
-    
-    /*
-     * General case, N>1: sort, update B
-     */
-    for(i=2; i<=n; i++)
-    {
-        t = i;
-        while(t!=1)
-        {
-            k = t/2;
-            p0 = offset+k-1;
-            p1 = offset+t-1;
-            ak = a->ptr.p_int[p0];
-            at = a->ptr.p_int[p1];
-            if( ak>=at )
-            {
-                break;
-            }
-            a->ptr.p_int[p0] = at;
-            a->ptr.p_int[p1] = ak;
-            tmpr = b->ptr.p_double[p0];
-            b->ptr.p_double[p0] = b->ptr.p_double[p1];
-            b->ptr.p_double[p1] = tmpr;
-            t = k;
-        }
-    }
-    for(i=n-1; i>=1; i--)
-    {
-        p0 = offset+0;
-        p1 = offset+i;
-        tmp = a->ptr.p_int[p1];
-        a->ptr.p_int[p1] = a->ptr.p_int[p0];
-        a->ptr.p_int[p0] = tmp;
-        at = tmp;
-        tmpr = b->ptr.p_double[p1];
-        b->ptr.p_double[p1] = b->ptr.p_double[p0];
-        b->ptr.p_double[p0] = tmpr;
-        bt = tmpr;
-        t = 0;
-        for(;;)
-        {
-            k = 2*t+1;
-            if( k+1>i )
-            {
-                break;
-            }
-            p0 = offset+t;
-            p1 = offset+k;
-            ak = a->ptr.p_int[p1];
-            if( k+1<i )
-            {
-                ak1 = a->ptr.p_int[p1+1];
-                if( ak1>ak )
-                {
-                    ak = ak1;
-                    p1 = p1+1;
-                    k = k+1;
-                }
-            }
-            if( at>=ak )
-            {
-                break;
-            }
-            a->ptr.p_int[p1] = at;
-            a->ptr.p_int[p0] = ak;
-            b->ptr.p_double[p0] = b->ptr.p_double[p1];
-            b->ptr.p_double[p1] = bt;
-            t = k;
-        }
-    }
-}
-
-
-/*************************************************************************
-Sorting function optimized for integer keys and real labels, can be used
-to sort middle of the array
-
-A is sorted, and same permutations are applied to B.
-
-NOTES:
-    this function assumes that A[] is finite; it doesn't checks that
-    condition. All other conditions (size of input arrays, etc.) are not
-    checked too.
-
-  -- ALGLIB --
-     Copyright 11.12.2008 by Bochkanov Sergey
-*************************************************************************/
-void tagsortmiddlei(/* Integer */ ae_vector* a,
-     ae_int_t offset,
-     ae_int_t n,
-     ae_state *_state)
-{
-    ae_int_t i;
-    ae_int_t k;
-    ae_int_t t;
-    ae_int_t tmp;
-    ae_int_t p0;
-    ae_int_t p1;
-    ae_int_t at;
-    ae_int_t ak;
-    ae_int_t ak1;
-
-
-    
-    /*
-     * Special cases
-     */
-    if( n<=1 )
-    {
-        return;
-    }
-    
-    /*
-     * General case, N>1: sort, update B
-     */
-    for(i=2; i<=n; i++)
-    {
-        t = i;
-        while(t!=1)
-        {
-            k = t/2;
-            p0 = offset+k-1;
-            p1 = offset+t-1;
-            ak = a->ptr.p_int[p0];
-            at = a->ptr.p_int[p1];
-            if( ak>=at )
-            {
-                break;
-            }
-            a->ptr.p_int[p0] = at;
-            a->ptr.p_int[p1] = ak;
-            t = k;
-        }
-    }
-    for(i=n-1; i>=1; i--)
-    {
-        p0 = offset+0;
-        p1 = offset+i;
-        tmp = a->ptr.p_int[p1];
-        a->ptr.p_int[p1] = a->ptr.p_int[p0];
-        a->ptr.p_int[p0] = tmp;
-        at = tmp;
-        t = 0;
-        for(;;)
-        {
-            k = 2*t+1;
-            if( k+1>i )
-            {
-                break;
-            }
-            p0 = offset+t;
-            p1 = offset+k;
-            ak = a->ptr.p_int[p1];
-            if( k+1<i )
-            {
-                ak1 = a->ptr.p_int[p1+1];
-                if( ak1>ak )
-                {
-                    ak = ak1;
-                    p1 = p1+1;
-                    k = k+1;
-                }
-            }
-            if( at>=ak )
-            {
-                break;
-            }
-            a->ptr.p_int[p1] = at;
-            a->ptr.p_int[p0] = ak;
-            t = k;
-        }
-    }
-}
-
-
-/*************************************************************************
-Sorting function optimized for integer values (only keys, no labels),  can
-be used to sort middle of the array
-
-  -- ALGLIB --
-     Copyright 11.12.2008 by Bochkanov Sergey
-*************************************************************************/
-void sortmiddlei(/* Integer */ ae_vector* a,
-     ae_int_t offset,
-     ae_int_t n,
-     ae_state *_state)
-{
-    ae_int_t i;
-    ae_int_t k;
-    ae_int_t t;
-    ae_int_t tmp;
-    ae_int_t p0;
-    ae_int_t p1;
-    ae_int_t at;
-    ae_int_t ak;
-    ae_int_t ak1;
-
-
-    
-    /*
-     * Special cases
-     */
-    if( n<=1 )
-    {
-        return;
-    }
-    
-    /*
-     * General case, N>1: sort, update B
-     */
-    for(i=2; i<=n; i++)
-    {
-        t = i;
-        while(t!=1)
-        {
-            k = t/2;
-            p0 = offset+k-1;
-            p1 = offset+t-1;
-            ak = a->ptr.p_int[p0];
-            at = a->ptr.p_int[p1];
-            if( ak>=at )
-            {
-                break;
-            }
-            a->ptr.p_int[p0] = at;
-            a->ptr.p_int[p1] = ak;
-            t = k;
-        }
-    }
-    for(i=n-1; i>=1; i--)
-    {
-        p0 = offset+0;
-        p1 = offset+i;
-        tmp = a->ptr.p_int[p1];
-        a->ptr.p_int[p1] = a->ptr.p_int[p0];
-        a->ptr.p_int[p0] = tmp;
-        at = tmp;
-        t = 0;
-        for(;;)
-        {
-            k = 2*t+1;
-            if( k+1>i )
-            {
-                break;
-            }
-            p0 = offset+t;
-            p1 = offset+k;
-            ak = a->ptr.p_int[p1];
-            if( k+1<i )
-            {
-                ak1 = a->ptr.p_int[p1+1];
-                if( ak1>ak )
-                {
-                    ak = ak1;
-                    p1 = p1+1;
-                    k = k+1;
-                }
-            }
-            if( at>=ak )
-            {
-                break;
-            }
-            a->ptr.p_int[p1] = at;
-            a->ptr.p_int[p0] = ak;
-            t = k;
-        }
-    }
-}
-
-
-/*************************************************************************
-Heap operations: adds element to the heap
-
-PARAMETERS:
-    A       -   heap itself, must be at least array[0..N]
-    B       -   array of integer tags, which are updated according to
-                permutations in the heap
-    N       -   size of the heap (without new element).
-                updated on output
-    VA      -   value of the element being added
-    VB      -   value of the tag
-
-  -- ALGLIB --
-     Copyright 28.02.2010 by Bochkanov Sergey
-*************************************************************************/
-void tagheappushi(/* Real    */ ae_vector* a,
-     /* Integer */ ae_vector* b,
-     ae_int_t* n,
-     double va,
-     ae_int_t vb,
-     ae_state *_state)
-{
-    ae_int_t j;
-    ae_int_t k;
-    double v;
-
-
-    if( *n<0 )
-    {
-        return;
-    }
-    
-    /*
-     * N=0 is a special case
-     */
-    if( *n==0 )
-    {
-        a->ptr.p_double[0] = va;
-        b->ptr.p_int[0] = vb;
-        *n = *n+1;
-        return;
-    }
-    
-    /*
-     * add current point to the heap
-     * (add to the bottom, then move up)
-     *
-     * we don't write point to the heap
-     * until its final position is determined
-     * (it allow us to reduce number of array access operations)
-     */
-    j = *n;
-    *n = *n+1;
-    while(j>0)
-    {
-        k = (j-1)/2;
-        v = a->ptr.p_double[k];
-        if( v<va )
-        {
-            
-            /*
-             * swap with higher element
-             */
-            a->ptr.p_double[j] = v;
-            b->ptr.p_int[j] = b->ptr.p_int[k];
-            j = k;
-        }
-        else
-        {
-            
-            /*
-             * element in its place. terminate.
-             */
-            break;
-        }
-    }
-    a->ptr.p_double[j] = va;
-    b->ptr.p_int[j] = vb;
-}
-
-
-/*************************************************************************
-Heap operations: replaces top element with new element
-(which is moved down)
-
-PARAMETERS:
-    A       -   heap itself, must be at least array[0..N-1]
-    B       -   array of integer tags, which are updated according to
-                permutations in the heap
-    N       -   size of the heap
-    VA      -   value of the element which replaces top element
-    VB      -   value of the tag
-
-  -- ALGLIB --
-     Copyright 28.02.2010 by Bochkanov Sergey
-*************************************************************************/
-void tagheapreplacetopi(/* Real    */ ae_vector* a,
-     /* Integer */ ae_vector* b,
-     ae_int_t n,
-     double va,
-     ae_int_t vb,
-     ae_state *_state)
-{
-    ae_int_t j;
-    ae_int_t k1;
-    ae_int_t k2;
-    double v;
-    double v1;
-    double v2;
-
-
-    if( n<1 )
-    {
-        return;
-    }
-    
-    /*
-     * N=1 is a special case
-     */
-    if( n==1 )
-    {
-        a->ptr.p_double[0] = va;
-        b->ptr.p_int[0] = vb;
-        return;
-    }
-    
-    /*
-     * move down through heap:
-     * * J  -   current element
-     * * K1 -   first child (always exists)
-     * * K2 -   second child (may not exists)
-     *
-     * we don't write point to the heap
-     * until its final position is determined
-     * (it allow us to reduce number of array access operations)
-     */
-    j = 0;
-    k1 = 1;
-    k2 = 2;
-    while(k1<n)
-    {
-        if( k2>=n )
-        {
-            
-            /*
-             * only one child.
-             *
-             * swap and terminate (because this child
-             * have no siblings due to heap structure)
-             */
-            v = a->ptr.p_double[k1];
-            if( v>va )
-            {
-                a->ptr.p_double[j] = v;
-                b->ptr.p_int[j] = b->ptr.p_int[k1];
-                j = k1;
-            }
-            break;
-        }
-        else
-        {
-            
-            /*
-             * two childs
-             */
-            v1 = a->ptr.p_double[k1];
-            v2 = a->ptr.p_double[k2];
-            if( v1>v2 )
-            {
-                if( va<v1 )
-                {
-                    a->ptr.p_double[j] = v1;
-                    b->ptr.p_int[j] = b->ptr.p_int[k1];
-                    j = k1;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            else
-            {
-                if( va<v2 )
-                {
-                    a->ptr.p_double[j] = v2;
-                    b->ptr.p_int[j] = b->ptr.p_int[k2];
-                    j = k2;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            k1 = 2*j+1;
-            k2 = 2*j+2;
-        }
-    }
-    a->ptr.p_double[j] = va;
-    b->ptr.p_int[j] = vb;
-}
-
-
-/*************************************************************************
-Heap operations: pops top element from the heap
-
-PARAMETERS:
-    A       -   heap itself, must be at least array[0..N-1]
-    B       -   array of integer tags, which are updated according to
-                permutations in the heap
-    N       -   size of the heap, N>=1
-
-On output top element is moved to A[N-1], B[N-1], heap is reordered, N is
-decreased by 1.
-
-  -- ALGLIB --
-     Copyright 28.02.2010 by Bochkanov Sergey
-*************************************************************************/
-void tagheappopi(/* Real    */ ae_vector* a,
-     /* Integer */ ae_vector* b,
-     ae_int_t* n,
-     ae_state *_state)
-{
-    double va;
-    ae_int_t vb;
-
-
-    if( *n<1 )
-    {
-        return;
-    }
-    
-    /*
-     * N=1 is a special case
-     */
-    if( *n==1 )
-    {
-        *n = 0;
-        return;
-    }
-    
-    /*
-     * swap top element and last element,
-     * then reorder heap
-     */
-    va = a->ptr.p_double[*n-1];
-    vb = b->ptr.p_int[*n-1];
-    a->ptr.p_double[*n-1] = a->ptr.p_double[0];
-    b->ptr.p_int[*n-1] = b->ptr.p_int[0];
-    *n = *n-1;
-    tagheapreplacetopi(a, b, *n, va, vb, _state);
-}
-
-
-/*************************************************************************
-Search first element less than T in sorted array.
-
-PARAMETERS:
-    A - sorted array by ascending from 0 to N-1
-    N - number of elements in array
-    T - the desired element
-
-RESULT:
-    The very first element's index, which isn't less than T.
-In the case when there aren't such elements, returns N.
-*************************************************************************/
-ae_int_t lowerbound(/* Real    */ ae_vector* a,
-     ae_int_t n,
-     double t,
-     ae_state *_state)
-{
-    ae_int_t l;
-    ae_int_t half;
-    ae_int_t first;
-    ae_int_t middle;
-    ae_int_t result;
-
-
-    l = n;
-    first = 0;
-    while(l>0)
-    {
-        half = l/2;
-        middle = first+half;
-        if( ae_fp_less(a->ptr.p_double[middle],t) )
-        {
-            first = middle+1;
-            l = l-half-1;
-        }
-        else
-        {
-            l = half;
-        }
-    }
-    result = first;
-    return result;
-}
-
-
-/*************************************************************************
-Search first element more than T in sorted array.
-
-PARAMETERS:
-    A - sorted array by ascending from 0 to N-1
-    N - number of elements in array
-    T - the desired element
-
-    RESULT:
-    The very first element's index, which more than T.
-In the case when there aren't such elements, returns N.
-*************************************************************************/
-ae_int_t upperbound(/* Real    */ ae_vector* a,
-     ae_int_t n,
-     double t,
-     ae_state *_state)
-{
-    ae_int_t l;
-    ae_int_t half;
-    ae_int_t first;
-    ae_int_t middle;
-    ae_int_t result;
-
-
-    l = n;
-    first = 0;
-    while(l>0)
-    {
-        half = l/2;
-        middle = first+half;
-        if( ae_fp_less(t,a->ptr.p_double[middle]) )
-        {
-            l = half;
-        }
-        else
-        {
-            first = middle+1;
-            l = l-half-1;
-        }
-    }
-    result = first;
-    return result;
-}
-
-
-/*************************************************************************
-Internal TagSortFastI: sorts A[I1...I2] (both bounds are included),
-applies same permutations to B.
-
-  -- ALGLIB --
-     Copyright 06.09.2010 by Bochkanov Sergey
-*************************************************************************/
-static void tsort_tagsortfastirec(/* Real    */ ae_vector* a,
-     /* Integer */ ae_vector* b,
-     /* Real    */ ae_vector* bufa,
-     /* Integer */ ae_vector* bufb,
-     ae_int_t i1,
-     ae_int_t i2,
-     ae_state *_state)
-{
-    ae_int_t i;
-    ae_int_t j;
-    ae_int_t k;
-    ae_int_t cntless;
-    ae_int_t cnteq;
-    ae_int_t cntgreater;
-    double tmpr;
-    ae_int_t tmpi;
-    double v0;
-    double v1;
-    double v2;
-    double vp;
-
-
-    
-    /*
-     * Fast exit
-     */
-    if( i2<=i1 )
-    {
-        return;
-    }
-    
-    /*
-     * Non-recursive sort for small arrays
-     */
-    if( i2-i1<=16 )
-    {
-        for(j=i1+1; j<=i2; j++)
-        {
-            
-            /*
-             * Search elements [I1..J-1] for place to insert Jth element.
-             *
-             * This code stops immediately if we can leave A[J] at J-th position
-             * (all elements have same value of A[J] larger than any of them)
-             */
-            tmpr = a->ptr.p_double[j];
-            tmpi = j;
-            for(k=j-1; k>=i1; k--)
-            {
-                if( a->ptr.p_double[k]<=tmpr )
-                {
-                    break;
-                }
-                tmpi = k;
-            }
-            k = tmpi;
-            
-            /*
-             * Insert Jth element into Kth position
-             */
-            if( k!=j )
-            {
-                tmpr = a->ptr.p_double[j];
-                tmpi = b->ptr.p_int[j];
-                for(i=j-1; i>=k; i--)
-                {
-                    a->ptr.p_double[i+1] = a->ptr.p_double[i];
-                    b->ptr.p_int[i+1] = b->ptr.p_int[i];
-                }
-                a->ptr.p_double[k] = tmpr;
-                b->ptr.p_int[k] = tmpi;
-            }
-        }
-        return;
-    }
-    
-    /*
-     * Quicksort: choose pivot
-     * Here we assume that I2-I1>=2
-     */
-    v0 = a->ptr.p_double[i1];
-    v1 = a->ptr.p_double[i1+(i2-i1)/2];
-    v2 = a->ptr.p_double[i2];
-    if( v0>v1 )
-    {
-        tmpr = v1;
-        v1 = v0;
-        v0 = tmpr;
-    }
-    if( v1>v2 )
-    {
-        tmpr = v2;
-        v2 = v1;
-        v1 = tmpr;
-    }
-    if( v0>v1 )
-    {
-        tmpr = v1;
-        v1 = v0;
-        v0 = tmpr;
-    }
-    vp = v1;
-    
-    /*
-     * now pass through A/B and:
-     * * move elements that are LESS than VP to the left of A/B
-     * * move elements that are EQUAL to VP to the right of BufA/BufB (in the reverse order)
-     * * move elements that are GREATER than VP to the left of BufA/BufB (in the normal order
-     * * move elements from the tail of BufA/BufB to the middle of A/B (restoring normal order)
-     * * move elements from the left of BufA/BufB to the end of A/B
-     */
-    cntless = 0;
-    cnteq = 0;
-    cntgreater = 0;
-    for(i=i1; i<=i2; i++)
-    {
-        v0 = a->ptr.p_double[i];
-        if( v0<vp )
-        {
-            
-            /*
-             * LESS
-             */
-            k = i1+cntless;
-            if( i!=k )
-            {
-                a->ptr.p_double[k] = v0;
-                b->ptr.p_int[k] = b->ptr.p_int[i];
-            }
-            cntless = cntless+1;
-            continue;
-        }
-        if( v0==vp )
-        {
-            
-            /*
-             * EQUAL
-             */
-            k = i2-cnteq;
-            bufa->ptr.p_double[k] = v0;
-            bufb->ptr.p_int[k] = b->ptr.p_int[i];
-            cnteq = cnteq+1;
-            continue;
-        }
-        
-        /*
-         * GREATER
-         */
-        k = i1+cntgreater;
-        bufa->ptr.p_double[k] = v0;
-        bufb->ptr.p_int[k] = b->ptr.p_int[i];
-        cntgreater = cntgreater+1;
-    }
-    for(i=0; i<=cnteq-1; i++)
-    {
-        j = i1+cntless+cnteq-1-i;
-        k = i2+i-(cnteq-1);
-        a->ptr.p_double[j] = bufa->ptr.p_double[k];
-        b->ptr.p_int[j] = bufb->ptr.p_int[k];
-    }
-    for(i=0; i<=cntgreater-1; i++)
-    {
-        j = i1+cntless+cnteq+i;
-        k = i1+i;
-        a->ptr.p_double[j] = bufa->ptr.p_double[k];
-        b->ptr.p_int[j] = bufb->ptr.p_int[k];
-    }
-    
-    /*
-     * Sort left and right parts of the array (ignoring middle part)
-     */
-    tsort_tagsortfastirec(a, b, bufa, bufb, i1, i1+cntless-1, _state);
-    tsort_tagsortfastirec(a, b, bufa, bufb, i1+cntless+cnteq, i2, _state);
-}
-
-
-/*************************************************************************
-Internal TagSortFastR: sorts A[I1...I2] (both bounds are included),
-applies same permutations to B.
-
-  -- ALGLIB --
-     Copyright 06.09.2010 by Bochkanov Sergey
-*************************************************************************/
-static void tsort_tagsortfastrrec(/* Real    */ ae_vector* a,
-     /* Real    */ ae_vector* b,
-     /* Real    */ ae_vector* bufa,
-     /* Real    */ ae_vector* bufb,
-     ae_int_t i1,
-     ae_int_t i2,
-     ae_state *_state)
-{
-    ae_int_t i;
-    ae_int_t j;
-    ae_int_t k;
-    double tmpr;
-    double tmpr2;
-    ae_int_t tmpi;
-    ae_int_t cntless;
-    ae_int_t cnteq;
-    ae_int_t cntgreater;
-    double v0;
-    double v1;
-    double v2;
-    double vp;
-
-
-    
-    /*
-     * Fast exit
-     */
-    if( i2<=i1 )
-    {
-        return;
-    }
-    
-    /*
-     * Non-recursive sort for small arrays
-     */
-    if( i2-i1<=16 )
-    {
-        for(j=i1+1; j<=i2; j++)
-        {
-            
-            /*
-             * Search elements [I1..J-1] for place to insert Jth element.
-             *
-             * This code stops immediatly if we can leave A[J] at J-th position
-             * (all elements have same value of A[J] larger than any of them)
-             */
-            tmpr = a->ptr.p_double[j];
-            tmpi = j;
-            for(k=j-1; k>=i1; k--)
-            {
-                if( a->ptr.p_double[k]<=tmpr )
-                {
-                    break;
-                }
-                tmpi = k;
-            }
-            k = tmpi;
-            
-            /*
-             * Insert Jth element into Kth position
-             */
-            if( k!=j )
-            {
-                tmpr = a->ptr.p_double[j];
-                tmpr2 = b->ptr.p_double[j];
-                for(i=j-1; i>=k; i--)
-                {
-                    a->ptr.p_double[i+1] = a->ptr.p_double[i];
-                    b->ptr.p_double[i+1] = b->ptr.p_double[i];
-                }
-                a->ptr.p_double[k] = tmpr;
-                b->ptr.p_double[k] = tmpr2;
-            }
-        }
-        return;
-    }
-    
-    /*
-     * Quicksort: choose pivot
-     * Here we assume that I2-I1>=16
-     */
-    v0 = a->ptr.p_double[i1];
-    v1 = a->ptr.p_double[i1+(i2-i1)/2];
-    v2 = a->ptr.p_double[i2];
-    if( v0>v1 )
-    {
-        tmpr = v1;
-        v1 = v0;
-        v0 = tmpr;
-    }
-    if( v1>v2 )
-    {
-        tmpr = v2;
-        v2 = v1;
-        v1 = tmpr;
-    }
-    if( v0>v1 )
-    {
-        tmpr = v1;
-        v1 = v0;
-        v0 = tmpr;
-    }
-    vp = v1;
-    
-    /*
-     * now pass through A/B and:
-     * * move elements that are LESS than VP to the left of A/B
-     * * move elements that are EQUAL to VP to the right of BufA/BufB (in the reverse order)
-     * * move elements that are GREATER than VP to the left of BufA/BufB (in the normal order
-     * * move elements from the tail of BufA/BufB to the middle of A/B (restoring normal order)
-     * * move elements from the left of BufA/BufB to the end of A/B
-     */
-    cntless = 0;
-    cnteq = 0;
-    cntgreater = 0;
-    for(i=i1; i<=i2; i++)
-    {
-        v0 = a->ptr.p_double[i];
-        if( v0<vp )
-        {
-            
-            /*
-             * LESS
-             */
-            k = i1+cntless;
-            if( i!=k )
-            {
-                a->ptr.p_double[k] = v0;
-                b->ptr.p_double[k] = b->ptr.p_double[i];
-            }
-            cntless = cntless+1;
-            continue;
-        }
-        if( v0==vp )
-        {
-            
-            /*
-             * EQUAL
-             */
-            k = i2-cnteq;
-            bufa->ptr.p_double[k] = v0;
-            bufb->ptr.p_double[k] = b->ptr.p_double[i];
-            cnteq = cnteq+1;
-            continue;
-        }
-        
-        /*
-         * GREATER
-         */
-        k = i1+cntgreater;
-        bufa->ptr.p_double[k] = v0;
-        bufb->ptr.p_double[k] = b->ptr.p_double[i];
-        cntgreater = cntgreater+1;
-    }
-    for(i=0; i<=cnteq-1; i++)
-    {
-        j = i1+cntless+cnteq-1-i;
-        k = i2+i-(cnteq-1);
-        a->ptr.p_double[j] = bufa->ptr.p_double[k];
-        b->ptr.p_double[j] = bufb->ptr.p_double[k];
-    }
-    for(i=0; i<=cntgreater-1; i++)
-    {
-        j = i1+cntless+cnteq+i;
-        k = i1+i;
-        a->ptr.p_double[j] = bufa->ptr.p_double[k];
-        b->ptr.p_double[j] = bufb->ptr.p_double[k];
-    }
-    
-    /*
-     * Sort left and right parts of the array (ignoring middle part)
-     */
-    tsort_tagsortfastrrec(a, b, bufa, bufb, i1, i1+cntless-1, _state);
-    tsort_tagsortfastrrec(a, b, bufa, bufb, i1+cntless+cnteq, i2, _state);
-}
-
-
-/*************************************************************************
-Internal TagSortFastI: sorts A[I1...I2] (both bounds are included),
-applies same permutations to B.
-
-  -- ALGLIB --
-     Copyright 06.09.2010 by Bochkanov Sergey
-*************************************************************************/
-static void tsort_tagsortfastrec(/* Real    */ ae_vector* a,
-     /* Real    */ ae_vector* bufa,
-     ae_int_t i1,
-     ae_int_t i2,
-     ae_state *_state)
-{
-    ae_int_t cntless;
-    ae_int_t cnteq;
-    ae_int_t cntgreater;
-    ae_int_t i;
-    ae_int_t j;
-    ae_int_t k;
-    double tmpr;
-    ae_int_t tmpi;
-    double v0;
-    double v1;
-    double v2;
-    double vp;
-
-
-    
-    /*
-     * Fast exit
-     */
-    if( i2<=i1 )
-    {
-        return;
-    }
-    
-    /*
-     * Non-recursive sort for small arrays
-     */
-    if( i2-i1<=16 )
-    {
-        for(j=i1+1; j<=i2; j++)
-        {
-            
-            /*
-             * Search elements [I1..J-1] for place to insert Jth element.
-             *
-             * This code stops immediatly if we can leave A[J] at J-th position
-             * (all elements have same value of A[J] larger than any of them)
-             */
-            tmpr = a->ptr.p_double[j];
-            tmpi = j;
-            for(k=j-1; k>=i1; k--)
-            {
-                if( a->ptr.p_double[k]<=tmpr )
-                {
-                    break;
-                }
-                tmpi = k;
-            }
-            k = tmpi;
-            
-            /*
-             * Insert Jth element into Kth position
-             */
-            if( k!=j )
-            {
-                tmpr = a->ptr.p_double[j];
-                for(i=j-1; i>=k; i--)
-                {
-                    a->ptr.p_double[i+1] = a->ptr.p_double[i];
-                }
-                a->ptr.p_double[k] = tmpr;
-            }
-        }
-        return;
-    }
-    
-    /*
-     * Quicksort: choose pivot
-     * Here we assume that I2-I1>=16
-     */
-    v0 = a->ptr.p_double[i1];
-    v1 = a->ptr.p_double[i1+(i2-i1)/2];
-    v2 = a->ptr.p_double[i2];
-    if( v0>v1 )
-    {
-        tmpr = v1;
-        v1 = v0;
-        v0 = tmpr;
-    }
-    if( v1>v2 )
-    {
-        tmpr = v2;
-        v2 = v1;
-        v1 = tmpr;
-    }
-    if( v0>v1 )
-    {
-        tmpr = v1;
-        v1 = v0;
-        v0 = tmpr;
-    }
-    vp = v1;
-    
-    /*
-     * now pass through A/B and:
-     * * move elements that are LESS than VP to the left of A/B
-     * * move elements that are EQUAL to VP to the right of BufA/BufB (in the reverse order)
-     * * move elements that are GREATER than VP to the left of BufA/BufB (in the normal order
-     * * move elements from the tail of BufA/BufB to the middle of A/B (restoring normal order)
-     * * move elements from the left of BufA/BufB to the end of A/B
-     */
-    cntless = 0;
-    cnteq = 0;
-    cntgreater = 0;
-    for(i=i1; i<=i2; i++)
-    {
-        v0 = a->ptr.p_double[i];
-        if( v0<vp )
-        {
-            
-            /*
-             * LESS
-             */
-            k = i1+cntless;
-            if( i!=k )
-            {
-                a->ptr.p_double[k] = v0;
-            }
-            cntless = cntless+1;
-            continue;
-        }
-        if( v0==vp )
-        {
-            
-            /*
-             * EQUAL
-             */
-            k = i2-cnteq;
-            bufa->ptr.p_double[k] = v0;
-            cnteq = cnteq+1;
-            continue;
-        }
-        
-        /*
-         * GREATER
-         */
-        k = i1+cntgreater;
-        bufa->ptr.p_double[k] = v0;
-        cntgreater = cntgreater+1;
-    }
-    for(i=0; i<=cnteq-1; i++)
-    {
-        j = i1+cntless+cnteq-1-i;
-        k = i2+i-(cnteq-1);
-        a->ptr.p_double[j] = bufa->ptr.p_double[k];
-    }
-    for(i=0; i<=cntgreater-1; i++)
-    {
-        j = i1+cntless+cnteq+i;
-        k = i1+i;
-        a->ptr.p_double[j] = bufa->ptr.p_double[k];
-    }
-    
-    /*
-     * Sort left and right parts of the array (ignoring middle part)
-     */
-    tsort_tagsortfastrec(a, bufa, i1, i1+cntless-1, _state);
-    tsort_tagsortfastrec(a, bufa, i1+cntless+cnteq, i2, _state);
-}
-
-
-#endif
 #if defined(AE_COMPILE_ABLASF) || !defined(AE_PARTIAL_BUILD)
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Computes dot product (X,Y) for elements [0,N) of X[] and Y[]
 
@@ -5727,8 +4149,10 @@ double rdotv(ae_int_t n,
     }
     return result;
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Computes dot product (X,A[i]) for elements [0,N) of vector X[] and row A[i,*]
 
@@ -5761,8 +4185,10 @@ double rdotvr(ae_int_t n,
     }
     return result;
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Computes dot product (X,A[i]) for rows A[ia,*] and B[ib,*]
 
@@ -5796,8 +4222,10 @@ double rdotrr(ae_int_t n,
     }
     return result;
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Computes dot product (X,X) for elements [0,N) of X[]
 
@@ -5826,8 +4254,10 @@ double rdotv2(ae_int_t n, /* Real    */ ae_vector* x, ae_state *_state)
     }
     return result;
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Performs inplace addition of Y[] to X[]
 
@@ -5857,8 +4287,146 @@ void raddv(ae_int_t n,
         x->ptr.p_double[i] = x->ptr.p_double[i]+alpha*y->ptr.p_double[i];
     }
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Performs inplace addition of Y[]*Z[] to X[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    Y       -   array[N], vector to process
+    Z       -   array[N], vector to process
+    X       -   array[N], vector to process
+
+RESULT:
+    X := X + Y*Z
+
+  -- ALGLIB --
+     Copyright 29.10.2021 by Bochkanov Sergey
+*************************************************************************/
+void rmuladdv(ae_int_t n,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* z,
+     /* Real    */ ae_vector* x,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.p_double[i] = x->ptr.p_double[i]+y->ptr.p_double[i]*z->ptr.p_double[i];
+    }
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Performs inplace subtraction of Y[]*Z[] from X[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    Y       -   array[N], vector to process
+    Z       -   array[N], vector to process
+    X       -   array[N], vector to process
+
+RESULT:
+    X := X - Y*Z
+
+  -- ALGLIB --
+     Copyright 29.10.2021 by Bochkanov Sergey
+*************************************************************************/
+void rnegmuladdv(ae_int_t n,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* z,
+     /* Real    */ ae_vector* x,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.p_double[i] = x->ptr.p_double[i]-y->ptr.p_double[i]*z->ptr.p_double[i];
+    }
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Performs addition of Y[]*Z[] to X[], with result being stored to R[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    Y       -   array[N], vector to process
+    Z       -   array[N], vector to process
+    X       -   array[N], vector to process
+    R       -   array[N], vector to process
+
+RESULT:
+    R := X + Y*Z
+
+  -- ALGLIB --
+     Copyright 29.10.2021 by Bochkanov Sergey
+*************************************************************************/
+void rcopymuladdv(ae_int_t n,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* z,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* r,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        r->ptr.p_double[i] = x->ptr.p_double[i]+y->ptr.p_double[i]*z->ptr.p_double[i];
+    }
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Performs subtraction of Y[]*Z[] from X[], with result being stored to R[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    Y       -   array[N], vector to process
+    Z       -   array[N], vector to process
+    X       -   array[N], vector to process
+    R       -   array[N], vector to process
+
+RESULT:
+    R := X - Y*Z
+
+  -- ALGLIB --
+     Copyright 29.10.2021 by Bochkanov Sergey
+*************************************************************************/
+void rcopynegmuladdv(ae_int_t n,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* z,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* r,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        r->ptr.p_double[i] = x->ptr.p_double[i]-y->ptr.p_double[i]*z->ptr.p_double[i];
+    }
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Performs inplace addition of Y[] to X[]
 
@@ -5892,6 +4460,7 @@ void raddvx(ae_int_t n,
         x->ptr.p_double[offsx+i] = x->ptr.p_double[offsx+i]+alpha*y->ptr.p_double[offsy+i];
     }
 }
+#endif
 
 
 /*************************************************************************
@@ -5926,6 +4495,7 @@ void raddvc(ae_int_t n,
 }
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Performs inplace addition of vector Y[] to row X[]
 
@@ -5956,8 +4526,41 @@ void raddvr(ae_int_t n,
         x->ptr.pp_double[rowidx][i] = x->ptr.pp_double[rowidx][i]+alpha*y->ptr.p_double[i];
     }
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Performs componentwise multiplication of vector X[] by vector Y[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    Y       -   vector to multiply by
+    X       -   target vector
+
+RESULT:
+    X := componentwise(X*Y)
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rmergemulv(ae_int_t n,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* x,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.p_double[i] = x->ptr.p_double[i]*y->ptr.p_double[i];
+    }
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Performs componentwise multiplication of row X[] by vector Y[]
 
@@ -5986,8 +4589,200 @@ void rmergemulvr(ae_int_t n,
         x->ptr.pp_double[rowidx][i] = x->ptr.pp_double[rowidx][i]*y->ptr.p_double[i];
     }
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Performs componentwise multiplication of row X[] by vector Y[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    Y       -   vector to multiply by
+    X       -   target row RowIdx
+
+RESULT:
+    X := componentwise(X*Y)
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rmergemulrv(ae_int_t n,
+     /* Real    */ ae_matrix* y,
+     ae_int_t rowidx,
+     /* Real    */ ae_vector* x,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.p_double[i] = x->ptr.p_double[i]*y->ptr.pp_double[rowidx][i];
+    }
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Performs componentwise division of vector X[] by vector Y[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    Y       -   vector to divide by
+    X       -   target vector
+
+RESULT:
+    X := componentwise(X/Y)
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rmergedivv(ae_int_t n,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* x,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.p_double[i] = x->ptr.p_double[i]/y->ptr.p_double[i];
+    }
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Performs componentwise division of row X[] by vector Y[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    Y       -   vector to divide by
+    X       -   target row RowIdx
+
+RESULT:
+    X := componentwise(X/Y)
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rmergedivvr(ae_int_t n,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_matrix* x,
+     ae_int_t rowidx,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.pp_double[rowidx][i] = x->ptr.pp_double[rowidx][i]/y->ptr.p_double[i];
+    }
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Performs componentwise division of row X[] by vector Y[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    Y       -   vector to divide by
+    X       -   target row RowIdx
+
+RESULT:
+    X := componentwise(X/Y)
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rmergedivrv(ae_int_t n,
+     /* Real    */ ae_matrix* y,
+     ae_int_t rowidx,
+     /* Real    */ ae_vector* x,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.p_double[i] = x->ptr.p_double[i]/y->ptr.pp_double[rowidx][i];
+    }
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Performs componentwise max of vector X[] and vector Y[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    Y       -   vector to multiply by
+    X       -   target vector
+
+RESULT:
+    X := componentwise_max(X,Y)
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rmergemaxv(ae_int_t n,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* x,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.p_double[i] = ae_maxreal(x->ptr.p_double[i], y->ptr.p_double[i], _state);
+    }
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Performs componentwise max of row X[] and vector Y[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    Y       -   vector to multiply by
+    X       -   target row RowIdx
+
+RESULT:
+    X := componentwise_max(X,Y)
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rmergemaxvr(ae_int_t n,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_matrix* x,
+     ae_int_t rowidx,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.pp_double[rowidx][i] = ae_maxreal(x->ptr.pp_double[rowidx][i], y->ptr.p_double[i], _state);
+    }
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Performs componentwise max of row X[I] and vector Y[] 
 
@@ -5997,7 +4792,7 @@ INPUT PARAMETERS:
     X       -   target row RowIdx
 
 RESULT:
-    X := componentwise(X*Y)
+    Y := componentwise_max(Y,X)
 
   -- ALGLIB --
      Copyright 20.01.2020 by Bochkanov Sergey
@@ -6016,8 +4811,105 @@ void rmergemaxrv(ae_int_t n,
         y->ptr.p_double[i] = ae_maxreal(y->ptr.p_double[i], x->ptr.pp_double[rowidx][i], _state);
     }
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Performs componentwise max of vector X[] and vector Y[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    Y       -   vector to multiply by
+    X       -   target vector
+
+RESULT:
+    X := componentwise_max(X,Y)
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rmergeminv(ae_int_t n,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* x,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.p_double[i] = ae_minreal(x->ptr.p_double[i], y->ptr.p_double[i], _state);
+    }
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Performs componentwise max of row X[] and vector Y[]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    Y       -   vector to multiply by
+    X       -   target row RowIdx
+
+RESULT:
+    X := componentwise_max(X,Y)
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rmergeminvr(ae_int_t n,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_matrix* x,
+     ae_int_t rowidx,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.pp_double[rowidx][i] = ae_minreal(x->ptr.pp_double[rowidx][i], y->ptr.p_double[i], _state);
+    }
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Performs componentwise max of row X[I] and vector Y[] 
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   matrix, I-th row is source
+    X       -   target row RowIdx
+
+RESULT:
+    X := componentwise_max(X,Y)
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rmergeminrv(ae_int_t n,
+     /* Real    */ ae_matrix* x,
+     ae_int_t rowidx,
+     /* Real    */ ae_vector* y,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        y->ptr.p_double[i] = ae_minreal(y->ptr.p_double[i], x->ptr.pp_double[rowidx][i], _state);
+    }
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Performs inplace addition of Y[RIdx,...] to X[]
 
@@ -6049,8 +4941,47 @@ void raddrv(ae_int_t n,
         x->ptr.p_double[i] = x->ptr.p_double[i]+alpha*y->ptr.pp_double[ridx][i];
     }
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Performs inplace addition of Y[RIdx,...] to X[RIdxDst]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    Alpha   -   multiplier
+    Y       -   array[?,N], matrix whose RIdxSrc-th row is added
+    RIdxSrc -   source row index
+    X       -   array[?,N], matrix whose RIdxDst-th row is target
+    RIdxDst -   destination row index
+
+RESULT:
+    X := X + alpha*Y
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void raddrr(ae_int_t n,
+     double alpha,
+     /* Real    */ ae_matrix* y,
+     ae_int_t ridxsrc,
+     /* Real    */ ae_matrix* x,
+     ae_int_t ridxdst,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.pp_double[ridxdst][i] = x->ptr.pp_double[ridxdst][i]+alpha*y->ptr.pp_double[ridxsrc][i];
+    }
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Performs inplace multiplication of X[] by V
 
@@ -6078,8 +5009,10 @@ void rmulv(ae_int_t n,
         x->ptr.p_double[i] = x->ptr.p_double[i]*v;
     }
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Performs inplace multiplication of X[] by V
 
@@ -6108,8 +5041,67 @@ void rmulr(ae_int_t n,
         x->ptr.pp_double[rowidx][i] = x->ptr.pp_double[rowidx][i]*v;
     }
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Performs inplace computation of Sqrt(X)
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   array[N], vector to process
+
+OUTPUT PARAMETERS:
+    X       -   elements 0...N-1 replaced by Sqrt(X)
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rsqrtv(ae_int_t n, /* Real    */ ae_vector* x, ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.p_double[i] = ae_sqrt(x->ptr.p_double[i], _state);
+    }
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Performs inplace computation of Sqrt(X[RowIdx,*])
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   array[?,N], matrix to process
+
+OUTPUT PARAMETERS:
+    X       -   elements 0...N-1 replaced by Sqrt(X)
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rsqrtr(ae_int_t n,
+     /* Real    */ ae_matrix* x,
+     ae_int_t rowidx,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.pp_double[rowidx][i] = ae_sqrt(x->ptr.pp_double[rowidx][i], _state);
+    }
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Performs inplace multiplication of X[OffsX:OffsX+N-1] by V
 
@@ -6138,8 +5130,51 @@ void rmulvx(ae_int_t n,
         x->ptr.p_double[offsx+i] = x->ptr.p_double[offsx+i]*v;
     }
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Returns maximum X
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   array[N], vector to process
+
+OUTPUT PARAMETERS:
+    max(X[i])
+    zero for N=0
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+double rmaxv(ae_int_t n, /* Real    */ ae_vector* x, ae_state *_state)
+{
+    ae_int_t i;
+    double v;
+    double result;
+
+
+    if( n<=0 )
+    {
+        result = (double)(0);
+        return result;
+    }
+    result = x->ptr.p_double[0];
+    for(i=1; i<=n-1; i++)
+    {
+        v = x->ptr.p_double[i];
+        if( v>result )
+        {
+            result = v;
+        }
+    }
+    return result;
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Returns maximum |X|
 
@@ -6149,6 +5184,7 @@ INPUT PARAMETERS:
 
 OUTPUT PARAMETERS:
     max(|X[i]|)
+    zero for N=0
 
   -- ALGLIB --
      Copyright 20.01.2020 by Bochkanov Sergey
@@ -6164,15 +5200,100 @@ double rmaxabsv(ae_int_t n, /* Real    */ ae_vector* x, ae_state *_state)
     for(i=0; i<=n-1; i++)
     {
         v = ae_fabs(x->ptr.p_double[i], _state);
-        if( ae_fp_greater(v,result) )
+        if( v>result )
         {
             result = v;
         }
     }
     return result;
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Returns maximum X
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   matrix to process, RowIdx-th row is processed
+
+OUTPUT PARAMETERS:
+    max(X[RowIdx,i])
+    zero for N=0
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+double rmaxr(ae_int_t n,
+     /* Real    */ ae_matrix* x,
+     ae_int_t rowidx,
+     ae_state *_state)
+{
+    ae_int_t i;
+    double v;
+    double result;
+
+
+    if( n<=0 )
+    {
+        result = (double)(0);
+        return result;
+    }
+    result = x->ptr.pp_double[rowidx][0];
+    for(i=1; i<=n-1; i++)
+    {
+        v = x->ptr.pp_double[rowidx][i];
+        if( v>result )
+        {
+            result = v;
+        }
+    }
+    return result;
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Returns maximum |X|
+
+INPUT PARAMETERS:
+    N       -   vector length
+    X       -   matrix to process, RowIdx-th row is processed
+
+OUTPUT PARAMETERS:
+    max(|X[RowIdx,i]|)
+    zero for N=0
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+double rmaxabsr(ae_int_t n,
+     /* Real    */ ae_matrix* x,
+     ae_int_t rowidx,
+     ae_state *_state)
+{
+    ae_int_t i;
+    double v;
+    double result;
+
+
+    result = (double)(0);
+    for(i=0; i<=n-1; i++)
+    {
+        v = ae_fabs(x->ptr.pp_double[rowidx][i], _state);
+        if( v>result )
+        {
+            result = v;
+        }
+    }
+    return result;
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Sets vector X[] to V
 
@@ -6200,8 +5321,10 @@ void rsetv(ae_int_t n,
         x->ptr.p_double[j] = v;
     }
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Sets X[OffsX:OffsX+N-1] to V
 
@@ -6230,8 +5353,10 @@ void rsetvx(ae_int_t n,
         x->ptr.p_double[offsx+j] = v;
     }
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Sets vector X[] to V
 
@@ -6259,8 +5384,10 @@ void isetv(ae_int_t n,
         x->ptr.p_int[j] = v;
     }
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Sets vector X[] to V
 
@@ -6288,8 +5415,10 @@ void bsetv(ae_int_t n,
         x->ptr.p_bool[j] = v;
     }
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Sets matrix A[] to V
 
@@ -6322,6 +5451,7 @@ void rsetm(ae_int_t m,
         }
     }
 }
+#endif
 
 
 /*************************************************************************
@@ -6401,6 +5531,31 @@ OUTPUT PARAMETERS:
      Copyright 20.01.2020 by Bochkanov Sergey
 *************************************************************************/
 void rallocv(ae_int_t n, /* Real    */ ae_vector* x, ae_state *_state)
+{
+
+
+    if( x->cnt<n )
+    {
+        ae_vector_set_length(x, n, _state);
+    }
+}
+
+
+/*************************************************************************
+Reallocates X[] if its length is less than required value. Does not change
+its length and contents if it is large enough.
+
+INPUT PARAMETERS:
+    N       -   desired vector length
+    X       -   possibly preallocated array
+
+OUTPUT PARAMETERS:
+    X       -   length(X)>=N
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void iallocv(ae_int_t n, /* Integer */ ae_vector* x, ae_state *_state)
 {
 
 
@@ -6525,6 +5680,7 @@ void bsetallocv(ae_int_t n,
 }
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Sets row I of A[,] to V
 
@@ -6554,6 +5710,7 @@ void rsetr(ae_int_t n,
         a->ptr.pp_double[i][j] = v;
     }
 }
+#endif
 
 
 /*************************************************************************
@@ -6587,6 +5744,7 @@ void rsetc(ae_int_t n,
 }
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Copies vector X[] to Y[]
 
@@ -6617,8 +5775,10 @@ void rcopyv(ae_int_t n,
         y->ptr.p_double[j] = x->ptr.p_double[j];
     }
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Copies vector X[] to Y[]
 
@@ -6649,8 +5809,10 @@ void bcopyv(ae_int_t n,
         y->ptr.p_bool[j] = x->ptr.p_bool[j];
     }
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Copies vector X[] to Y[], extended version
 
@@ -6684,6 +5846,7 @@ void rcopyvx(ae_int_t n,
         y->ptr.p_double[offsy+j] = x->ptr.p_double[offsx+j];
     }
 }
+#endif
 
 
 /*************************************************************************
@@ -6705,16 +5868,52 @@ void rcopyallocv(ae_int_t n,
      /* Real    */ ae_vector* y,
      ae_state *_state)
 {
-    ae_int_t j;
 
 
     if( y->cnt<n )
     {
         ae_vector_set_length(y, n, _state);
     }
-    for(j=0; j<=n-1; j++)
+    rcopyv(n, x, y, _state);
+}
+
+
+/*************************************************************************
+Copies matrix X[] to Y[], resizing Y[] if needed. On resize, dimensions of
+Y[] are increased - but not decreased.
+
+INPUT PARAMETERS:
+    M       -   rows count
+    N       -   cols count
+    X       -   array[M,N], source
+    Y       -   possibly preallocated array[M,N] (resized if needed)
+
+OUTPUT PARAMETERS:
+    Y       -   leading [M,N] elements are replaced by X
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rcopym(ae_int_t m,
+     ae_int_t n,
+     /* Real    */ ae_matrix* x,
+     /* Real    */ ae_matrix* y,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+
+
+    if( m==0||n==0 )
     {
-        y->ptr.p_double[j] = x->ptr.p_double[j];
+        return;
+    }
+    for(i=0; i<=m-1; i++)
+    {
+        for(j=0; j<=n-1; j++)
+        {
+            y->ptr.pp_double[i][j] = x->ptr.pp_double[i][j];
+        }
     }
 }
 
@@ -6741,8 +5940,6 @@ void rcopyallocm(ae_int_t m,
      /* Real    */ ae_matrix* y,
      ae_state *_state)
 {
-    ae_int_t i;
-    ae_int_t j;
 
 
     if( m==0||n==0 )
@@ -6753,13 +5950,7 @@ void rcopyallocm(ae_int_t m,
     {
         ae_matrix_set_length(y, ae_maxint(m, y->rows, _state), ae_maxint(n, y->cols, _state), _state);
     }
-    for(i=0; i<=m-1; i++)
-    {
-        for(j=0; j<=n-1; j++)
-        {
-            y->ptr.pp_double[i][j] = x->ptr.pp_double[i][j];
-        }
-    }
+    rcopym(m, n, x, y, _state);
 }
 
 
@@ -6782,17 +5973,13 @@ void icopyallocv(ae_int_t n,
      /* Integer */ ae_vector* y,
      ae_state *_state)
 {
-    ae_int_t j;
 
 
     if( y->cnt<n )
     {
         ae_vector_set_length(y, n, _state);
     }
-    for(j=0; j<=n-1; j++)
-    {
-        y->ptr.p_int[j] = x->ptr.p_int[j];
-    }
+    icopyv(n, x, y, _state);
 }
 
 
@@ -6815,20 +6002,17 @@ void bcopyallocv(ae_int_t n,
      /* Boolean */ ae_vector* y,
      ae_state *_state)
 {
-    ae_int_t j;
 
 
     if( y->cnt<n )
     {
         ae_vector_set_length(y, n, _state);
     }
-    for(j=0; j<=n-1; j++)
-    {
-        y->ptr.p_bool[j] = x->ptr.p_bool[j];
-    }
+    bcopyv(n, x, y, _state);
 }
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Copies vector X[] to Y[]
 
@@ -6856,8 +6040,10 @@ void icopyv(ae_int_t n,
         y->ptr.p_int[j] = x->ptr.p_int[j];
     }
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Copies vector X[] to Y[], extended version
 
@@ -6891,6 +6077,7 @@ void icopyvx(ae_int_t n,
         y->ptr.p_int[offsy+j] = x->ptr.p_int[offsx+j];
     }
 }
+#endif
 
 
 /*************************************************************************
@@ -6928,6 +6115,41 @@ void igrowv(ae_int_t newn, /* Integer */ ae_vector* x, ae_state *_state)
 
 
 /*************************************************************************
+Grows X, i.e. changes its size in such a way that:
+a) contents is preserved
+b) new size is at least N
+c) actual size can be larger than N, so subsequent grow() calls can return
+   without reallocation
+
+  -- ALGLIB --
+     Copyright 20.03.2009 by Bochkanov Sergey
+*************************************************************************/
+void rgrowv(ae_int_t newn, /* Real    */ ae_vector* x, ae_state *_state)
+{
+    ae_frame _frame_block;
+    ae_vector oldx;
+    ae_int_t oldn;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&oldx, 0, sizeof(oldx));
+    ae_vector_init(&oldx, 0, DT_REAL, _state, ae_true);
+
+    if( x->cnt>=newn )
+    {
+        ae_frame_leave(_state);
+        return;
+    }
+    oldn = x->cnt;
+    newn = ae_maxint(newn, ae_round(1.8*oldn+1, _state), _state);
+    ae_swap_vectors(x, &oldx);
+    ae_vector_set_length(x, newn, _state);
+    rcopyv(oldn, &oldx, x, _state);
+    ae_frame_leave(_state);
+}
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
 Performs copying with multiplication of V*X[] to Y[]
 
 INPUT PARAMETERS:
@@ -6956,8 +6178,10 @@ void rcopymulv(ae_int_t n,
         y->ptr.p_double[i] = v*x->ptr.p_double[i];
     }
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Performs copying with multiplication of V*X[] to Y[I,*]
 
@@ -6989,8 +6213,43 @@ void rcopymulvr(ae_int_t n,
         y->ptr.pp_double[ridx][i] = v*x->ptr.p_double[i];
     }
 }
+#endif
 
 
+/*************************************************************************
+Performs copying with multiplication of V*X[] to Y[*,J]
+
+INPUT PARAMETERS:
+    N       -   vector length
+    V       -   multiplier
+    X       -   array[N], source
+    Y       -   preallocated array[N,?]
+    CIdx    -   destination rocol index
+
+OUTPUT PARAMETERS:
+    Y       -   Y[RIdx,...] = V*X
+
+  -- ALGLIB --
+     Copyright 20.01.2020 by Bochkanov Sergey
+*************************************************************************/
+void rcopymulvc(ae_int_t n,
+     double v,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_matrix* y,
+     ae_int_t cidx,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    for(i=0; i<=n-1; i++)
+    {
+        y->ptr.pp_double[i][cidx] = v*x->ptr.p_double[i];
+    }
+}
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Copies vector X[] to row I of A[,]
 
@@ -7020,8 +6279,10 @@ void rcopyvr(ae_int_t n,
         a->ptr.pp_double[i][j] = x->ptr.p_double[j];
     }
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Copies row I of A[,] to vector X[]
 
@@ -7051,8 +6312,10 @@ void rcopyrv(ae_int_t n,
         x->ptr.p_double[j] = a->ptr.pp_double[i][j];
     }
 }
+#endif
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
 /*************************************************************************
 Copies row I of A[,] to row K of B[,].
 
@@ -7086,6 +6349,7 @@ void rcopyrr(ae_int_t n,
         b->ptr.pp_double[k][j] = a->ptr.pp_double[i][j];
     }
 }
+#endif
 
 
 /*************************************************************************
@@ -7147,6 +6411,437 @@ void rcopycv(ae_int_t n,
         x->ptr.p_double[i] = a->ptr.pp_double[i][j];
     }
 }
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Matrix-vector product: y := alpha*op(A)*x + beta*y
+
+NOTE: this  function  expects  Y  to  be  large enough to store result. No
+      automatic preallocation happens for  smaller  arrays.  No  integrity
+      checks is performed for sizes of A, x, y.
+
+INPUT PARAMETERS:
+    M   -   number of rows of op(A)
+    N   -   number of columns of op(A)
+    Alpha-  coefficient
+    A   -   source matrix
+    OpA -   operation type:
+            * OpA=0     =>  op(A) = A
+            * OpA=1     =>  op(A) = A^T
+    X   -   input vector, has at least N elements
+    Beta-   coefficient
+    Y   -   preallocated output array, has at least M elements
+
+OUTPUT PARAMETERS:
+    Y   -   vector which stores result
+
+HANDLING OF SPECIAL CASES:
+    * if M=0, then subroutine does nothing. It does not even touch arrays.
+    * if N=0 or Alpha=0.0, then:
+      * if Beta=0, then Y is filled by zeros. A and X are  not  referenced
+        at all. Initial values of Y are ignored (we do not  multiply  Y by
+        zero, we just rewrite it by zeros)
+      * if Beta<>0, then Y is replaced by Beta*Y
+    * if M>0, N>0, Alpha<>0, but  Beta=0,  then  Y  is  replaced  by  A*x;
+       initial state of Y is ignored (rewritten by  A*x,  without  initial
+       multiplication by zeros).
+
+
+  -- ALGLIB routine --
+
+     01.09.2021
+     Bochkanov Sergey
+*************************************************************************/
+void rgemv(ae_int_t m,
+     ae_int_t n,
+     double alpha,
+     /* Real    */ ae_matrix* a,
+     ae_int_t opa,
+     /* Real    */ ae_vector* x,
+     double beta,
+     /* Real    */ ae_vector* y,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+    double v;
+
+
+    
+    /*
+     * Properly premultiply Y by Beta.
+     *
+     * Quick exit for M=0, N=0 or Alpha=0.
+     * After this block we have M>0, N>0, Alpha<>0.
+     */
+    if( m<=0 )
+    {
+        return;
+    }
+    if( ae_fp_neq(beta,(double)(0)) )
+    {
+        rmulv(m, beta, y, _state);
+    }
+    else
+    {
+        rsetv(m, 0.0, y, _state);
+    }
+    if( n<=0||ae_fp_eq(alpha,0.0) )
+    {
+        return;
+    }
+    
+    /*
+     * Generic code
+     */
+    if( opa==0 )
+    {
+        
+        /*
+         * y += A*x
+         */
+        for(i=0; i<=m-1; i++)
+        {
+            v = (double)(0);
+            for(j=0; j<=n-1; j++)
+            {
+                v = v+a->ptr.pp_double[i][j]*x->ptr.p_double[j];
+            }
+            y->ptr.p_double[i] = alpha*v+y->ptr.p_double[i];
+        }
+        return;
+    }
+    if( opa==1 )
+    {
+        
+        /*
+         * y += A^T*x
+         */
+        for(i=0; i<=n-1; i++)
+        {
+            v = alpha*x->ptr.p_double[i];
+            for(j=0; j<=m-1; j++)
+            {
+                y->ptr.p_double[j] = y->ptr.p_double[j]+v*a->ptr.pp_double[i][j];
+            }
+        }
+        return;
+    }
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Matrix-vector product: y := alpha*op(A)*x + beta*y
+
+Here x, y, A are subvectors/submatrices of larger vectors/matrices.
+
+NOTE: this  function  expects  Y  to  be  large enough to store result. No
+      automatic preallocation happens for  smaller  arrays.  No  integrity
+      checks is performed for sizes of A, x, y.
+
+INPUT PARAMETERS:
+    M   -   number of rows of op(A)
+    N   -   number of columns of op(A)
+    Alpha-  coefficient
+    A   -   source matrix
+    IA  -   submatrix offset (row index)
+    JA  -   submatrix offset (column index)
+    OpA -   operation type:
+            * OpA=0     =>  op(A) = A
+            * OpA=1     =>  op(A) = A^T
+    X   -   input vector, has at least N+IX elements
+    IX  -   subvector offset
+    Beta-   coefficient
+    Y   -   preallocated output array, has at least M+IY elements
+    IY  -   subvector offset
+
+OUTPUT PARAMETERS:
+    Y   -   vector which stores result
+
+HANDLING OF SPECIAL CASES:
+    * if M=0, then subroutine does nothing. It does not even touch arrays.
+    * if N=0 or Alpha=0.0, then:
+      * if Beta=0, then Y is filled by zeros. A and X are  not  referenced
+        at all. Initial values of Y are ignored (we do not  multiply  Y by
+        zero, we just rewrite it by zeros)
+      * if Beta<>0, then Y is replaced by Beta*Y
+    * if M>0, N>0, Alpha<>0, but  Beta=0,  then  Y  is  replaced  by  A*x;
+       initial state of Y is ignored (rewritten by  A*x,  without  initial
+       multiplication by zeros).
+
+
+  -- ALGLIB routine --
+
+     01.09.2021
+     Bochkanov Sergey
+*************************************************************************/
+void rgemvx(ae_int_t m,
+     ae_int_t n,
+     double alpha,
+     /* Real    */ ae_matrix* a,
+     ae_int_t ia,
+     ae_int_t ja,
+     ae_int_t opa,
+     /* Real    */ ae_vector* x,
+     ae_int_t ix,
+     double beta,
+     /* Real    */ ae_vector* y,
+     ae_int_t iy,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+    double v;
+
+
+    
+    /*
+     * Properly premultiply Y by Beta.
+     *
+     * Quick exit for M=0, N=0 or Alpha=0.
+     * After this block we have M>0, N>0, Alpha<>0.
+     */
+    if( m<=0 )
+    {
+        return;
+    }
+    if( ae_fp_neq(beta,(double)(0)) )
+    {
+        rmulvx(m, beta, y, iy, _state);
+    }
+    else
+    {
+        rsetvx(m, 0.0, y, iy, _state);
+    }
+    if( n<=0||ae_fp_eq(alpha,0.0) )
+    {
+        return;
+    }
+    
+    /*
+     * Generic code
+     */
+    if( opa==0 )
+    {
+        
+        /*
+         * y += A*x
+         */
+        for(i=0; i<=m-1; i++)
+        {
+            v = (double)(0);
+            for(j=0; j<=n-1; j++)
+            {
+                v = v+a->ptr.pp_double[ia+i][ja+j]*x->ptr.p_double[ix+j];
+            }
+            y->ptr.p_double[iy+i] = alpha*v+y->ptr.p_double[iy+i];
+        }
+        return;
+    }
+    if( opa==1 )
+    {
+        
+        /*
+         * y += A^T*x
+         */
+        for(i=0; i<=n-1; i++)
+        {
+            v = alpha*x->ptr.p_double[ix+i];
+            for(j=0; j<=m-1; j++)
+            {
+                y->ptr.p_double[iy+j] = y->ptr.p_double[iy+j]+v*a->ptr.pp_double[ia+i][ja+j];
+            }
+        }
+        return;
+    }
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Rank-1 correction: A := A + alpha*u*v'
+
+NOTE: this  function  expects  A  to  be  large enough to store result. No
+      automatic preallocation happens for  smaller  arrays.  No  integrity
+      checks is performed for sizes of A, u, v.
+
+INPUT PARAMETERS:
+    M   -   number of rows
+    N   -   number of columns
+    A   -   target MxN matrix
+    Alpha-  coefficient
+    U   -   vector #1
+    V   -   vector #2
+
+
+  -- ALGLIB routine --
+     07.09.2021
+     Bochkanov Sergey
+*************************************************************************/
+void rger(ae_int_t m,
+     ae_int_t n,
+     double alpha,
+     /* Real    */ ae_vector* u,
+     /* Real    */ ae_vector* v,
+     /* Real    */ ae_matrix* a,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+    double s;
+
+
+    if( (m<=0||n<=0)||ae_fp_eq(alpha,(double)(0)) )
+    {
+        return;
+    }
+    for(i=0; i<=m-1; i++)
+    {
+        s = alpha*u->ptr.p_double[i];
+        for(j=0; j<=n-1; j++)
+        {
+            a->ptr.pp_double[i][j] = a->ptr.pp_double[i][j]+s*v->ptr.p_double[j];
+        }
+    }
+}
+#endif
+
+
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+This subroutine solves linear system op(A)*x=b where:
+* A is NxN upper/lower triangular/unitriangular matrix
+* X and B are Nx1 vectors
+* "op" may be identity transformation or transposition
+
+Solution replaces X.
+
+IMPORTANT: * no overflow/underflow/denegeracy tests is performed.
+           * no integrity checks for operand sizes, out-of-bounds accesses
+             and so on is performed
+
+INPUT PARAMETERS
+    N   -   matrix size, N>=0
+    A       -   matrix, actial matrix is stored in A[IA:IA+N-1,JA:JA+N-1]
+    IA      -   submatrix offset
+    JA      -   submatrix offset
+    IsUpper -   whether matrix is upper triangular
+    IsUnit  -   whether matrix is unitriangular
+    OpType  -   transformation type:
+                * 0 - no transformation
+                * 1 - transposition
+    X       -   right part, actual vector is stored in X[IX:IX+N-1]
+    IX      -   offset
+    
+OUTPUT PARAMETERS
+    X       -   solution replaces elements X[IX:IX+N-1]
+
+  -- ALGLIB routine --
+     (c) 07.09.2021 Bochkanov Sergey
+*************************************************************************/
+void rtrsvx(ae_int_t n,
+     /* Real    */ ae_matrix* a,
+     ae_int_t ia,
+     ae_int_t ja,
+     ae_bool isupper,
+     ae_bool isunit,
+     ae_int_t optype,
+     /* Real    */ ae_vector* x,
+     ae_int_t ix,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+    double v;
+
+
+    if( n<=0 )
+    {
+        return;
+    }
+    if( optype==0&&isupper )
+    {
+        for(i=n-1; i>=0; i--)
+        {
+            v = x->ptr.p_double[ix+i];
+            for(j=i+1; j<=n-1; j++)
+            {
+                v = v-a->ptr.pp_double[ia+i][ja+j]*x->ptr.p_double[ix+j];
+            }
+            if( !isunit )
+            {
+                v = v/a->ptr.pp_double[ia+i][ja+i];
+            }
+            x->ptr.p_double[ix+i] = v;
+        }
+        return;
+    }
+    if( optype==0&&!isupper )
+    {
+        for(i=0; i<=n-1; i++)
+        {
+            v = x->ptr.p_double[ix+i];
+            for(j=0; j<=i-1; j++)
+            {
+                v = v-a->ptr.pp_double[ia+i][ja+j]*x->ptr.p_double[ix+j];
+            }
+            if( !isunit )
+            {
+                v = v/a->ptr.pp_double[ia+i][ja+i];
+            }
+            x->ptr.p_double[ix+i] = v;
+        }
+        return;
+    }
+    if( optype==1&&isupper )
+    {
+        for(i=0; i<=n-1; i++)
+        {
+            v = x->ptr.p_double[ix+i];
+            if( !isunit )
+            {
+                v = v/a->ptr.pp_double[ia+i][ja+i];
+            }
+            x->ptr.p_double[ix+i] = v;
+            if( v==0 )
+            {
+                continue;
+            }
+            for(j=i+1; j<=n-1; j++)
+            {
+                x->ptr.p_double[ix+j] = x->ptr.p_double[ix+j]-v*a->ptr.pp_double[ia+i][ja+j];
+            }
+        }
+        return;
+    }
+    if( optype==1&&!isupper )
+    {
+        for(i=n-1; i>=0; i--)
+        {
+            v = x->ptr.p_double[ix+i];
+            if( !isunit )
+            {
+                v = v/a->ptr.pp_double[ia+i][ja+i];
+            }
+            x->ptr.p_double[ix+i] = v;
+            if( v==0 )
+            {
+                continue;
+            }
+            for(j=0; j<=i-1; j++)
+            {
+                x->ptr.p_double[ix+j] = x->ptr.p_double[ix+j]-v*a->ptr.pp_double[ia+i][ja+j];
+            }
+        }
+        return;
+    }
+    ae_assert(ae_false, "rTRSVX: unexpected operation type", _state);
+}
+#endif
 
 
 /*************************************************************************
@@ -7430,43 +7125,6 @@ ae_bool rmatrixsyrkf(ae_int_t n,
     return result;
 #else
     return _ialglib_i_rmatrixsyrkf(n, k, alpha, a, ia, ja, optypea, beta, c, ic, jc, isupper);
-#endif
-}
-
-
-/*************************************************************************
-Fast kernel
-
-  -- ALGLIB routine --
-     19.01.2010
-     Bochkanov Sergey
-*************************************************************************/
-ae_bool rmatrixgemmf(ae_int_t m,
-     ae_int_t n,
-     ae_int_t k,
-     double alpha,
-     /* Real    */ ae_matrix* a,
-     ae_int_t ia,
-     ae_int_t ja,
-     ae_int_t optypea,
-     /* Real    */ ae_matrix* b,
-     ae_int_t ib,
-     ae_int_t jb,
-     ae_int_t optypeb,
-     double beta,
-     /* Real    */ ae_matrix* c,
-     ae_int_t ic,
-     ae_int_t jc,
-     ae_state *_state)
-{
-#ifndef ALGLIB_INTERCEPTS_ABLAS
-    ae_bool result;
-
-
-    result = ae_false;
-    return result;
-#else
-    return _ialglib_i_rmatrixgemmf(m, n, k, alpha, a, ia, ja, optypea, b, ib, jb, optypeb, beta, c, ic, jc);
 #endif
 }
 
@@ -7968,7 +7626,7 @@ void rmatrixgemmk(ae_int_t m,
     /*
      * Try optimized code
      */
-    if( rmatrixgemmf(m, n, k, alpha, a, ia, ja, optypea, b, ib, jb, optypeb, beta, c, ic, jc, _state) )
+    if( ablasf_rgemm32basecase(m, n, k, alpha, a, ia, ja, optypea, b, ib, jb, optypeb, beta, c, ic, jc, _state) )
     {
         return;
     }
@@ -9076,6 +8734,624 @@ void rmatrixgemmk44v11(ae_int_t m,
 }
 
 
+#ifdef ALGLIB_NO_FAST_KERNELS
+/*************************************************************************
+Fast kernel (new version with AVX2/SSE2)
+
+  -- ALGLIB routine --
+     19.01.2010
+     Bochkanov Sergey
+*************************************************************************/
+static ae_bool ablasf_rgemm32basecase(ae_int_t m,
+     ae_int_t n,
+     ae_int_t k,
+     double alpha,
+     /* Real    */ ae_matrix* a,
+     ae_int_t ia,
+     ae_int_t ja,
+     ae_int_t optypea,
+     /* Real    */ ae_matrix* b,
+     ae_int_t ib,
+     ae_int_t jb,
+     ae_int_t optypeb,
+     double beta,
+     /* Real    */ ae_matrix* c,
+     ae_int_t ic,
+     ae_int_t jc,
+     ae_state *_state)
+{
+    ae_bool result;
+
+
+    result = ae_false;
+    return result;
+}
+#endif
+
+
+#endif
+#if defined(AE_COMPILE_HBLAS) || !defined(AE_PARTIAL_BUILD)
+
+
+void hermitianmatrixvectormultiply(/* Complex */ ae_matrix* a,
+     ae_bool isupper,
+     ae_int_t i1,
+     ae_int_t i2,
+     /* Complex */ ae_vector* x,
+     ae_complex alpha,
+     /* Complex */ ae_vector* y,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t ba1;
+    ae_int_t by1;
+    ae_int_t by2;
+    ae_int_t bx1;
+    ae_int_t bx2;
+    ae_int_t n;
+    ae_complex v;
+
+
+    n = i2-i1+1;
+    if( n<=0 )
+    {
+        return;
+    }
+    
+    /*
+     * Let A = L + D + U, where
+     *  L is strictly lower triangular (main diagonal is zero)
+     *  D is diagonal
+     *  U is strictly upper triangular (main diagonal is zero)
+     *
+     * A*x = L*x + D*x + U*x
+     *
+     * Calculate D*x first
+     */
+    for(i=i1; i<=i2; i++)
+    {
+        y->ptr.p_complex[i-i1+1] = ae_c_mul(a->ptr.pp_complex[i][i],x->ptr.p_complex[i-i1+1]);
+    }
+    
+    /*
+     * Add L*x + U*x
+     */
+    if( isupper )
+    {
+        for(i=i1; i<=i2-1; i++)
+        {
+            
+            /*
+             * Add L*x to the result
+             */
+            v = x->ptr.p_complex[i-i1+1];
+            by1 = i-i1+2;
+            by2 = n;
+            ba1 = i+1;
+            ae_v_caddc(&y->ptr.p_complex[by1], 1, &a->ptr.pp_complex[i][ba1], 1, "Conj", ae_v_len(by1,by2), v);
+            
+            /*
+             * Add U*x to the result
+             */
+            bx1 = i-i1+2;
+            bx2 = n;
+            ba1 = i+1;
+            v = ae_v_cdotproduct(&x->ptr.p_complex[bx1], 1, "N", &a->ptr.pp_complex[i][ba1], 1, "N", ae_v_len(bx1,bx2));
+            y->ptr.p_complex[i-i1+1] = ae_c_add(y->ptr.p_complex[i-i1+1],v);
+        }
+    }
+    else
+    {
+        for(i=i1+1; i<=i2; i++)
+        {
+            
+            /*
+             * Add L*x to the result
+             */
+            bx1 = 1;
+            bx2 = i-i1;
+            ba1 = i1;
+            v = ae_v_cdotproduct(&x->ptr.p_complex[bx1], 1, "N", &a->ptr.pp_complex[i][ba1], 1, "N", ae_v_len(bx1,bx2));
+            y->ptr.p_complex[i-i1+1] = ae_c_add(y->ptr.p_complex[i-i1+1],v);
+            
+            /*
+             * Add U*x to the result
+             */
+            v = x->ptr.p_complex[i-i1+1];
+            by1 = 1;
+            by2 = i-i1;
+            ba1 = i1;
+            ae_v_caddc(&y->ptr.p_complex[by1], 1, &a->ptr.pp_complex[i][ba1], 1, "Conj", ae_v_len(by1,by2), v);
+        }
+    }
+    ae_v_cmulc(&y->ptr.p_complex[1], 1, ae_v_len(1,n), alpha);
+}
+
+
+void hermitianrank2update(/* Complex */ ae_matrix* a,
+     ae_bool isupper,
+     ae_int_t i1,
+     ae_int_t i2,
+     /* Complex */ ae_vector* x,
+     /* Complex */ ae_vector* y,
+     /* Complex */ ae_vector* t,
+     ae_complex alpha,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t tp1;
+    ae_int_t tp2;
+    ae_complex v;
+
+
+    if( isupper )
+    {
+        for(i=i1; i<=i2; i++)
+        {
+            tp1 = i+1-i1;
+            tp2 = i2-i1+1;
+            v = ae_c_mul(alpha,x->ptr.p_complex[i+1-i1]);
+            ae_v_cmovec(&t->ptr.p_complex[tp1], 1, &y->ptr.p_complex[tp1], 1, "Conj", ae_v_len(tp1,tp2), v);
+            v = ae_c_mul(ae_c_conj(alpha, _state),y->ptr.p_complex[i+1-i1]);
+            ae_v_caddc(&t->ptr.p_complex[tp1], 1, &x->ptr.p_complex[tp1], 1, "Conj", ae_v_len(tp1,tp2), v);
+            ae_v_cadd(&a->ptr.pp_complex[i][i], 1, &t->ptr.p_complex[tp1], 1, "N", ae_v_len(i,i2));
+        }
+    }
+    else
+    {
+        for(i=i1; i<=i2; i++)
+        {
+            tp1 = 1;
+            tp2 = i+1-i1;
+            v = ae_c_mul(alpha,x->ptr.p_complex[i+1-i1]);
+            ae_v_cmovec(&t->ptr.p_complex[tp1], 1, &y->ptr.p_complex[tp1], 1, "Conj", ae_v_len(tp1,tp2), v);
+            v = ae_c_mul(ae_c_conj(alpha, _state),y->ptr.p_complex[i+1-i1]);
+            ae_v_caddc(&t->ptr.p_complex[tp1], 1, &x->ptr.p_complex[tp1], 1, "Conj", ae_v_len(tp1,tp2), v);
+            ae_v_cadd(&a->ptr.pp_complex[i][i1], 1, &t->ptr.p_complex[tp1], 1, "N", ae_v_len(i1,i));
+        }
+    }
+}
+
+
+#endif
+#if defined(AE_COMPILE_CREFLECTIONS) || !defined(AE_PARTIAL_BUILD)
+
+
+/*************************************************************************
+Generation of an elementary complex reflection transformation
+
+The subroutine generates elementary complex reflection H of  order  N,  so
+that, for a given X, the following equality holds true:
+
+     ( X(1) )   ( Beta )
+H' * (  ..  ) = (  0   ),   H'*H = I,   Beta is a real number
+     ( X(n) )   (  0   )
+
+where
+
+              ( V(1) )
+H = 1 - Tau * (  ..  ) * ( conj(V(1)), ..., conj(V(n)) )
+              ( V(n) )
+
+where the first component of vector V equals 1.
+
+Input parameters:
+    X   -   vector. Array with elements [1..N].
+    N   -   reflection order.
+
+Output parameters:
+    X   -   components from 2 to N are replaced by vector V.
+            The first component is replaced with parameter Beta.
+    Tau -   scalar value Tau.
+
+This subroutine is the modification of CLARFG subroutines  from the LAPACK
+library. It has similar functionality except for the fact that it  doesn't
+handle errors when intermediate results cause an overflow.
+
+  -- LAPACK auxiliary routine (version 3.0) --
+     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+     Courant Institute, Argonne National Lab, and Rice University
+     September 30, 1994
+*************************************************************************/
+void complexgeneratereflection(/* Complex */ ae_vector* x,
+     ae_int_t n,
+     ae_complex* tau,
+     ae_state *_state)
+{
+    ae_int_t j;
+    ae_complex alpha;
+    double alphi;
+    double alphr;
+    double beta;
+    double xnorm;
+    double mx;
+    ae_complex t;
+    double s;
+    ae_complex v;
+
+    tau->x = 0;
+    tau->y = 0;
+
+    if( n<=0 )
+    {
+        *tau = ae_complex_from_i(0);
+        return;
+    }
+    
+    /*
+     * Scale if needed (to avoid overflow/underflow during intermediate
+     * calculations).
+     */
+    mx = (double)(0);
+    for(j=1; j<=n; j++)
+    {
+        mx = ae_maxreal(ae_c_abs(x->ptr.p_complex[j], _state), mx, _state);
+    }
+    s = (double)(1);
+    if( ae_fp_neq(mx,(double)(0)) )
+    {
+        if( ae_fp_less(mx,(double)(1)) )
+        {
+            s = ae_sqrt(ae_minrealnumber, _state);
+            v = ae_complex_from_d(1/s);
+            ae_v_cmulc(&x->ptr.p_complex[1], 1, ae_v_len(1,n), v);
+        }
+        else
+        {
+            s = ae_sqrt(ae_maxrealnumber, _state);
+            v = ae_complex_from_d(1/s);
+            ae_v_cmulc(&x->ptr.p_complex[1], 1, ae_v_len(1,n), v);
+        }
+    }
+    
+    /*
+     * calculate
+     */
+    alpha = x->ptr.p_complex[1];
+    mx = (double)(0);
+    for(j=2; j<=n; j++)
+    {
+        mx = ae_maxreal(ae_c_abs(x->ptr.p_complex[j], _state), mx, _state);
+    }
+    xnorm = (double)(0);
+    if( ae_fp_neq(mx,(double)(0)) )
+    {
+        for(j=2; j<=n; j++)
+        {
+            t = ae_c_div_d(x->ptr.p_complex[j],mx);
+            xnorm = xnorm+ae_c_mul(t,ae_c_conj(t, _state)).x;
+        }
+        xnorm = ae_sqrt(xnorm, _state)*mx;
+    }
+    alphr = alpha.x;
+    alphi = alpha.y;
+    if( ae_fp_eq(xnorm,(double)(0))&&ae_fp_eq(alphi,(double)(0)) )
+    {
+        *tau = ae_complex_from_i(0);
+        x->ptr.p_complex[1] = ae_c_mul_d(x->ptr.p_complex[1],s);
+        return;
+    }
+    mx = ae_maxreal(ae_fabs(alphr, _state), ae_fabs(alphi, _state), _state);
+    mx = ae_maxreal(mx, ae_fabs(xnorm, _state), _state);
+    beta = -mx*ae_sqrt(ae_sqr(alphr/mx, _state)+ae_sqr(alphi/mx, _state)+ae_sqr(xnorm/mx, _state), _state);
+    if( ae_fp_less(alphr,(double)(0)) )
+    {
+        beta = -beta;
+    }
+    tau->x = (beta-alphr)/beta;
+    tau->y = -alphi/beta;
+    alpha = ae_c_d_div(1,ae_c_sub_d(alpha,beta));
+    if( n>1 )
+    {
+        ae_v_cmulc(&x->ptr.p_complex[2], 1, ae_v_len(2,n), alpha);
+    }
+    alpha = ae_complex_from_d(beta);
+    x->ptr.p_complex[1] = alpha;
+    
+    /*
+     * Scale back
+     */
+    x->ptr.p_complex[1] = ae_c_mul_d(x->ptr.p_complex[1],s);
+}
+
+
+/*************************************************************************
+Application of an elementary reflection to a rectangular matrix of size MxN
+
+The  algorithm  pre-multiplies  the  matrix  by  an  elementary reflection
+transformation  which  is  given  by  column  V  and  scalar  Tau (see the
+description of the GenerateReflection). Not the whole matrix  but  only  a
+part of it is transformed (rows from M1 to M2, columns from N1 to N2). Only
+the elements of this submatrix are changed.
+
+Note: the matrix is multiplied by H, not by H'.   If  it  is  required  to
+multiply the matrix by H', it is necessary to pass Conj(Tau) instead of Tau.
+
+Input parameters:
+    C       -   matrix to be transformed.
+    Tau     -   scalar defining transformation.
+    V       -   column defining transformation.
+                Array whose index ranges within [1..M2-M1+1]
+    M1, M2  -   range of rows to be transformed.
+    N1, N2  -   range of columns to be transformed.
+    WORK    -   working array whose index goes from N1 to N2.
+
+Output parameters:
+    C       -   the result of multiplying the input matrix C by the
+                transformation matrix which is given by Tau and V.
+                If N1>N2 or M1>M2, C is not modified.
+
+  -- LAPACK auxiliary routine (version 3.0) --
+     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+     Courant Institute, Argonne National Lab, and Rice University
+     September 30, 1994
+*************************************************************************/
+void complexapplyreflectionfromtheleft(/* Complex */ ae_matrix* c,
+     ae_complex tau,
+     /* Complex */ ae_vector* v,
+     ae_int_t m1,
+     ae_int_t m2,
+     ae_int_t n1,
+     ae_int_t n2,
+     /* Complex */ ae_vector* work,
+     ae_state *_state)
+{
+    ae_complex t;
+    ae_int_t i;
+
+
+    if( (ae_c_eq_d(tau,(double)(0))||n1>n2)||m1>m2 )
+    {
+        return;
+    }
+    
+    /*
+     * w := C^T * conj(v)
+     */
+    for(i=n1; i<=n2; i++)
+    {
+        work->ptr.p_complex[i] = ae_complex_from_i(0);
+    }
+    for(i=m1; i<=m2; i++)
+    {
+        t = ae_c_conj(v->ptr.p_complex[i+1-m1], _state);
+        ae_v_caddc(&work->ptr.p_complex[n1], 1, &c->ptr.pp_complex[i][n1], 1, "N", ae_v_len(n1,n2), t);
+    }
+    
+    /*
+     * C := C - tau * v * w^T
+     */
+    for(i=m1; i<=m2; i++)
+    {
+        t = ae_c_mul(v->ptr.p_complex[i-m1+1],tau);
+        ae_v_csubc(&c->ptr.pp_complex[i][n1], 1, &work->ptr.p_complex[n1], 1, "N", ae_v_len(n1,n2), t);
+    }
+}
+
+
+/*************************************************************************
+Application of an elementary reflection to a rectangular matrix of size MxN
+
+The  algorithm  post-multiplies  the  matrix  by  an elementary reflection
+transformation  which  is  given  by  column  V  and  scalar  Tau (see the
+description  of  the  GenerateReflection). Not the whole matrix but only a
+part  of  it  is  transformed (rows from M1 to M2, columns from N1 to N2).
+Only the elements of this submatrix are changed.
+
+Input parameters:
+    C       -   matrix to be transformed.
+    Tau     -   scalar defining transformation.
+    V       -   column defining transformation.
+                Array whose index ranges within [1..N2-N1+1]
+    M1, M2  -   range of rows to be transformed.
+    N1, N2  -   range of columns to be transformed.
+    WORK    -   working array whose index goes from M1 to M2.
+
+Output parameters:
+    C       -   the result of multiplying the input matrix C by the
+                transformation matrix which is given by Tau and V.
+                If N1>N2 or M1>M2, C is not modified.
+
+  -- LAPACK auxiliary routine (version 3.0) --
+     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+     Courant Institute, Argonne National Lab, and Rice University
+     September 30, 1994
+*************************************************************************/
+void complexapplyreflectionfromtheright(/* Complex */ ae_matrix* c,
+     ae_complex tau,
+     /* Complex */ ae_vector* v,
+     ae_int_t m1,
+     ae_int_t m2,
+     ae_int_t n1,
+     ae_int_t n2,
+     /* Complex */ ae_vector* work,
+     ae_state *_state)
+{
+    ae_complex t;
+    ae_int_t i;
+    ae_int_t vm;
+
+
+    if( (ae_c_eq_d(tau,(double)(0))||n1>n2)||m1>m2 )
+    {
+        return;
+    }
+    
+    /*
+     * w := C * v
+     */
+    vm = n2-n1+1;
+    for(i=m1; i<=m2; i++)
+    {
+        t = ae_v_cdotproduct(&c->ptr.pp_complex[i][n1], 1, "N", &v->ptr.p_complex[1], 1, "N", ae_v_len(n1,n2));
+        work->ptr.p_complex[i] = t;
+    }
+    
+    /*
+     * C := C - w * conj(v^T)
+     */
+    ae_v_cmove(&v->ptr.p_complex[1], 1, &v->ptr.p_complex[1], 1, "Conj", ae_v_len(1,vm));
+    for(i=m1; i<=m2; i++)
+    {
+        t = ae_c_mul(work->ptr.p_complex[i],tau);
+        ae_v_csubc(&c->ptr.pp_complex[i][n1], 1, &v->ptr.p_complex[1], 1, "N", ae_v_len(n1,n2), t);
+    }
+    ae_v_cmove(&v->ptr.p_complex[1], 1, &v->ptr.p_complex[1], 1, "Conj", ae_v_len(1,vm));
+}
+
+
+#endif
+#if defined(AE_COMPILE_SBLAS) || !defined(AE_PARTIAL_BUILD)
+
+
+void symmetricmatrixvectormultiply(/* Real    */ ae_matrix* a,
+     ae_bool isupper,
+     ae_int_t i1,
+     ae_int_t i2,
+     /* Real    */ ae_vector* x,
+     double alpha,
+     /* Real    */ ae_vector* y,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t ba1;
+    ae_int_t ba2;
+    ae_int_t by1;
+    ae_int_t by2;
+    ae_int_t bx1;
+    ae_int_t bx2;
+    ae_int_t n;
+    double v;
+
+
+    n = i2-i1+1;
+    if( n<=0 )
+    {
+        return;
+    }
+    
+    /*
+     * Let A = L + D + U, where
+     *  L is strictly lower triangular (main diagonal is zero)
+     *  D is diagonal
+     *  U is strictly upper triangular (main diagonal is zero)
+     *
+     * A*x = L*x + D*x + U*x
+     *
+     * Calculate D*x first
+     */
+    for(i=i1; i<=i2; i++)
+    {
+        y->ptr.p_double[i-i1+1] = a->ptr.pp_double[i][i]*x->ptr.p_double[i-i1+1];
+    }
+    
+    /*
+     * Add L*x + U*x
+     */
+    if( isupper )
+    {
+        for(i=i1; i<=i2-1; i++)
+        {
+            
+            /*
+             * Add L*x to the result
+             */
+            v = x->ptr.p_double[i-i1+1];
+            by1 = i-i1+2;
+            by2 = n;
+            ba1 = i+1;
+            ba2 = i2;
+            ae_v_addd(&y->ptr.p_double[by1], 1, &a->ptr.pp_double[i][ba1], 1, ae_v_len(by1,by2), v);
+            
+            /*
+             * Add U*x to the result
+             */
+            bx1 = i-i1+2;
+            bx2 = n;
+            ba1 = i+1;
+            ba2 = i2;
+            v = ae_v_dotproduct(&x->ptr.p_double[bx1], 1, &a->ptr.pp_double[i][ba1], 1, ae_v_len(bx1,bx2));
+            y->ptr.p_double[i-i1+1] = y->ptr.p_double[i-i1+1]+v;
+        }
+    }
+    else
+    {
+        for(i=i1+1; i<=i2; i++)
+        {
+            
+            /*
+             * Add L*x to the result
+             */
+            bx1 = 1;
+            bx2 = i-i1;
+            ba1 = i1;
+            ba2 = i-1;
+            v = ae_v_dotproduct(&x->ptr.p_double[bx1], 1, &a->ptr.pp_double[i][ba1], 1, ae_v_len(bx1,bx2));
+            y->ptr.p_double[i-i1+1] = y->ptr.p_double[i-i1+1]+v;
+            
+            /*
+             * Add U*x to the result
+             */
+            v = x->ptr.p_double[i-i1+1];
+            by1 = 1;
+            by2 = i-i1;
+            ba1 = i1;
+            ba2 = i-1;
+            ae_v_addd(&y->ptr.p_double[by1], 1, &a->ptr.pp_double[i][ba1], 1, ae_v_len(by1,by2), v);
+        }
+    }
+    ae_v_muld(&y->ptr.p_double[1], 1, ae_v_len(1,n), alpha);
+    touchint(&ba2, _state);
+}
+
+
+void symmetricrank2update(/* Real    */ ae_matrix* a,
+     ae_bool isupper,
+     ae_int_t i1,
+     ae_int_t i2,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     /* Real    */ ae_vector* t,
+     double alpha,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t tp1;
+    ae_int_t tp2;
+    double v;
+
+
+    if( isupper )
+    {
+        for(i=i1; i<=i2; i++)
+        {
+            tp1 = i+1-i1;
+            tp2 = i2-i1+1;
+            v = x->ptr.p_double[i+1-i1];
+            ae_v_moved(&t->ptr.p_double[tp1], 1, &y->ptr.p_double[tp1], 1, ae_v_len(tp1,tp2), v);
+            v = y->ptr.p_double[i+1-i1];
+            ae_v_addd(&t->ptr.p_double[tp1], 1, &x->ptr.p_double[tp1], 1, ae_v_len(tp1,tp2), v);
+            ae_v_muld(&t->ptr.p_double[tp1], 1, ae_v_len(tp1,tp2), alpha);
+            ae_v_add(&a->ptr.pp_double[i][i], 1, &t->ptr.p_double[tp1], 1, ae_v_len(i,i2));
+        }
+    }
+    else
+    {
+        for(i=i1; i<=i2; i++)
+        {
+            tp1 = 1;
+            tp2 = i+1-i1;
+            v = x->ptr.p_double[i+1-i1];
+            ae_v_moved(&t->ptr.p_double[tp1], 1, &y->ptr.p_double[tp1], 1, ae_v_len(tp1,tp2), v);
+            v = y->ptr.p_double[i+1-i1];
+            ae_v_addd(&t->ptr.p_double[tp1], 1, &x->ptr.p_double[tp1], 1, ae_v_len(tp1,tp2), v);
+            ae_v_muld(&t->ptr.p_double[tp1], 1, ae_v_len(tp1,tp2), alpha);
+            ae_v_add(&a->ptr.pp_double[i][i1], 1, &t->ptr.p_double[tp1], 1, ae_v_len(i1,i));
+        }
+    }
+}
+
+
 #endif
 #if defined(AE_COMPILE_ABLASMKL) || !defined(AE_PARTIAL_BUILD)
 
@@ -10082,289 +10358,2393 @@ ae_bool sparsegemvcrsmkl(ae_int_t opa,
 
 
 #endif
-#if defined(AE_COMPILE_CREFLECTIONS) || !defined(AE_PARTIAL_BUILD)
+#if defined(AE_COMPILE_SCODES) || !defined(AE_PARTIAL_BUILD)
+
+
+ae_int_t getrdfserializationcode(ae_state *_state)
+{
+    ae_int_t result;
+
+
+    result = 1;
+    return result;
+}
+
+
+ae_int_t getkdtreeserializationcode(ae_state *_state)
+{
+    ae_int_t result;
+
+
+    result = 2;
+    return result;
+}
+
+
+ae_int_t getmlpserializationcode(ae_state *_state)
+{
+    ae_int_t result;
+
+
+    result = 3;
+    return result;
+}
+
+
+ae_int_t getmlpeserializationcode(ae_state *_state)
+{
+    ae_int_t result;
+
+
+    result = 4;
+    return result;
+}
+
+
+ae_int_t getrbfserializationcode(ae_state *_state)
+{
+    ae_int_t result;
+
+
+    result = 5;
+    return result;
+}
+
+
+ae_int_t getspline2dserializationcode(ae_state *_state)
+{
+    ae_int_t result;
+
+
+    result = 6;
+    return result;
+}
+
+
+ae_int_t getidwserializationcode(ae_state *_state)
+{
+    ae_int_t result;
+
+
+    result = 7;
+    return result;
+}
+
+
+ae_int_t getsparsematrixserializationcode(ae_state *_state)
+{
+    ae_int_t result;
+
+
+    result = 8;
+    return result;
+}
+
+
+ae_int_t getknnserializationcode(ae_state *_state)
+{
+    ae_int_t result;
+
+
+    result = 108;
+    return result;
+}
+
+
+ae_int_t getlptestserializationcode(ae_state *_state)
+{
+    ae_int_t result;
+
+
+    result = 200;
+    return result;
+}
+
+
+#endif
+#if defined(AE_COMPILE_TSORT) || !defined(AE_PARTIAL_BUILD)
 
 
 /*************************************************************************
-Generation of an elementary complex reflection transformation
+This function sorts array of real keys by ascending.
 
-The subroutine generates elementary complex reflection H of  order  N,  so
-that, for a given X, the following equality holds true:
+Its results are:
+* sorted array A
+* permutation tables P1, P2
 
-     ( X(1) )   ( Beta )
-H' * (  ..  ) = (  0   ),   H'*H = I,   Beta is a real number
-     ( X(n) )   (  0   )
+Algorithm outputs permutation tables using two formats:
+* as usual permutation of [0..N-1]. If P1[i]=j, then sorted A[i]  contains
+  value which was moved there from J-th position.
+* as a sequence of pairwise permutations. Sorted A[] may  be  obtained  by
+  swaping A[i] and A[P2[i]] for all i from 0 to N-1.
+  
+INPUT PARAMETERS:
+    A       -   unsorted array
+    N       -   array size
 
-where
+OUPUT PARAMETERS:
+    A       -   sorted array
+    P1, P2  -   permutation tables, array[N]
+    
+NOTES:
+    this function assumes that A[] is finite; it doesn't checks that
+    condition. All other conditions (size of input arrays, etc.) are not
+    checked too.
 
-              ( V(1) )
-H = 1 - Tau * (  ..  ) * ( conj(V(1)), ..., conj(V(n)) )
-              ( V(n) )
-
-where the first component of vector V equals 1.
-
-Input parameters:
-    X   -   vector. Array with elements [1..N].
-    N   -   reflection order.
-
-Output parameters:
-    X   -   components from 2 to N are replaced by vector V.
-            The first component is replaced with parameter Beta.
-    Tau -   scalar value Tau.
-
-This subroutine is the modification of CLARFG subroutines  from the LAPACK
-library. It has similar functionality except for the fact that it  doesn't
-handle errors when intermediate results cause an overflow.
-
-  -- LAPACK auxiliary routine (version 3.0) --
-     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
-     Courant Institute, Argonne National Lab, and Rice University
-     September 30, 1994
+  -- ALGLIB --
+     Copyright 14.05.2008 by Bochkanov Sergey
 *************************************************************************/
-void complexgeneratereflection(/* Complex */ ae_vector* x,
+void tagsort(/* Real    */ ae_vector* a,
      ae_int_t n,
-     ae_complex* tau,
+     /* Integer */ ae_vector* p1,
+     /* Integer */ ae_vector* p2,
+     ae_state *_state)
+{
+    ae_frame _frame_block;
+    apbuffers buf;
+
+    ae_frame_make(_state, &_frame_block);
+    memset(&buf, 0, sizeof(buf));
+    ae_vector_clear(p1);
+    ae_vector_clear(p2);
+    _apbuffers_init(&buf, _state, ae_true);
+
+    tagsortbuf(a, n, p1, p2, &buf, _state);
+    ae_frame_leave(_state);
+}
+
+
+/*************************************************************************
+Buffered variant of TagSort, which accepts preallocated output arrays as
+well as special structure for buffered allocations. If arrays are too
+short, they are reallocated. If they are large enough, no memory
+allocation is done.
+
+It is intended to be used in the performance-critical parts of code, where
+additional allocations can lead to severe performance degradation
+
+  -- ALGLIB --
+     Copyright 14.05.2008 by Bochkanov Sergey
+*************************************************************************/
+void tagsortbuf(/* Real    */ ae_vector* a,
+     ae_int_t n,
+     /* Integer */ ae_vector* p1,
+     /* Integer */ ae_vector* p2,
+     apbuffers* buf,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t lv;
+    ae_int_t lp;
+    ae_int_t rv;
+    ae_int_t rp;
+
+
+    
+    /*
+     * Special cases
+     */
+    if( n<=0 )
+    {
+        return;
+    }
+    if( n==1 )
+    {
+        ivectorsetlengthatleast(p1, 1, _state);
+        ivectorsetlengthatleast(p2, 1, _state);
+        p1->ptr.p_int[0] = 0;
+        p2->ptr.p_int[0] = 0;
+        return;
+    }
+    
+    /*
+     * General case, N>1: prepare permutations table P1
+     */
+    ivectorsetlengthatleast(p1, n, _state);
+    for(i=0; i<=n-1; i++)
+    {
+        p1->ptr.p_int[i] = i;
+    }
+    
+    /*
+     * General case, N>1: sort, update P1
+     */
+    rvectorsetlengthatleast(&buf->ra0, n, _state);
+    ivectorsetlengthatleast(&buf->ia0, n, _state);
+    tagsortfasti(a, p1, &buf->ra0, &buf->ia0, n, _state);
+    
+    /*
+     * General case, N>1: fill permutations table P2
+     *
+     * To fill P2 we maintain two arrays:
+     * * PV (Buf.IA0), Position(Value). PV[i] contains position of I-th key at the moment
+     * * VP (Buf.IA1), Value(Position). VP[i] contains key which has position I at the moment
+     *
+     * At each step we making permutation of two items:
+     *   Left, which is given by position/value pair LP/LV
+     *   and Right, which is given by RP/RV
+     * and updating PV[] and VP[] correspondingly.
+     */
+    ivectorsetlengthatleast(&buf->ia0, n, _state);
+    ivectorsetlengthatleast(&buf->ia1, n, _state);
+    ivectorsetlengthatleast(p2, n, _state);
+    for(i=0; i<=n-1; i++)
+    {
+        buf->ia0.ptr.p_int[i] = i;
+        buf->ia1.ptr.p_int[i] = i;
+    }
+    for(i=0; i<=n-1; i++)
+    {
+        
+        /*
+         * calculate LP, LV, RP, RV
+         */
+        lp = i;
+        lv = buf->ia1.ptr.p_int[lp];
+        rv = p1->ptr.p_int[i];
+        rp = buf->ia0.ptr.p_int[rv];
+        
+        /*
+         * Fill P2
+         */
+        p2->ptr.p_int[i] = rp;
+        
+        /*
+         * update PV and VP
+         */
+        buf->ia1.ptr.p_int[lp] = rv;
+        buf->ia1.ptr.p_int[rp] = lv;
+        buf->ia0.ptr.p_int[lv] = rp;
+        buf->ia0.ptr.p_int[rv] = lp;
+    }
+}
+
+
+/*************************************************************************
+Same as TagSort, but optimized for real keys and integer labels.
+
+A is sorted, and same permutations are applied to B.
+
+NOTES:
+1.  this function assumes that A[] is finite; it doesn't checks that
+    condition. All other conditions (size of input arrays, etc.) are not
+    checked too.
+2.  this function uses two buffers, BufA and BufB, each is N elements large.
+    They may be preallocated (which will save some time) or not, in which
+    case function will automatically allocate memory.
+
+  -- ALGLIB --
+     Copyright 11.12.2008 by Bochkanov Sergey
+*************************************************************************/
+void tagsortfasti(/* Real    */ ae_vector* a,
+     /* Integer */ ae_vector* b,
+     /* Real    */ ae_vector* bufa,
+     /* Integer */ ae_vector* bufb,
+     ae_int_t n,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+    ae_bool isascending;
+    ae_bool isdescending;
+    double tmpr;
+    ae_int_t tmpi;
+
+
+    
+    /*
+     * Special case
+     */
+    if( n<=1 )
+    {
+        return;
+    }
+    
+    /*
+     * Test for already sorted set
+     */
+    isascending = ae_true;
+    isdescending = ae_true;
+    for(i=1; i<=n-1; i++)
+    {
+        isascending = isascending&&a->ptr.p_double[i]>=a->ptr.p_double[i-1];
+        isdescending = isdescending&&a->ptr.p_double[i]<=a->ptr.p_double[i-1];
+    }
+    if( isascending )
+    {
+        return;
+    }
+    if( isdescending )
+    {
+        for(i=0; i<=n-1; i++)
+        {
+            j = n-1-i;
+            if( j<=i )
+            {
+                break;
+            }
+            tmpr = a->ptr.p_double[i];
+            a->ptr.p_double[i] = a->ptr.p_double[j];
+            a->ptr.p_double[j] = tmpr;
+            tmpi = b->ptr.p_int[i];
+            b->ptr.p_int[i] = b->ptr.p_int[j];
+            b->ptr.p_int[j] = tmpi;
+        }
+        return;
+    }
+    
+    /*
+     * General case
+     */
+    if( bufa->cnt<n )
+    {
+        ae_vector_set_length(bufa, n, _state);
+    }
+    if( bufb->cnt<n )
+    {
+        ae_vector_set_length(bufb, n, _state);
+    }
+    tsort_tagsortfastirec(a, b, bufa, bufb, 0, n-1, _state);
+}
+
+
+/*************************************************************************
+Same as TagSort, but optimized for real keys and real labels.
+
+A is sorted, and same permutations are applied to B.
+
+NOTES:
+1.  this function assumes that A[] is finite; it doesn't checks that
+    condition. All other conditions (size of input arrays, etc.) are not
+    checked too.
+2.  this function uses two buffers, BufA and BufB, each is N elements large.
+    They may be preallocated (which will save some time) or not, in which
+    case function will automatically allocate memory.
+
+  -- ALGLIB --
+     Copyright 11.12.2008 by Bochkanov Sergey
+*************************************************************************/
+void tagsortfastr(/* Real    */ ae_vector* a,
+     /* Real    */ ae_vector* b,
+     /* Real    */ ae_vector* bufa,
+     /* Real    */ ae_vector* bufb,
+     ae_int_t n,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+    ae_bool isascending;
+    ae_bool isdescending;
+    double tmpr;
+
+
+    
+    /*
+     * Special case
+     */
+    if( n<=1 )
+    {
+        return;
+    }
+    
+    /*
+     * Test for already sorted set
+     */
+    isascending = ae_true;
+    isdescending = ae_true;
+    for(i=1; i<=n-1; i++)
+    {
+        isascending = isascending&&a->ptr.p_double[i]>=a->ptr.p_double[i-1];
+        isdescending = isdescending&&a->ptr.p_double[i]<=a->ptr.p_double[i-1];
+    }
+    if( isascending )
+    {
+        return;
+    }
+    if( isdescending )
+    {
+        for(i=0; i<=n-1; i++)
+        {
+            j = n-1-i;
+            if( j<=i )
+            {
+                break;
+            }
+            tmpr = a->ptr.p_double[i];
+            a->ptr.p_double[i] = a->ptr.p_double[j];
+            a->ptr.p_double[j] = tmpr;
+            tmpr = b->ptr.p_double[i];
+            b->ptr.p_double[i] = b->ptr.p_double[j];
+            b->ptr.p_double[j] = tmpr;
+        }
+        return;
+    }
+    
+    /*
+     * General case
+     */
+    if( bufa->cnt<n )
+    {
+        ae_vector_set_length(bufa, n, _state);
+    }
+    if( bufb->cnt<n )
+    {
+        ae_vector_set_length(bufb, n, _state);
+    }
+    tsort_tagsortfastrrec(a, b, bufa, bufb, 0, n-1, _state);
+}
+
+
+/*************************************************************************
+Same as TagSort, but optimized for real keys without labels.
+
+A is sorted, and that's all.
+
+NOTES:
+1.  this function assumes that A[] is finite; it doesn't checks that
+    condition. All other conditions (size of input arrays, etc.) are not
+    checked too.
+2.  this function uses buffer, BufA, which is N elements large. It may be
+    preallocated (which will save some time) or not, in which case
+    function will automatically allocate memory.
+
+  -- ALGLIB --
+     Copyright 11.12.2008 by Bochkanov Sergey
+*************************************************************************/
+void tagsortfast(/* Real    */ ae_vector* a,
+     /* Real    */ ae_vector* bufa,
+     ae_int_t n,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+    ae_bool isascending;
+    ae_bool isdescending;
+    double tmpr;
+
+
+    
+    /*
+     * Special case
+     */
+    if( n<=1 )
+    {
+        return;
+    }
+    
+    /*
+     * Test for already sorted set
+     */
+    isascending = ae_true;
+    isdescending = ae_true;
+    for(i=1; i<=n-1; i++)
+    {
+        isascending = isascending&&a->ptr.p_double[i]>=a->ptr.p_double[i-1];
+        isdescending = isdescending&&a->ptr.p_double[i]<=a->ptr.p_double[i-1];
+    }
+    if( isascending )
+    {
+        return;
+    }
+    if( isdescending )
+    {
+        for(i=0; i<=n-1; i++)
+        {
+            j = n-1-i;
+            if( j<=i )
+            {
+                break;
+            }
+            tmpr = a->ptr.p_double[i];
+            a->ptr.p_double[i] = a->ptr.p_double[j];
+            a->ptr.p_double[j] = tmpr;
+        }
+        return;
+    }
+    
+    /*
+     * General case
+     */
+    if( bufa->cnt<n )
+    {
+        ae_vector_set_length(bufa, n, _state);
+    }
+    tsort_tagsortfastrec(a, bufa, 0, n-1, _state);
+}
+
+
+/*************************************************************************
+Sorting function optimized for integer keys and real labels, can be used
+to sort middle of the array
+
+A is sorted, and same permutations are applied to B.
+
+NOTES:
+    this function assumes that A[] is finite; it doesn't checks that
+    condition. All other conditions (size of input arrays, etc.) are not
+    checked too.
+
+  -- ALGLIB --
+     Copyright 11.12.2008 by Bochkanov Sergey
+*************************************************************************/
+void tagsortmiddleir(/* Integer */ ae_vector* a,
+     /* Real    */ ae_vector* b,
+     ae_int_t offset,
+     ae_int_t n,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t k;
+    ae_int_t t;
+    ae_int_t tmp;
+    double tmpr;
+    ae_int_t p0;
+    ae_int_t p1;
+    ae_int_t at;
+    ae_int_t ak;
+    ae_int_t ak1;
+    double bt;
+
+
+    
+    /*
+     * Special cases
+     */
+    if( n<=1 )
+    {
+        return;
+    }
+    
+    /*
+     * General case, N>1: sort, update B
+     */
+    for(i=2; i<=n; i++)
+    {
+        t = i;
+        while(t!=1)
+        {
+            k = t/2;
+            p0 = offset+k-1;
+            p1 = offset+t-1;
+            ak = a->ptr.p_int[p0];
+            at = a->ptr.p_int[p1];
+            if( ak>=at )
+            {
+                break;
+            }
+            a->ptr.p_int[p0] = at;
+            a->ptr.p_int[p1] = ak;
+            tmpr = b->ptr.p_double[p0];
+            b->ptr.p_double[p0] = b->ptr.p_double[p1];
+            b->ptr.p_double[p1] = tmpr;
+            t = k;
+        }
+    }
+    for(i=n-1; i>=1; i--)
+    {
+        p0 = offset+0;
+        p1 = offset+i;
+        tmp = a->ptr.p_int[p1];
+        a->ptr.p_int[p1] = a->ptr.p_int[p0];
+        a->ptr.p_int[p0] = tmp;
+        at = tmp;
+        tmpr = b->ptr.p_double[p1];
+        b->ptr.p_double[p1] = b->ptr.p_double[p0];
+        b->ptr.p_double[p0] = tmpr;
+        bt = tmpr;
+        t = 0;
+        for(;;)
+        {
+            k = 2*t+1;
+            if( k+1>i )
+            {
+                break;
+            }
+            p0 = offset+t;
+            p1 = offset+k;
+            ak = a->ptr.p_int[p1];
+            if( k+1<i )
+            {
+                ak1 = a->ptr.p_int[p1+1];
+                if( ak1>ak )
+                {
+                    ak = ak1;
+                    p1 = p1+1;
+                    k = k+1;
+                }
+            }
+            if( at>=ak )
+            {
+                break;
+            }
+            a->ptr.p_int[p1] = at;
+            a->ptr.p_int[p0] = ak;
+            b->ptr.p_double[p0] = b->ptr.p_double[p1];
+            b->ptr.p_double[p1] = bt;
+            t = k;
+        }
+    }
+}
+
+
+/*************************************************************************
+Sorting function optimized for integer keys and integer labels, can be used
+to sort middle of the array
+
+A is sorted, and same permutations are applied to B.
+
+NOTES:
+    this function assumes that A[] is finite; it doesn't checks that
+    condition. All other conditions (size of input arrays, etc.) are not
+    checked too.
+
+  -- ALGLIB --
+     Copyright 11.12.2008 by Bochkanov Sergey
+*************************************************************************/
+void tagsortmiddleii(/* Integer */ ae_vector* a,
+     /* Integer */ ae_vector* b,
+     ae_int_t offset,
+     ae_int_t n,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t k;
+    ae_int_t t;
+    ae_int_t tmp;
+    ae_int_t tmpi;
+    ae_int_t p0;
+    ae_int_t p1;
+    ae_int_t at;
+    ae_int_t ak;
+    ae_int_t ak1;
+    ae_int_t bt;
+
+
+    
+    /*
+     * Special cases
+     */
+    if( n<=1 )
+    {
+        return;
+    }
+    
+    /*
+     * General case, N>1: sort, update B
+     */
+    for(i=2; i<=n; i++)
+    {
+        t = i;
+        while(t!=1)
+        {
+            k = t/2;
+            p0 = offset+k-1;
+            p1 = offset+t-1;
+            ak = a->ptr.p_int[p0];
+            at = a->ptr.p_int[p1];
+            if( ak>=at )
+            {
+                break;
+            }
+            a->ptr.p_int[p0] = at;
+            a->ptr.p_int[p1] = ak;
+            tmpi = b->ptr.p_int[p0];
+            b->ptr.p_int[p0] = b->ptr.p_int[p1];
+            b->ptr.p_int[p1] = tmpi;
+            t = k;
+        }
+    }
+    for(i=n-1; i>=1; i--)
+    {
+        p0 = offset+0;
+        p1 = offset+i;
+        tmp = a->ptr.p_int[p1];
+        a->ptr.p_int[p1] = a->ptr.p_int[p0];
+        a->ptr.p_int[p0] = tmp;
+        at = tmp;
+        tmpi = b->ptr.p_int[p1];
+        b->ptr.p_int[p1] = b->ptr.p_int[p0];
+        b->ptr.p_int[p0] = tmpi;
+        bt = tmpi;
+        t = 0;
+        for(;;)
+        {
+            k = 2*t+1;
+            if( k+1>i )
+            {
+                break;
+            }
+            p0 = offset+t;
+            p1 = offset+k;
+            ak = a->ptr.p_int[p1];
+            if( k+1<i )
+            {
+                ak1 = a->ptr.p_int[p1+1];
+                if( ak1>ak )
+                {
+                    ak = ak1;
+                    p1 = p1+1;
+                    k = k+1;
+                }
+            }
+            if( at>=ak )
+            {
+                break;
+            }
+            a->ptr.p_int[p1] = at;
+            a->ptr.p_int[p0] = ak;
+            b->ptr.p_int[p0] = b->ptr.p_int[p1];
+            b->ptr.p_int[p1] = bt;
+            t = k;
+        }
+    }
+}
+
+
+/*************************************************************************
+Sorting function optimized for integer keys and real labels, can be used
+to sort middle of the array
+
+A is sorted, and same permutations are applied to B.
+
+NOTES:
+    this function assumes that A[] is finite; it doesn't checks that
+    condition. All other conditions (size of input arrays, etc.) are not
+    checked too.
+
+  -- ALGLIB --
+     Copyright 11.12.2008 by Bochkanov Sergey
+*************************************************************************/
+void tagsortmiddlei(/* Integer */ ae_vector* a,
+     ae_int_t offset,
+     ae_int_t n,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t k;
+    ae_int_t t;
+    ae_int_t tmp;
+    ae_int_t p0;
+    ae_int_t p1;
+    ae_int_t at;
+    ae_int_t ak;
+    ae_int_t ak1;
+
+
+    
+    /*
+     * Special cases
+     */
+    if( n<=1 )
+    {
+        return;
+    }
+    
+    /*
+     * General case, N>1: sort, update B
+     */
+    for(i=2; i<=n; i++)
+    {
+        t = i;
+        while(t!=1)
+        {
+            k = t/2;
+            p0 = offset+k-1;
+            p1 = offset+t-1;
+            ak = a->ptr.p_int[p0];
+            at = a->ptr.p_int[p1];
+            if( ak>=at )
+            {
+                break;
+            }
+            a->ptr.p_int[p0] = at;
+            a->ptr.p_int[p1] = ak;
+            t = k;
+        }
+    }
+    for(i=n-1; i>=1; i--)
+    {
+        p0 = offset+0;
+        p1 = offset+i;
+        tmp = a->ptr.p_int[p1];
+        a->ptr.p_int[p1] = a->ptr.p_int[p0];
+        a->ptr.p_int[p0] = tmp;
+        at = tmp;
+        t = 0;
+        for(;;)
+        {
+            k = 2*t+1;
+            if( k+1>i )
+            {
+                break;
+            }
+            p0 = offset+t;
+            p1 = offset+k;
+            ak = a->ptr.p_int[p1];
+            if( k+1<i )
+            {
+                ak1 = a->ptr.p_int[p1+1];
+                if( ak1>ak )
+                {
+                    ak = ak1;
+                    p1 = p1+1;
+                    k = k+1;
+                }
+            }
+            if( at>=ak )
+            {
+                break;
+            }
+            a->ptr.p_int[p1] = at;
+            a->ptr.p_int[p0] = ak;
+            t = k;
+        }
+    }
+}
+
+
+/*************************************************************************
+Sorting function optimized for integer values (only keys, no labels),  can
+be used to sort middle of the array
+
+  -- ALGLIB --
+     Copyright 11.12.2008 by Bochkanov Sergey
+*************************************************************************/
+void sortmiddlei(/* Integer */ ae_vector* a,
+     ae_int_t offset,
+     ae_int_t n,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t k;
+    ae_int_t t;
+    ae_int_t tmp;
+    ae_int_t p0;
+    ae_int_t p1;
+    ae_int_t at;
+    ae_int_t ak;
+    ae_int_t ak1;
+
+
+    
+    /*
+     * Special cases
+     */
+    if( n<=1 )
+    {
+        return;
+    }
+    
+    /*
+     * General case, N>1: sort, update B
+     */
+    for(i=2; i<=n; i++)
+    {
+        t = i;
+        while(t!=1)
+        {
+            k = t/2;
+            p0 = offset+k-1;
+            p1 = offset+t-1;
+            ak = a->ptr.p_int[p0];
+            at = a->ptr.p_int[p1];
+            if( ak>=at )
+            {
+                break;
+            }
+            a->ptr.p_int[p0] = at;
+            a->ptr.p_int[p1] = ak;
+            t = k;
+        }
+    }
+    for(i=n-1; i>=1; i--)
+    {
+        p0 = offset+0;
+        p1 = offset+i;
+        tmp = a->ptr.p_int[p1];
+        a->ptr.p_int[p1] = a->ptr.p_int[p0];
+        a->ptr.p_int[p0] = tmp;
+        at = tmp;
+        t = 0;
+        for(;;)
+        {
+            k = 2*t+1;
+            if( k+1>i )
+            {
+                break;
+            }
+            p0 = offset+t;
+            p1 = offset+k;
+            ak = a->ptr.p_int[p1];
+            if( k+1<i )
+            {
+                ak1 = a->ptr.p_int[p1+1];
+                if( ak1>ak )
+                {
+                    ak = ak1;
+                    p1 = p1+1;
+                    k = k+1;
+                }
+            }
+            if( at>=ak )
+            {
+                break;
+            }
+            a->ptr.p_int[p1] = at;
+            a->ptr.p_int[p0] = ak;
+            t = k;
+        }
+    }
+}
+
+
+/*************************************************************************
+Heap operations: adds element to the heap
+
+PARAMETERS:
+    A       -   heap itself, must be at least array[0..N]
+    B       -   array of integer tags, which are updated according to
+                permutations in the heap
+    N       -   size of the heap (without new element).
+                updated on output
+    VA      -   value of the element being added
+    VB      -   value of the tag
+
+  -- ALGLIB --
+     Copyright 28.02.2010 by Bochkanov Sergey
+*************************************************************************/
+void tagheappushi(/* Real    */ ae_vector* a,
+     /* Integer */ ae_vector* b,
+     ae_int_t* n,
+     double va,
+     ae_int_t vb,
      ae_state *_state)
 {
     ae_int_t j;
-    ae_complex alpha;
-    double alphi;
-    double alphr;
-    double beta;
-    double xnorm;
-    double mx;
-    ae_complex t;
-    double s;
-    ae_complex v;
+    ae_int_t k;
+    double v;
 
-    tau->x = 0;
-    tau->y = 0;
 
-    if( n<=0 )
+    if( *n<0 )
     {
-        *tau = ae_complex_from_i(0);
         return;
     }
     
     /*
-     * Scale if needed (to avoid overflow/underflow during intermediate
-     * calculations).
+     * N=0 is a special case
      */
-    mx = (double)(0);
-    for(j=1; j<=n; j++)
+    if( *n==0 )
     {
-        mx = ae_maxreal(ae_c_abs(x->ptr.p_complex[j], _state), mx, _state);
+        a->ptr.p_double[0] = va;
+        b->ptr.p_int[0] = vb;
+        *n = *n+1;
+        return;
     }
-    s = (double)(1);
-    if( ae_fp_neq(mx,(double)(0)) )
+    
+    /*
+     * add current point to the heap
+     * (add to the bottom, then move up)
+     *
+     * we don't write point to the heap
+     * until its final position is determined
+     * (it allow us to reduce number of array access operations)
+     */
+    j = *n;
+    *n = *n+1;
+    while(j>0)
     {
-        if( ae_fp_less(mx,(double)(1)) )
+        k = (j-1)/2;
+        v = a->ptr.p_double[k];
+        if( v<va )
         {
-            s = ae_sqrt(ae_minrealnumber, _state);
-            v = ae_complex_from_d(1/s);
-            ae_v_cmulc(&x->ptr.p_complex[1], 1, ae_v_len(1,n), v);
+            
+            /*
+             * swap with higher element
+             */
+            a->ptr.p_double[j] = v;
+            b->ptr.p_int[j] = b->ptr.p_int[k];
+            j = k;
         }
         else
         {
-            s = ae_sqrt(ae_maxrealnumber, _state);
-            v = ae_complex_from_d(1/s);
-            ae_v_cmulc(&x->ptr.p_complex[1], 1, ae_v_len(1,n), v);
+            
+            /*
+             * element in its place. terminate.
+             */
+            break;
         }
+    }
+    a->ptr.p_double[j] = va;
+    b->ptr.p_int[j] = vb;
+}
+
+
+/*************************************************************************
+Heap operations: replaces top element with new element
+(which is moved down)
+
+PARAMETERS:
+    A       -   heap itself, must be at least array[0..N-1]
+    B       -   array of integer tags, which are updated according to
+                permutations in the heap
+    N       -   size of the heap
+    VA      -   value of the element which replaces top element
+    VB      -   value of the tag
+
+  -- ALGLIB --
+     Copyright 28.02.2010 by Bochkanov Sergey
+*************************************************************************/
+void tagheapreplacetopi(/* Real    */ ae_vector* a,
+     /* Integer */ ae_vector* b,
+     ae_int_t n,
+     double va,
+     ae_int_t vb,
+     ae_state *_state)
+{
+    ae_int_t j;
+    ae_int_t k1;
+    ae_int_t k2;
+    double v;
+    double v1;
+    double v2;
+
+
+    if( n<1 )
+    {
+        return;
     }
     
     /*
-     * calculate
+     * N=1 is a special case
      */
-    alpha = x->ptr.p_complex[1];
-    mx = (double)(0);
-    for(j=2; j<=n; j++)
+    if( n==1 )
     {
-        mx = ae_maxreal(ae_c_abs(x->ptr.p_complex[j], _state), mx, _state);
+        a->ptr.p_double[0] = va;
+        b->ptr.p_int[0] = vb;
+        return;
     }
-    xnorm = (double)(0);
-    if( ae_fp_neq(mx,(double)(0)) )
+    
+    /*
+     * move down through heap:
+     * * J  -   current element
+     * * K1 -   first child (always exists)
+     * * K2 -   second child (may not exists)
+     *
+     * we don't write point to the heap
+     * until its final position is determined
+     * (it allow us to reduce number of array access operations)
+     */
+    j = 0;
+    k1 = 1;
+    k2 = 2;
+    while(k1<n)
     {
-        for(j=2; j<=n; j++)
+        if( k2>=n )
         {
-            t = ae_c_div_d(x->ptr.p_complex[j],mx);
-            xnorm = xnorm+ae_c_mul(t,ae_c_conj(t, _state)).x;
+            
+            /*
+             * only one child.
+             *
+             * swap and terminate (because this child
+             * have no siblings due to heap structure)
+             */
+            v = a->ptr.p_double[k1];
+            if( v>va )
+            {
+                a->ptr.p_double[j] = v;
+                b->ptr.p_int[j] = b->ptr.p_int[k1];
+                j = k1;
+            }
+            break;
         }
-        xnorm = ae_sqrt(xnorm, _state)*mx;
+        else
+        {
+            
+            /*
+             * two childs
+             */
+            v1 = a->ptr.p_double[k1];
+            v2 = a->ptr.p_double[k2];
+            if( v1>v2 )
+            {
+                if( va<v1 )
+                {
+                    a->ptr.p_double[j] = v1;
+                    b->ptr.p_int[j] = b->ptr.p_int[k1];
+                    j = k1;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                if( va<v2 )
+                {
+                    a->ptr.p_double[j] = v2;
+                    b->ptr.p_int[j] = b->ptr.p_int[k2];
+                    j = k2;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            k1 = 2*j+1;
+            k2 = 2*j+2;
+        }
     }
-    alphr = alpha.x;
-    alphi = alpha.y;
-    if( ae_fp_eq(xnorm,(double)(0))&&ae_fp_eq(alphi,(double)(0)) )
-    {
-        *tau = ae_complex_from_i(0);
-        x->ptr.p_complex[1] = ae_c_mul_d(x->ptr.p_complex[1],s);
-        return;
-    }
-    mx = ae_maxreal(ae_fabs(alphr, _state), ae_fabs(alphi, _state), _state);
-    mx = ae_maxreal(mx, ae_fabs(xnorm, _state), _state);
-    beta = -mx*ae_sqrt(ae_sqr(alphr/mx, _state)+ae_sqr(alphi/mx, _state)+ae_sqr(xnorm/mx, _state), _state);
-    if( ae_fp_less(alphr,(double)(0)) )
-    {
-        beta = -beta;
-    }
-    tau->x = (beta-alphr)/beta;
-    tau->y = -alphi/beta;
-    alpha = ae_c_d_div(1,ae_c_sub_d(alpha,beta));
-    if( n>1 )
-    {
-        ae_v_cmulc(&x->ptr.p_complex[2], 1, ae_v_len(2,n), alpha);
-    }
-    alpha = ae_complex_from_d(beta);
-    x->ptr.p_complex[1] = alpha;
-    
-    /*
-     * Scale back
-     */
-    x->ptr.p_complex[1] = ae_c_mul_d(x->ptr.p_complex[1],s);
+    a->ptr.p_double[j] = va;
+    b->ptr.p_int[j] = vb;
 }
 
 
 /*************************************************************************
-Application of an elementary reflection to a rectangular matrix of size MxN
+Heap operations: pops top element from the heap
 
-The  algorithm  pre-multiplies  the  matrix  by  an  elementary reflection
-transformation  which  is  given  by  column  V  and  scalar  Tau (see the
-description of the GenerateReflection). Not the whole matrix  but  only  a
-part of it is transformed (rows from M1 to M2, columns from N1 to N2). Only
-the elements of this submatrix are changed.
+PARAMETERS:
+    A       -   heap itself, must be at least array[0..N-1]
+    B       -   array of integer tags, which are updated according to
+                permutations in the heap
+    N       -   size of the heap, N>=1
 
-Note: the matrix is multiplied by H, not by H'.   If  it  is  required  to
-multiply the matrix by H', it is necessary to pass Conj(Tau) instead of Tau.
+On output top element is moved to A[N-1], B[N-1], heap is reordered, N is
+decreased by 1.
 
-Input parameters:
-    C       -   matrix to be transformed.
-    Tau     -   scalar defining transformation.
-    V       -   column defining transformation.
-                Array whose index ranges within [1..M2-M1+1]
-    M1, M2  -   range of rows to be transformed.
-    N1, N2  -   range of columns to be transformed.
-    WORK    -   working array whose index goes from N1 to N2.
-
-Output parameters:
-    C       -   the result of multiplying the input matrix C by the
-                transformation matrix which is given by Tau and V.
-                If N1>N2 or M1>M2, C is not modified.
-
-  -- LAPACK auxiliary routine (version 3.0) --
-     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
-     Courant Institute, Argonne National Lab, and Rice University
-     September 30, 1994
+  -- ALGLIB --
+     Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************/
-void complexapplyreflectionfromtheleft(/* Complex */ ae_matrix* c,
-     ae_complex tau,
-     /* Complex */ ae_vector* v,
-     ae_int_t m1,
-     ae_int_t m2,
-     ae_int_t n1,
-     ae_int_t n2,
-     /* Complex */ ae_vector* work,
+void tagheappopi(/* Real    */ ae_vector* a,
+     /* Integer */ ae_vector* b,
+     ae_int_t* n,
      ae_state *_state)
 {
-    ae_complex t;
-    ae_int_t i;
+    double va;
+    ae_int_t vb;
 
 
-    if( (ae_c_eq_d(tau,(double)(0))||n1>n2)||m1>m2 )
+    if( *n<1 )
     {
         return;
     }
     
     /*
-     * w := C^T * conj(v)
+     * N=1 is a special case
      */
-    for(i=n1; i<=n2; i++)
+    if( *n==1 )
     {
-        work->ptr.p_complex[i] = ae_complex_from_i(0);
-    }
-    for(i=m1; i<=m2; i++)
-    {
-        t = ae_c_conj(v->ptr.p_complex[i+1-m1], _state);
-        ae_v_caddc(&work->ptr.p_complex[n1], 1, &c->ptr.pp_complex[i][n1], 1, "N", ae_v_len(n1,n2), t);
+        *n = 0;
+        return;
     }
     
     /*
-     * C := C - tau * v * w^T
+     * swap top element and last element,
+     * then reorder heap
      */
-    for(i=m1; i<=m2; i++)
-    {
-        t = ae_c_mul(v->ptr.p_complex[i-m1+1],tau);
-        ae_v_csubc(&c->ptr.pp_complex[i][n1], 1, &work->ptr.p_complex[n1], 1, "N", ae_v_len(n1,n2), t);
-    }
+    va = a->ptr.p_double[*n-1];
+    vb = b->ptr.p_int[*n-1];
+    a->ptr.p_double[*n-1] = a->ptr.p_double[0];
+    b->ptr.p_int[*n-1] = b->ptr.p_int[0];
+    *n = *n-1;
+    tagheapreplacetopi(a, b, *n, va, vb, _state);
 }
 
 
 /*************************************************************************
-Application of an elementary reflection to a rectangular matrix of size MxN
+Search first element less than T in sorted array.
 
-The  algorithm  post-multiplies  the  matrix  by  an elementary reflection
-transformation  which  is  given  by  column  V  and  scalar  Tau (see the
-description  of  the  GenerateReflection). Not the whole matrix but only a
-part  of  it  is  transformed (rows from M1 to M2, columns from N1 to N2).
-Only the elements of this submatrix are changed.
+PARAMETERS:
+    A - sorted array by ascending from 0 to N-1
+    N - number of elements in array
+    T - the desired element
 
-Input parameters:
-    C       -   matrix to be transformed.
-    Tau     -   scalar defining transformation.
-    V       -   column defining transformation.
-                Array whose index ranges within [1..N2-N1+1]
-    M1, M2  -   range of rows to be transformed.
-    N1, N2  -   range of columns to be transformed.
-    WORK    -   working array whose index goes from M1 to M2.
-
-Output parameters:
-    C       -   the result of multiplying the input matrix C by the
-                transformation matrix which is given by Tau and V.
-                If N1>N2 or M1>M2, C is not modified.
-
-  -- LAPACK auxiliary routine (version 3.0) --
-     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
-     Courant Institute, Argonne National Lab, and Rice University
-     September 30, 1994
+RESULT:
+    The very first element's index, which isn't less than T.
+In the case when there aren't such elements, returns N.
 *************************************************************************/
-void complexapplyreflectionfromtheright(/* Complex */ ae_matrix* c,
-     ae_complex tau,
-     /* Complex */ ae_vector* v,
-     ae_int_t m1,
-     ae_int_t m2,
-     ae_int_t n1,
-     ae_int_t n2,
-     /* Complex */ ae_vector* work,
+ae_int_t lowerbound(/* Real    */ ae_vector* a,
+     ae_int_t n,
+     double t,
      ae_state *_state)
 {
-    ae_complex t;
+    ae_int_t l;
+    ae_int_t half;
+    ae_int_t first;
+    ae_int_t middle;
+    ae_int_t result;
+
+
+    l = n;
+    first = 0;
+    while(l>0)
+    {
+        half = l/2;
+        middle = first+half;
+        if( ae_fp_less(a->ptr.p_double[middle],t) )
+        {
+            first = middle+1;
+            l = l-half-1;
+        }
+        else
+        {
+            l = half;
+        }
+    }
+    result = first;
+    return result;
+}
+
+
+/*************************************************************************
+Search first element more than T in sorted array.
+
+PARAMETERS:
+    A - sorted array by ascending from 0 to N-1
+    N - number of elements in array
+    T - the desired element
+
+    RESULT:
+    The very first element's index, which more than T.
+In the case when there aren't such elements, returns N.
+*************************************************************************/
+ae_int_t upperbound(/* Real    */ ae_vector* a,
+     ae_int_t n,
+     double t,
+     ae_state *_state)
+{
+    ae_int_t l;
+    ae_int_t half;
+    ae_int_t first;
+    ae_int_t middle;
+    ae_int_t result;
+
+
+    l = n;
+    first = 0;
+    while(l>0)
+    {
+        half = l/2;
+        middle = first+half;
+        if( ae_fp_less(t,a->ptr.p_double[middle]) )
+        {
+            l = half;
+        }
+        else
+        {
+            first = middle+1;
+            l = l-half-1;
+        }
+    }
+    result = first;
+    return result;
+}
+
+
+/*************************************************************************
+Internal TagSortFastI: sorts A[I1...I2] (both bounds are included),
+applies same permutations to B.
+
+  -- ALGLIB --
+     Copyright 06.09.2010 by Bochkanov Sergey
+*************************************************************************/
+static void tsort_tagsortfastirec(/* Real    */ ae_vector* a,
+     /* Integer */ ae_vector* b,
+     /* Real    */ ae_vector* bufa,
+     /* Integer */ ae_vector* bufb,
+     ae_int_t i1,
+     ae_int_t i2,
+     ae_state *_state)
+{
     ae_int_t i;
-    ae_int_t vm;
+    ae_int_t j;
+    ae_int_t k;
+    ae_int_t cntless;
+    ae_int_t cnteq;
+    ae_int_t cntgreater;
+    double tmpr;
+    ae_int_t tmpi;
+    double v0;
+    double v1;
+    double v2;
+    double vp;
 
 
-    if( (ae_c_eq_d(tau,(double)(0))||n1>n2)||m1>m2 )
+    
+    /*
+     * Fast exit
+     */
+    if( i2<=i1 )
     {
         return;
     }
     
     /*
-     * w := C * v
+     * Non-recursive sort for small arrays
      */
-    vm = n2-n1+1;
-    for(i=m1; i<=m2; i++)
+    if( i2-i1<=16 )
     {
-        t = ae_v_cdotproduct(&c->ptr.pp_complex[i][n1], 1, "N", &v->ptr.p_complex[1], 1, "N", ae_v_len(n1,n2));
-        work->ptr.p_complex[i] = t;
+        for(j=i1+1; j<=i2; j++)
+        {
+            
+            /*
+             * Search elements [I1..J-1] for place to insert Jth element.
+             *
+             * This code stops immediately if we can leave A[J] at J-th position
+             * (all elements have same value of A[J] larger than any of them)
+             */
+            tmpr = a->ptr.p_double[j];
+            tmpi = j;
+            for(k=j-1; k>=i1; k--)
+            {
+                if( a->ptr.p_double[k]<=tmpr )
+                {
+                    break;
+                }
+                tmpi = k;
+            }
+            k = tmpi;
+            
+            /*
+             * Insert Jth element into Kth position
+             */
+            if( k!=j )
+            {
+                tmpr = a->ptr.p_double[j];
+                tmpi = b->ptr.p_int[j];
+                for(i=j-1; i>=k; i--)
+                {
+                    a->ptr.p_double[i+1] = a->ptr.p_double[i];
+                    b->ptr.p_int[i+1] = b->ptr.p_int[i];
+                }
+                a->ptr.p_double[k] = tmpr;
+                b->ptr.p_int[k] = tmpi;
+            }
+        }
+        return;
     }
     
     /*
-     * C := C - w * conj(v^T)
+     * Quicksort: choose pivot
+     * Here we assume that I2-I1>=2
      */
-    ae_v_cmove(&v->ptr.p_complex[1], 1, &v->ptr.p_complex[1], 1, "Conj", ae_v_len(1,vm));
-    for(i=m1; i<=m2; i++)
+    v0 = a->ptr.p_double[i1];
+    v1 = a->ptr.p_double[i1+(i2-i1)/2];
+    v2 = a->ptr.p_double[i2];
+    if( v0>v1 )
     {
-        t = ae_c_mul(work->ptr.p_complex[i],tau);
-        ae_v_csubc(&c->ptr.pp_complex[i][n1], 1, &v->ptr.p_complex[1], 1, "N", ae_v_len(n1,n2), t);
+        tmpr = v1;
+        v1 = v0;
+        v0 = tmpr;
     }
-    ae_v_cmove(&v->ptr.p_complex[1], 1, &v->ptr.p_complex[1], 1, "Conj", ae_v_len(1,vm));
+    if( v1>v2 )
+    {
+        tmpr = v2;
+        v2 = v1;
+        v1 = tmpr;
+    }
+    if( v0>v1 )
+    {
+        tmpr = v1;
+        v1 = v0;
+        v0 = tmpr;
+    }
+    vp = v1;
+    
+    /*
+     * now pass through A/B and:
+     * * move elements that are LESS than VP to the left of A/B
+     * * move elements that are EQUAL to VP to the right of BufA/BufB (in the reverse order)
+     * * move elements that are GREATER than VP to the left of BufA/BufB (in the normal order
+     * * move elements from the tail of BufA/BufB to the middle of A/B (restoring normal order)
+     * * move elements from the left of BufA/BufB to the end of A/B
+     */
+    cntless = 0;
+    cnteq = 0;
+    cntgreater = 0;
+    for(i=i1; i<=i2; i++)
+    {
+        v0 = a->ptr.p_double[i];
+        if( v0<vp )
+        {
+            
+            /*
+             * LESS
+             */
+            k = i1+cntless;
+            if( i!=k )
+            {
+                a->ptr.p_double[k] = v0;
+                b->ptr.p_int[k] = b->ptr.p_int[i];
+            }
+            cntless = cntless+1;
+            continue;
+        }
+        if( v0==vp )
+        {
+            
+            /*
+             * EQUAL
+             */
+            k = i2-cnteq;
+            bufa->ptr.p_double[k] = v0;
+            bufb->ptr.p_int[k] = b->ptr.p_int[i];
+            cnteq = cnteq+1;
+            continue;
+        }
+        
+        /*
+         * GREATER
+         */
+        k = i1+cntgreater;
+        bufa->ptr.p_double[k] = v0;
+        bufb->ptr.p_int[k] = b->ptr.p_int[i];
+        cntgreater = cntgreater+1;
+    }
+    for(i=0; i<=cnteq-1; i++)
+    {
+        j = i1+cntless+cnteq-1-i;
+        k = i2+i-(cnteq-1);
+        a->ptr.p_double[j] = bufa->ptr.p_double[k];
+        b->ptr.p_int[j] = bufb->ptr.p_int[k];
+    }
+    for(i=0; i<=cntgreater-1; i++)
+    {
+        j = i1+cntless+cnteq+i;
+        k = i1+i;
+        a->ptr.p_double[j] = bufa->ptr.p_double[k];
+        b->ptr.p_int[j] = bufb->ptr.p_int[k];
+    }
+    
+    /*
+     * Sort left and right parts of the array (ignoring middle part)
+     */
+    tsort_tagsortfastirec(a, b, bufa, bufb, i1, i1+cntless-1, _state);
+    tsort_tagsortfastirec(a, b, bufa, bufb, i1+cntless+cnteq, i2, _state);
+}
+
+
+/*************************************************************************
+Internal TagSortFastR: sorts A[I1...I2] (both bounds are included),
+applies same permutations to B.
+
+  -- ALGLIB --
+     Copyright 06.09.2010 by Bochkanov Sergey
+*************************************************************************/
+static void tsort_tagsortfastrrec(/* Real    */ ae_vector* a,
+     /* Real    */ ae_vector* b,
+     /* Real    */ ae_vector* bufa,
+     /* Real    */ ae_vector* bufb,
+     ae_int_t i1,
+     ae_int_t i2,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+    ae_int_t k;
+    double tmpr;
+    double tmpr2;
+    ae_int_t tmpi;
+    ae_int_t cntless;
+    ae_int_t cnteq;
+    ae_int_t cntgreater;
+    double v0;
+    double v1;
+    double v2;
+    double vp;
+
+
+    
+    /*
+     * Fast exit
+     */
+    if( i2<=i1 )
+    {
+        return;
+    }
+    
+    /*
+     * Non-recursive sort for small arrays
+     */
+    if( i2-i1<=16 )
+    {
+        for(j=i1+1; j<=i2; j++)
+        {
+            
+            /*
+             * Search elements [I1..J-1] for place to insert Jth element.
+             *
+             * This code stops immediatly if we can leave A[J] at J-th position
+             * (all elements have same value of A[J] larger than any of them)
+             */
+            tmpr = a->ptr.p_double[j];
+            tmpi = j;
+            for(k=j-1; k>=i1; k--)
+            {
+                if( a->ptr.p_double[k]<=tmpr )
+                {
+                    break;
+                }
+                tmpi = k;
+            }
+            k = tmpi;
+            
+            /*
+             * Insert Jth element into Kth position
+             */
+            if( k!=j )
+            {
+                tmpr = a->ptr.p_double[j];
+                tmpr2 = b->ptr.p_double[j];
+                for(i=j-1; i>=k; i--)
+                {
+                    a->ptr.p_double[i+1] = a->ptr.p_double[i];
+                    b->ptr.p_double[i+1] = b->ptr.p_double[i];
+                }
+                a->ptr.p_double[k] = tmpr;
+                b->ptr.p_double[k] = tmpr2;
+            }
+        }
+        return;
+    }
+    
+    /*
+     * Quicksort: choose pivot
+     * Here we assume that I2-I1>=16
+     */
+    v0 = a->ptr.p_double[i1];
+    v1 = a->ptr.p_double[i1+(i2-i1)/2];
+    v2 = a->ptr.p_double[i2];
+    if( v0>v1 )
+    {
+        tmpr = v1;
+        v1 = v0;
+        v0 = tmpr;
+    }
+    if( v1>v2 )
+    {
+        tmpr = v2;
+        v2 = v1;
+        v1 = tmpr;
+    }
+    if( v0>v1 )
+    {
+        tmpr = v1;
+        v1 = v0;
+        v0 = tmpr;
+    }
+    vp = v1;
+    
+    /*
+     * now pass through A/B and:
+     * * move elements that are LESS than VP to the left of A/B
+     * * move elements that are EQUAL to VP to the right of BufA/BufB (in the reverse order)
+     * * move elements that are GREATER than VP to the left of BufA/BufB (in the normal order
+     * * move elements from the tail of BufA/BufB to the middle of A/B (restoring normal order)
+     * * move elements from the left of BufA/BufB to the end of A/B
+     */
+    cntless = 0;
+    cnteq = 0;
+    cntgreater = 0;
+    for(i=i1; i<=i2; i++)
+    {
+        v0 = a->ptr.p_double[i];
+        if( v0<vp )
+        {
+            
+            /*
+             * LESS
+             */
+            k = i1+cntless;
+            if( i!=k )
+            {
+                a->ptr.p_double[k] = v0;
+                b->ptr.p_double[k] = b->ptr.p_double[i];
+            }
+            cntless = cntless+1;
+            continue;
+        }
+        if( v0==vp )
+        {
+            
+            /*
+             * EQUAL
+             */
+            k = i2-cnteq;
+            bufa->ptr.p_double[k] = v0;
+            bufb->ptr.p_double[k] = b->ptr.p_double[i];
+            cnteq = cnteq+1;
+            continue;
+        }
+        
+        /*
+         * GREATER
+         */
+        k = i1+cntgreater;
+        bufa->ptr.p_double[k] = v0;
+        bufb->ptr.p_double[k] = b->ptr.p_double[i];
+        cntgreater = cntgreater+1;
+    }
+    for(i=0; i<=cnteq-1; i++)
+    {
+        j = i1+cntless+cnteq-1-i;
+        k = i2+i-(cnteq-1);
+        a->ptr.p_double[j] = bufa->ptr.p_double[k];
+        b->ptr.p_double[j] = bufb->ptr.p_double[k];
+    }
+    for(i=0; i<=cntgreater-1; i++)
+    {
+        j = i1+cntless+cnteq+i;
+        k = i1+i;
+        a->ptr.p_double[j] = bufa->ptr.p_double[k];
+        b->ptr.p_double[j] = bufb->ptr.p_double[k];
+    }
+    
+    /*
+     * Sort left and right parts of the array (ignoring middle part)
+     */
+    tsort_tagsortfastrrec(a, b, bufa, bufb, i1, i1+cntless-1, _state);
+    tsort_tagsortfastrrec(a, b, bufa, bufb, i1+cntless+cnteq, i2, _state);
+}
+
+
+/*************************************************************************
+Internal TagSortFastI: sorts A[I1...I2] (both bounds are included),
+applies same permutations to B.
+
+  -- ALGLIB --
+     Copyright 06.09.2010 by Bochkanov Sergey
+*************************************************************************/
+static void tsort_tagsortfastrec(/* Real    */ ae_vector* a,
+     /* Real    */ ae_vector* bufa,
+     ae_int_t i1,
+     ae_int_t i2,
+     ae_state *_state)
+{
+    ae_int_t cntless;
+    ae_int_t cnteq;
+    ae_int_t cntgreater;
+    ae_int_t i;
+    ae_int_t j;
+    ae_int_t k;
+    double tmpr;
+    ae_int_t tmpi;
+    double v0;
+    double v1;
+    double v2;
+    double vp;
+
+
+    
+    /*
+     * Fast exit
+     */
+    if( i2<=i1 )
+    {
+        return;
+    }
+    
+    /*
+     * Non-recursive sort for small arrays
+     */
+    if( i2-i1<=16 )
+    {
+        for(j=i1+1; j<=i2; j++)
+        {
+            
+            /*
+             * Search elements [I1..J-1] for place to insert Jth element.
+             *
+             * This code stops immediatly if we can leave A[J] at J-th position
+             * (all elements have same value of A[J] larger than any of them)
+             */
+            tmpr = a->ptr.p_double[j];
+            tmpi = j;
+            for(k=j-1; k>=i1; k--)
+            {
+                if( a->ptr.p_double[k]<=tmpr )
+                {
+                    break;
+                }
+                tmpi = k;
+            }
+            k = tmpi;
+            
+            /*
+             * Insert Jth element into Kth position
+             */
+            if( k!=j )
+            {
+                tmpr = a->ptr.p_double[j];
+                for(i=j-1; i>=k; i--)
+                {
+                    a->ptr.p_double[i+1] = a->ptr.p_double[i];
+                }
+                a->ptr.p_double[k] = tmpr;
+            }
+        }
+        return;
+    }
+    
+    /*
+     * Quicksort: choose pivot
+     * Here we assume that I2-I1>=16
+     */
+    v0 = a->ptr.p_double[i1];
+    v1 = a->ptr.p_double[i1+(i2-i1)/2];
+    v2 = a->ptr.p_double[i2];
+    if( v0>v1 )
+    {
+        tmpr = v1;
+        v1 = v0;
+        v0 = tmpr;
+    }
+    if( v1>v2 )
+    {
+        tmpr = v2;
+        v2 = v1;
+        v1 = tmpr;
+    }
+    if( v0>v1 )
+    {
+        tmpr = v1;
+        v1 = v0;
+        v0 = tmpr;
+    }
+    vp = v1;
+    
+    /*
+     * now pass through A/B and:
+     * * move elements that are LESS than VP to the left of A/B
+     * * move elements that are EQUAL to VP to the right of BufA/BufB (in the reverse order)
+     * * move elements that are GREATER than VP to the left of BufA/BufB (in the normal order
+     * * move elements from the tail of BufA/BufB to the middle of A/B (restoring normal order)
+     * * move elements from the left of BufA/BufB to the end of A/B
+     */
+    cntless = 0;
+    cnteq = 0;
+    cntgreater = 0;
+    for(i=i1; i<=i2; i++)
+    {
+        v0 = a->ptr.p_double[i];
+        if( v0<vp )
+        {
+            
+            /*
+             * LESS
+             */
+            k = i1+cntless;
+            if( i!=k )
+            {
+                a->ptr.p_double[k] = v0;
+            }
+            cntless = cntless+1;
+            continue;
+        }
+        if( v0==vp )
+        {
+            
+            /*
+             * EQUAL
+             */
+            k = i2-cnteq;
+            bufa->ptr.p_double[k] = v0;
+            cnteq = cnteq+1;
+            continue;
+        }
+        
+        /*
+         * GREATER
+         */
+        k = i1+cntgreater;
+        bufa->ptr.p_double[k] = v0;
+        cntgreater = cntgreater+1;
+    }
+    for(i=0; i<=cnteq-1; i++)
+    {
+        j = i1+cntless+cnteq-1-i;
+        k = i2+i-(cnteq-1);
+        a->ptr.p_double[j] = bufa->ptr.p_double[k];
+    }
+    for(i=0; i<=cntgreater-1; i++)
+    {
+        j = i1+cntless+cnteq+i;
+        k = i1+i;
+        a->ptr.p_double[j] = bufa->ptr.p_double[k];
+    }
+    
+    /*
+     * Sort left and right parts of the array (ignoring middle part)
+     */
+    tsort_tagsortfastrec(a, bufa, i1, i1+cntless-1, _state);
+    tsort_tagsortfastrec(a, bufa, i1+cntless+cnteq, i2, _state);
+}
+
+
+#endif
+#if defined(AE_COMPILE_BLAS) || !defined(AE_PARTIAL_BUILD)
+
+
+double vectornorm2(/* Real    */ ae_vector* x,
+     ae_int_t i1,
+     ae_int_t i2,
+     ae_state *_state)
+{
+    ae_int_t n;
+    ae_int_t ix;
+    double absxi;
+    double scl;
+    double ssq;
+    double result;
+
+
+    n = i2-i1+1;
+    if( n<1 )
+    {
+        result = (double)(0);
+        return result;
+    }
+    if( n==1 )
+    {
+        result = ae_fabs(x->ptr.p_double[i1], _state);
+        return result;
+    }
+    scl = (double)(0);
+    ssq = (double)(1);
+    for(ix=i1; ix<=i2; ix++)
+    {
+        if( ae_fp_neq(x->ptr.p_double[ix],(double)(0)) )
+        {
+            absxi = ae_fabs(x->ptr.p_double[ix], _state);
+            if( ae_fp_less(scl,absxi) )
+            {
+                ssq = 1+ssq*ae_sqr(scl/absxi, _state);
+                scl = absxi;
+            }
+            else
+            {
+                ssq = ssq+ae_sqr(absxi/scl, _state);
+            }
+        }
+    }
+    result = scl*ae_sqrt(ssq, _state);
+    return result;
+}
+
+
+ae_int_t vectoridxabsmax(/* Real    */ ae_vector* x,
+     ae_int_t i1,
+     ae_int_t i2,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t result;
+
+
+    result = i1;
+    for(i=i1+1; i<=i2; i++)
+    {
+        if( ae_fp_greater(ae_fabs(x->ptr.p_double[i], _state),ae_fabs(x->ptr.p_double[result], _state)) )
+        {
+            result = i;
+        }
+    }
+    return result;
+}
+
+
+ae_int_t columnidxabsmax(/* Real    */ ae_matrix* x,
+     ae_int_t i1,
+     ae_int_t i2,
+     ae_int_t j,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t result;
+
+
+    result = i1;
+    for(i=i1+1; i<=i2; i++)
+    {
+        if( ae_fp_greater(ae_fabs(x->ptr.pp_double[i][j], _state),ae_fabs(x->ptr.pp_double[result][j], _state)) )
+        {
+            result = i;
+        }
+    }
+    return result;
+}
+
+
+ae_int_t rowidxabsmax(/* Real    */ ae_matrix* x,
+     ae_int_t j1,
+     ae_int_t j2,
+     ae_int_t i,
+     ae_state *_state)
+{
+    ae_int_t j;
+    ae_int_t result;
+
+
+    result = j1;
+    for(j=j1+1; j<=j2; j++)
+    {
+        if( ae_fp_greater(ae_fabs(x->ptr.pp_double[i][j], _state),ae_fabs(x->ptr.pp_double[i][result], _state)) )
+        {
+            result = j;
+        }
+    }
+    return result;
+}
+
+
+double upperhessenberg1norm(/* Real    */ ae_matrix* a,
+     ae_int_t i1,
+     ae_int_t i2,
+     ae_int_t j1,
+     ae_int_t j2,
+     /* Real    */ ae_vector* work,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+    double result;
+
+
+    ae_assert(i2-i1==j2-j1, "UpperHessenberg1Norm: I2-I1<>J2-J1!", _state);
+    for(j=j1; j<=j2; j++)
+    {
+        work->ptr.p_double[j] = (double)(0);
+    }
+    for(i=i1; i<=i2; i++)
+    {
+        for(j=ae_maxint(j1, j1+i-i1-1, _state); j<=j2; j++)
+        {
+            work->ptr.p_double[j] = work->ptr.p_double[j]+ae_fabs(a->ptr.pp_double[i][j], _state);
+        }
+    }
+    result = (double)(0);
+    for(j=j1; j<=j2; j++)
+    {
+        result = ae_maxreal(result, work->ptr.p_double[j], _state);
+    }
+    return result;
+}
+
+
+void copymatrix(/* Real    */ ae_matrix* a,
+     ae_int_t is1,
+     ae_int_t is2,
+     ae_int_t js1,
+     ae_int_t js2,
+     /* Real    */ ae_matrix* b,
+     ae_int_t id1,
+     ae_int_t id2,
+     ae_int_t jd1,
+     ae_int_t jd2,
+     ae_state *_state)
+{
+    ae_int_t isrc;
+    ae_int_t idst;
+
+
+    if( is1>is2||js1>js2 )
+    {
+        return;
+    }
+    ae_assert(is2-is1==id2-id1, "CopyMatrix: different sizes!", _state);
+    ae_assert(js2-js1==jd2-jd1, "CopyMatrix: different sizes!", _state);
+    for(isrc=is1; isrc<=is2; isrc++)
+    {
+        idst = isrc-is1+id1;
+        ae_v_move(&b->ptr.pp_double[idst][jd1], 1, &a->ptr.pp_double[isrc][js1], 1, ae_v_len(jd1,jd2));
+    }
+}
+
+
+void inplacetranspose(/* Real    */ ae_matrix* a,
+     ae_int_t i1,
+     ae_int_t i2,
+     ae_int_t j1,
+     ae_int_t j2,
+     /* Real    */ ae_vector* work,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+    ae_int_t ips;
+    ae_int_t jps;
+    ae_int_t l;
+
+
+    if( i1>i2||j1>j2 )
+    {
+        return;
+    }
+    ae_assert(i1-i2==j1-j2, "InplaceTranspose error: incorrect array size!", _state);
+    for(i=i1; i<=i2-1; i++)
+    {
+        j = j1+i-i1;
+        ips = i+1;
+        jps = j1+ips-i1;
+        l = i2-i;
+        ae_v_move(&work->ptr.p_double[1], 1, &a->ptr.pp_double[ips][j], a->stride, ae_v_len(1,l));
+        ae_v_move(&a->ptr.pp_double[ips][j], a->stride, &a->ptr.pp_double[i][jps], 1, ae_v_len(ips,i2));
+        ae_v_move(&a->ptr.pp_double[i][jps], 1, &work->ptr.p_double[1], 1, ae_v_len(jps,j2));
+    }
+}
+
+
+void copyandtranspose(/* Real    */ ae_matrix* a,
+     ae_int_t is1,
+     ae_int_t is2,
+     ae_int_t js1,
+     ae_int_t js2,
+     /* Real    */ ae_matrix* b,
+     ae_int_t id1,
+     ae_int_t id2,
+     ae_int_t jd1,
+     ae_int_t jd2,
+     ae_state *_state)
+{
+    ae_int_t isrc;
+    ae_int_t jdst;
+
+
+    if( is1>is2||js1>js2 )
+    {
+        return;
+    }
+    ae_assert(is2-is1==jd2-jd1, "CopyAndTranspose: different sizes!", _state);
+    ae_assert(js2-js1==id2-id1, "CopyAndTranspose: different sizes!", _state);
+    for(isrc=is1; isrc<=is2; isrc++)
+    {
+        jdst = isrc-is1+jd1;
+        ae_v_move(&b->ptr.pp_double[id1][jdst], b->stride, &a->ptr.pp_double[isrc][js1], 1, ae_v_len(id1,id2));
+    }
+}
+
+
+void matrixvectormultiply(/* Real    */ ae_matrix* a,
+     ae_int_t i1,
+     ae_int_t i2,
+     ae_int_t j1,
+     ae_int_t j2,
+     ae_bool trans,
+     /* Real    */ ae_vector* x,
+     ae_int_t ix1,
+     ae_int_t ix2,
+     double alpha,
+     /* Real    */ ae_vector* y,
+     ae_int_t iy1,
+     ae_int_t iy2,
+     double beta,
+     ae_state *_state)
+{
+    ae_int_t i;
+    double v;
+
+
+    if( !trans )
+    {
+        
+        /*
+         * y := alpha*A*x + beta*y;
+         */
+        if( i1>i2||j1>j2 )
+        {
+            return;
+        }
+        ae_assert(j2-j1==ix2-ix1, "MatrixVectorMultiply: A and X dont match!", _state);
+        ae_assert(i2-i1==iy2-iy1, "MatrixVectorMultiply: A and Y dont match!", _state);
+        
+        /*
+         * beta*y
+         */
+        if( ae_fp_eq(beta,(double)(0)) )
+        {
+            for(i=iy1; i<=iy2; i++)
+            {
+                y->ptr.p_double[i] = (double)(0);
+            }
+        }
+        else
+        {
+            ae_v_muld(&y->ptr.p_double[iy1], 1, ae_v_len(iy1,iy2), beta);
+        }
+        
+        /*
+         * alpha*A*x
+         */
+        for(i=i1; i<=i2; i++)
+        {
+            v = ae_v_dotproduct(&a->ptr.pp_double[i][j1], 1, &x->ptr.p_double[ix1], 1, ae_v_len(j1,j2));
+            y->ptr.p_double[iy1+i-i1] = y->ptr.p_double[iy1+i-i1]+alpha*v;
+        }
+    }
+    else
+    {
+        
+        /*
+         * y := alpha*A'*x + beta*y;
+         */
+        if( i1>i2||j1>j2 )
+        {
+            return;
+        }
+        ae_assert(i2-i1==ix2-ix1, "MatrixVectorMultiply: A and X dont match!", _state);
+        ae_assert(j2-j1==iy2-iy1, "MatrixVectorMultiply: A and Y dont match!", _state);
+        
+        /*
+         * beta*y
+         */
+        if( ae_fp_eq(beta,(double)(0)) )
+        {
+            for(i=iy1; i<=iy2; i++)
+            {
+                y->ptr.p_double[i] = (double)(0);
+            }
+        }
+        else
+        {
+            ae_v_muld(&y->ptr.p_double[iy1], 1, ae_v_len(iy1,iy2), beta);
+        }
+        
+        /*
+         * alpha*A'*x
+         */
+        for(i=i1; i<=i2; i++)
+        {
+            v = alpha*x->ptr.p_double[ix1+i-i1];
+            ae_v_addd(&y->ptr.p_double[iy1], 1, &a->ptr.pp_double[i][j1], 1, ae_v_len(iy1,iy2), v);
+        }
+    }
+}
+
+
+double pythag2(double x, double y, ae_state *_state)
+{
+    double w;
+    double xabs;
+    double yabs;
+    double z;
+    double result;
+
+
+    xabs = ae_fabs(x, _state);
+    yabs = ae_fabs(y, _state);
+    w = ae_maxreal(xabs, yabs, _state);
+    z = ae_minreal(xabs, yabs, _state);
+    if( ae_fp_eq(z,(double)(0)) )
+    {
+        result = w;
+    }
+    else
+    {
+        result = w*ae_sqrt(1+ae_sqr(z/w, _state), _state);
+    }
+    return result;
+}
+
+
+void matrixmatrixmultiply(/* Real    */ ae_matrix* a,
+     ae_int_t ai1,
+     ae_int_t ai2,
+     ae_int_t aj1,
+     ae_int_t aj2,
+     ae_bool transa,
+     /* Real    */ ae_matrix* b,
+     ae_int_t bi1,
+     ae_int_t bi2,
+     ae_int_t bj1,
+     ae_int_t bj2,
+     ae_bool transb,
+     double alpha,
+     /* Real    */ ae_matrix* c,
+     ae_int_t ci1,
+     ae_int_t ci2,
+     ae_int_t cj1,
+     ae_int_t cj2,
+     double beta,
+     /* Real    */ ae_vector* work,
+     ae_state *_state)
+{
+    ae_int_t arows;
+    ae_int_t acols;
+    ae_int_t brows;
+    ae_int_t bcols;
+    ae_int_t crows;
+    ae_int_t i;
+    ae_int_t j;
+    ae_int_t k;
+    ae_int_t l;
+    ae_int_t r;
+    double v;
+
+
+    
+    /*
+     * Setup
+     */
+    if( !transa )
+    {
+        arows = ai2-ai1+1;
+        acols = aj2-aj1+1;
+    }
+    else
+    {
+        arows = aj2-aj1+1;
+        acols = ai2-ai1+1;
+    }
+    if( !transb )
+    {
+        brows = bi2-bi1+1;
+        bcols = bj2-bj1+1;
+    }
+    else
+    {
+        brows = bj2-bj1+1;
+        bcols = bi2-bi1+1;
+    }
+    ae_assert(acols==brows, "MatrixMatrixMultiply: incorrect matrix sizes!", _state);
+    if( ((arows<=0||acols<=0)||brows<=0)||bcols<=0 )
+    {
+        return;
+    }
+    crows = arows;
+    
+    /*
+     * Test WORK
+     */
+    i = ae_maxint(arows, acols, _state);
+    i = ae_maxint(brows, i, _state);
+    i = ae_maxint(i, bcols, _state);
+    work->ptr.p_double[1] = (double)(0);
+    work->ptr.p_double[i] = (double)(0);
+    
+    /*
+     * Prepare C
+     */
+    if( ae_fp_eq(beta,(double)(0)) )
+    {
+        for(i=ci1; i<=ci2; i++)
+        {
+            for(j=cj1; j<=cj2; j++)
+            {
+                c->ptr.pp_double[i][j] = (double)(0);
+            }
+        }
+    }
+    else
+    {
+        for(i=ci1; i<=ci2; i++)
+        {
+            ae_v_muld(&c->ptr.pp_double[i][cj1], 1, ae_v_len(cj1,cj2), beta);
+        }
+    }
+    
+    /*
+     * A*B
+     */
+    if( !transa&&!transb )
+    {
+        for(l=ai1; l<=ai2; l++)
+        {
+            for(r=bi1; r<=bi2; r++)
+            {
+                v = alpha*a->ptr.pp_double[l][aj1+r-bi1];
+                k = ci1+l-ai1;
+                ae_v_addd(&c->ptr.pp_double[k][cj1], 1, &b->ptr.pp_double[r][bj1], 1, ae_v_len(cj1,cj2), v);
+            }
+        }
+        return;
+    }
+    
+    /*
+     * A*B'
+     */
+    if( !transa&&transb )
+    {
+        if( arows*acols<brows*bcols )
+        {
+            for(r=bi1; r<=bi2; r++)
+            {
+                for(l=ai1; l<=ai2; l++)
+                {
+                    v = ae_v_dotproduct(&a->ptr.pp_double[l][aj1], 1, &b->ptr.pp_double[r][bj1], 1, ae_v_len(aj1,aj2));
+                    c->ptr.pp_double[ci1+l-ai1][cj1+r-bi1] = c->ptr.pp_double[ci1+l-ai1][cj1+r-bi1]+alpha*v;
+                }
+            }
+            return;
+        }
+        else
+        {
+            for(l=ai1; l<=ai2; l++)
+            {
+                for(r=bi1; r<=bi2; r++)
+                {
+                    v = ae_v_dotproduct(&a->ptr.pp_double[l][aj1], 1, &b->ptr.pp_double[r][bj1], 1, ae_v_len(aj1,aj2));
+                    c->ptr.pp_double[ci1+l-ai1][cj1+r-bi1] = c->ptr.pp_double[ci1+l-ai1][cj1+r-bi1]+alpha*v;
+                }
+            }
+            return;
+        }
+    }
+    
+    /*
+     * A'*B
+     */
+    if( transa&&!transb )
+    {
+        for(l=aj1; l<=aj2; l++)
+        {
+            for(r=bi1; r<=bi2; r++)
+            {
+                v = alpha*a->ptr.pp_double[ai1+r-bi1][l];
+                k = ci1+l-aj1;
+                ae_v_addd(&c->ptr.pp_double[k][cj1], 1, &b->ptr.pp_double[r][bj1], 1, ae_v_len(cj1,cj2), v);
+            }
+        }
+        return;
+    }
+    
+    /*
+     * A'*B'
+     */
+    if( transa&&transb )
+    {
+        if( arows*acols<brows*bcols )
+        {
+            for(r=bi1; r<=bi2; r++)
+            {
+                k = cj1+r-bi1;
+                for(i=1; i<=crows; i++)
+                {
+                    work->ptr.p_double[i] = 0.0;
+                }
+                for(l=ai1; l<=ai2; l++)
+                {
+                    v = alpha*b->ptr.pp_double[r][bj1+l-ai1];
+                    ae_v_addd(&work->ptr.p_double[1], 1, &a->ptr.pp_double[l][aj1], 1, ae_v_len(1,crows), v);
+                }
+                ae_v_add(&c->ptr.pp_double[ci1][k], c->stride, &work->ptr.p_double[1], 1, ae_v_len(ci1,ci2));
+            }
+            return;
+        }
+        else
+        {
+            for(l=aj1; l<=aj2; l++)
+            {
+                k = ai2-ai1+1;
+                ae_v_move(&work->ptr.p_double[1], 1, &a->ptr.pp_double[ai1][l], a->stride, ae_v_len(1,k));
+                for(r=bi1; r<=bi2; r++)
+                {
+                    v = ae_v_dotproduct(&work->ptr.p_double[1], 1, &b->ptr.pp_double[r][bj1], 1, ae_v_len(1,k));
+                    c->ptr.pp_double[ci1+l-aj1][cj1+r-bi1] = c->ptr.pp_double[ci1+l-aj1][cj1+r-bi1]+alpha*v;
+                }
+            }
+            return;
+        }
+    }
 }
 
 
@@ -10701,6 +13081,179 @@ void generaterotation(double f,
                 *r = -*r;
             }
         }
+    }
+}
+
+
+#endif
+#if defined(AE_COMPILE_BASICSTATOPS) || !defined(AE_PARTIAL_BUILD)
+
+
+/*************************************************************************
+Internal tied ranking subroutine.
+
+INPUT PARAMETERS:
+    X       -   array to rank
+    N       -   array size
+    IsCentered- whether ranks are centered or not:
+                * True      -   ranks are centered in such way that  their
+                                sum is zero
+                * False     -   ranks are not centered
+    Buf     -   temporary buffers
+    
+NOTE: when IsCentered is True and all X[] are equal, this  function  fills
+      X by zeros (exact zeros are used, not sum which is only approximately
+      equal to zero).
+*************************************************************************/
+void rankx(/* Real    */ ae_vector* x,
+     ae_int_t n,
+     ae_bool iscentered,
+     apbuffers* buf,
+     ae_state *_state)
+{
+    ae_int_t i;
+    ae_int_t j;
+    ae_int_t k;
+    double tmp;
+    double voffs;
+
+
+    
+    /*
+     * Prepare
+     */
+    if( n<1 )
+    {
+        return;
+    }
+    if( n==1 )
+    {
+        x->ptr.p_double[0] = (double)(0);
+        return;
+    }
+    if( buf->ra1.cnt<n )
+    {
+        ae_vector_set_length(&buf->ra1, n, _state);
+    }
+    if( buf->ia1.cnt<n )
+    {
+        ae_vector_set_length(&buf->ia1, n, _state);
+    }
+    for(i=0; i<=n-1; i++)
+    {
+        buf->ra1.ptr.p_double[i] = x->ptr.p_double[i];
+        buf->ia1.ptr.p_int[i] = i;
+    }
+    tagsortfasti(&buf->ra1, &buf->ia1, &buf->ra2, &buf->ia2, n, _state);
+    
+    /*
+     * Special test for all values being equal
+     */
+    if( ae_fp_eq(buf->ra1.ptr.p_double[0],buf->ra1.ptr.p_double[n-1]) )
+    {
+        if( iscentered )
+        {
+            tmp = 0.0;
+        }
+        else
+        {
+            tmp = (double)(n-1)/(double)2;
+        }
+        for(i=0; i<=n-1; i++)
+        {
+            x->ptr.p_double[i] = tmp;
+        }
+        return;
+    }
+    
+    /*
+     * compute tied ranks
+     */
+    i = 0;
+    while(i<=n-1)
+    {
+        j = i+1;
+        while(j<=n-1)
+        {
+            if( ae_fp_neq(buf->ra1.ptr.p_double[j],buf->ra1.ptr.p_double[i]) )
+            {
+                break;
+            }
+            j = j+1;
+        }
+        for(k=i; k<=j-1; k++)
+        {
+            buf->ra1.ptr.p_double[k] = (double)(i+j-1)/(double)2;
+        }
+        i = j;
+    }
+    
+    /*
+     * back to x
+     */
+    if( iscentered )
+    {
+        voffs = (double)(n-1)/(double)2;
+    }
+    else
+    {
+        voffs = 0.0;
+    }
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.p_double[buf->ia1.ptr.p_int[i]] = buf->ra1.ptr.p_double[i]-voffs;
+    }
+}
+
+
+/*************************************************************************
+Internal untied ranking subroutine.
+
+INPUT PARAMETERS:
+    X       -   array to rank
+    N       -   array size
+    Buf     -   temporary buffers
+
+Returns untied ranks (in case of a tie ranks are resolved arbitrarily).
+*************************************************************************/
+void rankxuntied(/* Real    */ ae_vector* x,
+     ae_int_t n,
+     apbuffers* buf,
+     ae_state *_state)
+{
+    ae_int_t i;
+
+
+    
+    /*
+     * Prepare
+     */
+    if( n<1 )
+    {
+        return;
+    }
+    if( n==1 )
+    {
+        x->ptr.p_double[0] = (double)(0);
+        return;
+    }
+    if( buf->ra1.cnt<n )
+    {
+        ae_vector_set_length(&buf->ra1, n, _state);
+    }
+    if( buf->ia1.cnt<n )
+    {
+        ae_vector_set_length(&buf->ia1, n, _state);
+    }
+    for(i=0; i<=n-1; i++)
+    {
+        buf->ra1.ptr.p_double[i] = x->ptr.p_double[i];
+        buf->ia1.ptr.p_int[i] = i;
+    }
+    tagsortfasti(&buf->ra1, &buf->ia1, &buf->ra2, &buf->ia2, n, _state);
+    for(i=0; i<=n-1; i++)
+    {
+        x->ptr.p_double[buf->ia1.ptr.p_int[i]] = (double)(i);
     }
 }
 
@@ -12331,865 +14884,362 @@ static ae_bool safesolve_cbasicsolveandupdate(ae_complex alpha,
 
 
 #endif
-#if defined(AE_COMPILE_HBLAS) || !defined(AE_PARTIAL_BUILD)
+#if defined(AE_COMPILE_XBLAS) || !defined(AE_PARTIAL_BUILD)
 
 
-void hermitianmatrixvectormultiply(/* Complex */ ae_matrix* a,
-     ae_bool isupper,
-     ae_int_t i1,
-     ae_int_t i2,
-     /* Complex */ ae_vector* x,
-     ae_complex alpha,
-     /* Complex */ ae_vector* y,
+/*************************************************************************
+More precise dot-product. Absolute error of  subroutine  result  is  about
+1 ulp of max(MX,V), where:
+    MX = max( |a[i]*b[i]| )
+    V  = |(a,b)|
+
+INPUT PARAMETERS
+    A       -   array[0..N-1], vector 1
+    B       -   array[0..N-1], vector 2
+    N       -   vectors length, N<2^29.
+    Temp    -   array[0..N-1], pre-allocated temporary storage
+
+OUTPUT PARAMETERS
+    R       -   (A,B)
+    RErr    -   estimate of error. This estimate accounts for both  errors
+                during  calculation  of  (A,B)  and  errors  introduced by
+                rounding of A and B to fit in double (about 1 ulp).
+
+  -- ALGLIB --
+     Copyright 24.08.2009 by Bochkanov Sergey
+*************************************************************************/
+void xdot(/* Real    */ ae_vector* a,
+     /* Real    */ ae_vector* b,
+     ae_int_t n,
+     /* Real    */ ae_vector* temp,
+     double* r,
+     double* rerr,
      ae_state *_state)
 {
     ae_int_t i;
-    ae_int_t ba1;
-    ae_int_t by1;
-    ae_int_t by2;
-    ae_int_t bx1;
-    ae_int_t bx2;
-    ae_int_t n;
-    ae_complex v;
-
-
-    n = i2-i1+1;
-    if( n<=0 )
-    {
-        return;
-    }
-    
-    /*
-     * Let A = L + D + U, where
-     *  L is strictly lower triangular (main diagonal is zero)
-     *  D is diagonal
-     *  U is strictly upper triangular (main diagonal is zero)
-     *
-     * A*x = L*x + D*x + U*x
-     *
-     * Calculate D*x first
-     */
-    for(i=i1; i<=i2; i++)
-    {
-        y->ptr.p_complex[i-i1+1] = ae_c_mul(a->ptr.pp_complex[i][i],x->ptr.p_complex[i-i1+1]);
-    }
-    
-    /*
-     * Add L*x + U*x
-     */
-    if( isupper )
-    {
-        for(i=i1; i<=i2-1; i++)
-        {
-            
-            /*
-             * Add L*x to the result
-             */
-            v = x->ptr.p_complex[i-i1+1];
-            by1 = i-i1+2;
-            by2 = n;
-            ba1 = i+1;
-            ae_v_caddc(&y->ptr.p_complex[by1], 1, &a->ptr.pp_complex[i][ba1], 1, "Conj", ae_v_len(by1,by2), v);
-            
-            /*
-             * Add U*x to the result
-             */
-            bx1 = i-i1+2;
-            bx2 = n;
-            ba1 = i+1;
-            v = ae_v_cdotproduct(&x->ptr.p_complex[bx1], 1, "N", &a->ptr.pp_complex[i][ba1], 1, "N", ae_v_len(bx1,bx2));
-            y->ptr.p_complex[i-i1+1] = ae_c_add(y->ptr.p_complex[i-i1+1],v);
-        }
-    }
-    else
-    {
-        for(i=i1+1; i<=i2; i++)
-        {
-            
-            /*
-             * Add L*x to the result
-             */
-            bx1 = 1;
-            bx2 = i-i1;
-            ba1 = i1;
-            v = ae_v_cdotproduct(&x->ptr.p_complex[bx1], 1, "N", &a->ptr.pp_complex[i][ba1], 1, "N", ae_v_len(bx1,bx2));
-            y->ptr.p_complex[i-i1+1] = ae_c_add(y->ptr.p_complex[i-i1+1],v);
-            
-            /*
-             * Add U*x to the result
-             */
-            v = x->ptr.p_complex[i-i1+1];
-            by1 = 1;
-            by2 = i-i1;
-            ba1 = i1;
-            ae_v_caddc(&y->ptr.p_complex[by1], 1, &a->ptr.pp_complex[i][ba1], 1, "Conj", ae_v_len(by1,by2), v);
-        }
-    }
-    ae_v_cmulc(&y->ptr.p_complex[1], 1, ae_v_len(1,n), alpha);
-}
-
-
-void hermitianrank2update(/* Complex */ ae_matrix* a,
-     ae_bool isupper,
-     ae_int_t i1,
-     ae_int_t i2,
-     /* Complex */ ae_vector* x,
-     /* Complex */ ae_vector* y,
-     /* Complex */ ae_vector* t,
-     ae_complex alpha,
-     ae_state *_state)
-{
-    ae_int_t i;
-    ae_int_t tp1;
-    ae_int_t tp2;
-    ae_complex v;
-
-
-    if( isupper )
-    {
-        for(i=i1; i<=i2; i++)
-        {
-            tp1 = i+1-i1;
-            tp2 = i2-i1+1;
-            v = ae_c_mul(alpha,x->ptr.p_complex[i+1-i1]);
-            ae_v_cmovec(&t->ptr.p_complex[tp1], 1, &y->ptr.p_complex[tp1], 1, "Conj", ae_v_len(tp1,tp2), v);
-            v = ae_c_mul(ae_c_conj(alpha, _state),y->ptr.p_complex[i+1-i1]);
-            ae_v_caddc(&t->ptr.p_complex[tp1], 1, &x->ptr.p_complex[tp1], 1, "Conj", ae_v_len(tp1,tp2), v);
-            ae_v_cadd(&a->ptr.pp_complex[i][i], 1, &t->ptr.p_complex[tp1], 1, "N", ae_v_len(i,i2));
-        }
-    }
-    else
-    {
-        for(i=i1; i<=i2; i++)
-        {
-            tp1 = 1;
-            tp2 = i+1-i1;
-            v = ae_c_mul(alpha,x->ptr.p_complex[i+1-i1]);
-            ae_v_cmovec(&t->ptr.p_complex[tp1], 1, &y->ptr.p_complex[tp1], 1, "Conj", ae_v_len(tp1,tp2), v);
-            v = ae_c_mul(ae_c_conj(alpha, _state),y->ptr.p_complex[i+1-i1]);
-            ae_v_caddc(&t->ptr.p_complex[tp1], 1, &x->ptr.p_complex[tp1], 1, "Conj", ae_v_len(tp1,tp2), v);
-            ae_v_cadd(&a->ptr.pp_complex[i][i1], 1, &t->ptr.p_complex[tp1], 1, "N", ae_v_len(i1,i));
-        }
-    }
-}
-
-
-#endif
-#if defined(AE_COMPILE_SBLAS) || !defined(AE_PARTIAL_BUILD)
-
-
-void symmetricmatrixvectormultiply(/* Real    */ ae_matrix* a,
-     ae_bool isupper,
-     ae_int_t i1,
-     ae_int_t i2,
-     /* Real    */ ae_vector* x,
-     double alpha,
-     /* Real    */ ae_vector* y,
-     ae_state *_state)
-{
-    ae_int_t i;
-    ae_int_t ba1;
-    ae_int_t ba2;
-    ae_int_t by1;
-    ae_int_t by2;
-    ae_int_t bx1;
-    ae_int_t bx2;
-    ae_int_t n;
+    double mx;
     double v;
 
+    *r = 0;
+    *rerr = 0;
 
-    n = i2-i1+1;
-    if( n<=0 )
+    
+    /*
+     * special cases:
+     * * N=0
+     */
+    if( n==0 )
     {
+        *r = (double)(0);
+        *rerr = (double)(0);
+        return;
+    }
+    mx = (double)(0);
+    for(i=0; i<=n-1; i++)
+    {
+        v = a->ptr.p_double[i]*b->ptr.p_double[i];
+        temp->ptr.p_double[i] = v;
+        mx = ae_maxreal(mx, ae_fabs(v, _state), _state);
+    }
+    if( ae_fp_eq(mx,(double)(0)) )
+    {
+        *r = (double)(0);
+        *rerr = (double)(0);
+        return;
+    }
+    xblas_xsum(temp, mx, n, r, rerr, _state);
+}
+
+
+/*************************************************************************
+More precise complex dot-product. Absolute error of  subroutine  result is
+about 1 ulp of max(MX,V), where:
+    MX = max( |a[i]*b[i]| )
+    V  = |(a,b)|
+
+INPUT PARAMETERS
+    A       -   array[0..N-1], vector 1
+    B       -   array[0..N-1], vector 2
+    N       -   vectors length, N<2^29.
+    Temp    -   array[0..2*N-1], pre-allocated temporary storage
+
+OUTPUT PARAMETERS
+    R       -   (A,B)
+    RErr    -   estimate of error. This estimate accounts for both  errors
+                during  calculation  of  (A,B)  and  errors  introduced by
+                rounding of A and B to fit in double (about 1 ulp).
+
+  -- ALGLIB --
+     Copyright 27.01.2010 by Bochkanov Sergey
+*************************************************************************/
+void xcdot(/* Complex */ ae_vector* a,
+     /* Complex */ ae_vector* b,
+     ae_int_t n,
+     /* Real    */ ae_vector* temp,
+     ae_complex* r,
+     double* rerr,
+     ae_state *_state)
+{
+    ae_int_t i;
+    double mx;
+    double v;
+    double rerrx;
+    double rerry;
+
+    r->x = 0;
+    r->y = 0;
+    *rerr = 0;
+
+    
+    /*
+     * special cases:
+     * * N=0
+     */
+    if( n==0 )
+    {
+        *r = ae_complex_from_i(0);
+        *rerr = (double)(0);
         return;
     }
     
     /*
-     * Let A = L + D + U, where
-     *  L is strictly lower triangular (main diagonal is zero)
-     *  D is diagonal
-     *  U is strictly upper triangular (main diagonal is zero)
-     *
-     * A*x = L*x + D*x + U*x
-     *
-     * Calculate D*x first
+     * calculate real part
      */
-    for(i=i1; i<=i2; i++)
+    mx = (double)(0);
+    for(i=0; i<=n-1; i++)
     {
-        y->ptr.p_double[i-i1+1] = a->ptr.pp_double[i][i]*x->ptr.p_double[i-i1+1];
+        v = a->ptr.p_complex[i].x*b->ptr.p_complex[i].x;
+        temp->ptr.p_double[2*i+0] = v;
+        mx = ae_maxreal(mx, ae_fabs(v, _state), _state);
+        v = -a->ptr.p_complex[i].y*b->ptr.p_complex[i].y;
+        temp->ptr.p_double[2*i+1] = v;
+        mx = ae_maxreal(mx, ae_fabs(v, _state), _state);
+    }
+    if( ae_fp_eq(mx,(double)(0)) )
+    {
+        r->x = (double)(0);
+        rerrx = (double)(0);
+    }
+    else
+    {
+        xblas_xsum(temp, mx, 2*n, &r->x, &rerrx, _state);
     }
     
     /*
-     * Add L*x + U*x
+     * calculate imaginary part
      */
-    if( isupper )
+    mx = (double)(0);
+    for(i=0; i<=n-1; i++)
     {
-        for(i=i1; i<=i2-1; i++)
-        {
-            
-            /*
-             * Add L*x to the result
-             */
-            v = x->ptr.p_double[i-i1+1];
-            by1 = i-i1+2;
-            by2 = n;
-            ba1 = i+1;
-            ba2 = i2;
-            ae_v_addd(&y->ptr.p_double[by1], 1, &a->ptr.pp_double[i][ba1], 1, ae_v_len(by1,by2), v);
-            
-            /*
-             * Add U*x to the result
-             */
-            bx1 = i-i1+2;
-            bx2 = n;
-            ba1 = i+1;
-            ba2 = i2;
-            v = ae_v_dotproduct(&x->ptr.p_double[bx1], 1, &a->ptr.pp_double[i][ba1], 1, ae_v_len(bx1,bx2));
-            y->ptr.p_double[i-i1+1] = y->ptr.p_double[i-i1+1]+v;
-        }
+        v = a->ptr.p_complex[i].x*b->ptr.p_complex[i].y;
+        temp->ptr.p_double[2*i+0] = v;
+        mx = ae_maxreal(mx, ae_fabs(v, _state), _state);
+        v = a->ptr.p_complex[i].y*b->ptr.p_complex[i].x;
+        temp->ptr.p_double[2*i+1] = v;
+        mx = ae_maxreal(mx, ae_fabs(v, _state), _state);
+    }
+    if( ae_fp_eq(mx,(double)(0)) )
+    {
+        r->y = (double)(0);
+        rerry = (double)(0);
     }
     else
     {
-        for(i=i1+1; i<=i2; i++)
-        {
-            
-            /*
-             * Add L*x to the result
-             */
-            bx1 = 1;
-            bx2 = i-i1;
-            ba1 = i1;
-            ba2 = i-1;
-            v = ae_v_dotproduct(&x->ptr.p_double[bx1], 1, &a->ptr.pp_double[i][ba1], 1, ae_v_len(bx1,bx2));
-            y->ptr.p_double[i-i1+1] = y->ptr.p_double[i-i1+1]+v;
-            
-            /*
-             * Add U*x to the result
-             */
-            v = x->ptr.p_double[i-i1+1];
-            by1 = 1;
-            by2 = i-i1;
-            ba1 = i1;
-            ba2 = i-1;
-            ae_v_addd(&y->ptr.p_double[by1], 1, &a->ptr.pp_double[i][ba1], 1, ae_v_len(by1,by2), v);
-        }
+        xblas_xsum(temp, mx, 2*n, &r->y, &rerry, _state);
     }
-    ae_v_muld(&y->ptr.p_double[1], 1, ae_v_len(1,n), alpha);
-    touchint(&ba2, _state);
-}
-
-
-void symmetricrank2update(/* Real    */ ae_matrix* a,
-     ae_bool isupper,
-     ae_int_t i1,
-     ae_int_t i2,
-     /* Real    */ ae_vector* x,
-     /* Real    */ ae_vector* y,
-     /* Real    */ ae_vector* t,
-     double alpha,
-     ae_state *_state)
-{
-    ae_int_t i;
-    ae_int_t tp1;
-    ae_int_t tp2;
-    double v;
-
-
-    if( isupper )
+    
+    /*
+     * total error
+     */
+    if( ae_fp_eq(rerrx,(double)(0))&&ae_fp_eq(rerry,(double)(0)) )
     {
-        for(i=i1; i<=i2; i++)
-        {
-            tp1 = i+1-i1;
-            tp2 = i2-i1+1;
-            v = x->ptr.p_double[i+1-i1];
-            ae_v_moved(&t->ptr.p_double[tp1], 1, &y->ptr.p_double[tp1], 1, ae_v_len(tp1,tp2), v);
-            v = y->ptr.p_double[i+1-i1];
-            ae_v_addd(&t->ptr.p_double[tp1], 1, &x->ptr.p_double[tp1], 1, ae_v_len(tp1,tp2), v);
-            ae_v_muld(&t->ptr.p_double[tp1], 1, ae_v_len(tp1,tp2), alpha);
-            ae_v_add(&a->ptr.pp_double[i][i], 1, &t->ptr.p_double[tp1], 1, ae_v_len(i,i2));
-        }
+        *rerr = (double)(0);
     }
     else
     {
-        for(i=i1; i<=i2; i++)
-        {
-            tp1 = 1;
-            tp2 = i+1-i1;
-            v = x->ptr.p_double[i+1-i1];
-            ae_v_moved(&t->ptr.p_double[tp1], 1, &y->ptr.p_double[tp1], 1, ae_v_len(tp1,tp2), v);
-            v = y->ptr.p_double[i+1-i1];
-            ae_v_addd(&t->ptr.p_double[tp1], 1, &x->ptr.p_double[tp1], 1, ae_v_len(tp1,tp2), v);
-            ae_v_muld(&t->ptr.p_double[tp1], 1, ae_v_len(tp1,tp2), alpha);
-            ae_v_add(&a->ptr.pp_double[i][i1], 1, &t->ptr.p_double[tp1], 1, ae_v_len(i1,i));
-        }
+        *rerr = ae_maxreal(rerrx, rerry, _state)*ae_sqrt(1+ae_sqr(ae_minreal(rerrx, rerry, _state)/ae_maxreal(rerrx, rerry, _state), _state), _state);
     }
 }
 
 
-#endif
-#if defined(AE_COMPILE_BLAS) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+Internal subroutine for extra-precise calculation of SUM(w[i]).
 
+INPUT PARAMETERS:
+    W   -   array[0..N-1], values to be added
+            W is modified during calculations.
+    MX  -   max(W[i])
+    N   -   array size
+    
+OUTPUT PARAMETERS:
+    R   -   SUM(w[i])
+    RErr-   error estimate for R
 
-double vectornorm2(/* Real    */ ae_vector* x,
-     ae_int_t i1,
-     ae_int_t i2,
-     ae_state *_state)
-{
-    ae_int_t n;
-    ae_int_t ix;
-    double absxi;
-    double scl;
-    double ssq;
-    double result;
-
-
-    n = i2-i1+1;
-    if( n<1 )
-    {
-        result = (double)(0);
-        return result;
-    }
-    if( n==1 )
-    {
-        result = ae_fabs(x->ptr.p_double[i1], _state);
-        return result;
-    }
-    scl = (double)(0);
-    ssq = (double)(1);
-    for(ix=i1; ix<=i2; ix++)
-    {
-        if( ae_fp_neq(x->ptr.p_double[ix],(double)(0)) )
-        {
-            absxi = ae_fabs(x->ptr.p_double[ix], _state);
-            if( ae_fp_less(scl,absxi) )
-            {
-                ssq = 1+ssq*ae_sqr(scl/absxi, _state);
-                scl = absxi;
-            }
-            else
-            {
-                ssq = ssq+ae_sqr(absxi/scl, _state);
-            }
-        }
-    }
-    result = scl*ae_sqrt(ssq, _state);
-    return result;
-}
-
-
-ae_int_t vectoridxabsmax(/* Real    */ ae_vector* x,
-     ae_int_t i1,
-     ae_int_t i2,
+  -- ALGLIB --
+     Copyright 24.08.2009 by Bochkanov Sergey
+*************************************************************************/
+static void xblas_xsum(/* Real    */ ae_vector* w,
+     double mx,
+     ae_int_t n,
+     double* r,
+     double* rerr,
      ae_state *_state)
 {
     ae_int_t i;
-    ae_int_t result;
-
-
-    result = i1;
-    for(i=i1+1; i<=i2; i++)
-    {
-        if( ae_fp_greater(ae_fabs(x->ptr.p_double[i], _state),ae_fabs(x->ptr.p_double[result], _state)) )
-        {
-            result = i;
-        }
-    }
-    return result;
-}
-
-
-ae_int_t columnidxabsmax(/* Real    */ ae_matrix* x,
-     ae_int_t i1,
-     ae_int_t i2,
-     ae_int_t j,
-     ae_state *_state)
-{
-    ae_int_t i;
-    ae_int_t result;
-
-
-    result = i1;
-    for(i=i1+1; i<=i2; i++)
-    {
-        if( ae_fp_greater(ae_fabs(x->ptr.pp_double[i][j], _state),ae_fabs(x->ptr.pp_double[result][j], _state)) )
-        {
-            result = i;
-        }
-    }
-    return result;
-}
-
-
-ae_int_t rowidxabsmax(/* Real    */ ae_matrix* x,
-     ae_int_t j1,
-     ae_int_t j2,
-     ae_int_t i,
-     ae_state *_state)
-{
-    ae_int_t j;
-    ae_int_t result;
-
-
-    result = j1;
-    for(j=j1+1; j<=j2; j++)
-    {
-        if( ae_fp_greater(ae_fabs(x->ptr.pp_double[i][j], _state),ae_fabs(x->ptr.pp_double[i][result], _state)) )
-        {
-            result = j;
-        }
-    }
-    return result;
-}
-
-
-double upperhessenberg1norm(/* Real    */ ae_matrix* a,
-     ae_int_t i1,
-     ae_int_t i2,
-     ae_int_t j1,
-     ae_int_t j2,
-     /* Real    */ ae_vector* work,
-     ae_state *_state)
-{
-    ae_int_t i;
-    ae_int_t j;
-    double result;
-
-
-    ae_assert(i2-i1==j2-j1, "UpperHessenberg1Norm: I2-I1<>J2-J1!", _state);
-    for(j=j1; j<=j2; j++)
-    {
-        work->ptr.p_double[j] = (double)(0);
-    }
-    for(i=i1; i<=i2; i++)
-    {
-        for(j=ae_maxint(j1, j1+i-i1-1, _state); j<=j2; j++)
-        {
-            work->ptr.p_double[j] = work->ptr.p_double[j]+ae_fabs(a->ptr.pp_double[i][j], _state);
-        }
-    }
-    result = (double)(0);
-    for(j=j1; j<=j2; j++)
-    {
-        result = ae_maxreal(result, work->ptr.p_double[j], _state);
-    }
-    return result;
-}
-
-
-void copymatrix(/* Real    */ ae_matrix* a,
-     ae_int_t is1,
-     ae_int_t is2,
-     ae_int_t js1,
-     ae_int_t js2,
-     /* Real    */ ae_matrix* b,
-     ae_int_t id1,
-     ae_int_t id2,
-     ae_int_t jd1,
-     ae_int_t jd2,
-     ae_state *_state)
-{
-    ae_int_t isrc;
-    ae_int_t idst;
-
-
-    if( is1>is2||js1>js2 )
-    {
-        return;
-    }
-    ae_assert(is2-is1==id2-id1, "CopyMatrix: different sizes!", _state);
-    ae_assert(js2-js1==jd2-jd1, "CopyMatrix: different sizes!", _state);
-    for(isrc=is1; isrc<=is2; isrc++)
-    {
-        idst = isrc-is1+id1;
-        ae_v_move(&b->ptr.pp_double[idst][jd1], 1, &a->ptr.pp_double[isrc][js1], 1, ae_v_len(jd1,jd2));
-    }
-}
-
-
-void inplacetranspose(/* Real    */ ae_matrix* a,
-     ae_int_t i1,
-     ae_int_t i2,
-     ae_int_t j1,
-     ae_int_t j2,
-     /* Real    */ ae_vector* work,
-     ae_state *_state)
-{
-    ae_int_t i;
-    ae_int_t j;
-    ae_int_t ips;
-    ae_int_t jps;
-    ae_int_t l;
-
-
-    if( i1>i2||j1>j2 )
-    {
-        return;
-    }
-    ae_assert(i1-i2==j1-j2, "InplaceTranspose error: incorrect array size!", _state);
-    for(i=i1; i<=i2-1; i++)
-    {
-        j = j1+i-i1;
-        ips = i+1;
-        jps = j1+ips-i1;
-        l = i2-i;
-        ae_v_move(&work->ptr.p_double[1], 1, &a->ptr.pp_double[ips][j], a->stride, ae_v_len(1,l));
-        ae_v_move(&a->ptr.pp_double[ips][j], a->stride, &a->ptr.pp_double[i][jps], 1, ae_v_len(ips,i2));
-        ae_v_move(&a->ptr.pp_double[i][jps], 1, &work->ptr.p_double[1], 1, ae_v_len(jps,j2));
-    }
-}
-
-
-void copyandtranspose(/* Real    */ ae_matrix* a,
-     ae_int_t is1,
-     ae_int_t is2,
-     ae_int_t js1,
-     ae_int_t js2,
-     /* Real    */ ae_matrix* b,
-     ae_int_t id1,
-     ae_int_t id2,
-     ae_int_t jd1,
-     ae_int_t jd2,
-     ae_state *_state)
-{
-    ae_int_t isrc;
-    ae_int_t jdst;
-
-
-    if( is1>is2||js1>js2 )
-    {
-        return;
-    }
-    ae_assert(is2-is1==jd2-jd1, "CopyAndTranspose: different sizes!", _state);
-    ae_assert(js2-js1==id2-id1, "CopyAndTranspose: different sizes!", _state);
-    for(isrc=is1; isrc<=is2; isrc++)
-    {
-        jdst = isrc-is1+jd1;
-        ae_v_move(&b->ptr.pp_double[id1][jdst], b->stride, &a->ptr.pp_double[isrc][js1], 1, ae_v_len(id1,id2));
-    }
-}
-
-
-void matrixvectormultiply(/* Real    */ ae_matrix* a,
-     ae_int_t i1,
-     ae_int_t i2,
-     ae_int_t j1,
-     ae_int_t j2,
-     ae_bool trans,
-     /* Real    */ ae_vector* x,
-     ae_int_t ix1,
-     ae_int_t ix2,
-     double alpha,
-     /* Real    */ ae_vector* y,
-     ae_int_t iy1,
-     ae_int_t iy2,
-     double beta,
-     ae_state *_state)
-{
-    ae_int_t i;
-    double v;
-
-
-    if( !trans )
-    {
-        
-        /*
-         * y := alpha*A*x + beta*y;
-         */
-        if( i1>i2||j1>j2 )
-        {
-            return;
-        }
-        ae_assert(j2-j1==ix2-ix1, "MatrixVectorMultiply: A and X dont match!", _state);
-        ae_assert(i2-i1==iy2-iy1, "MatrixVectorMultiply: A and Y dont match!", _state);
-        
-        /*
-         * beta*y
-         */
-        if( ae_fp_eq(beta,(double)(0)) )
-        {
-            for(i=iy1; i<=iy2; i++)
-            {
-                y->ptr.p_double[i] = (double)(0);
-            }
-        }
-        else
-        {
-            ae_v_muld(&y->ptr.p_double[iy1], 1, ae_v_len(iy1,iy2), beta);
-        }
-        
-        /*
-         * alpha*A*x
-         */
-        for(i=i1; i<=i2; i++)
-        {
-            v = ae_v_dotproduct(&a->ptr.pp_double[i][j1], 1, &x->ptr.p_double[ix1], 1, ae_v_len(j1,j2));
-            y->ptr.p_double[iy1+i-i1] = y->ptr.p_double[iy1+i-i1]+alpha*v;
-        }
-    }
-    else
-    {
-        
-        /*
-         * y := alpha*A'*x + beta*y;
-         */
-        if( i1>i2||j1>j2 )
-        {
-            return;
-        }
-        ae_assert(i2-i1==ix2-ix1, "MatrixVectorMultiply: A and X dont match!", _state);
-        ae_assert(j2-j1==iy2-iy1, "MatrixVectorMultiply: A and Y dont match!", _state);
-        
-        /*
-         * beta*y
-         */
-        if( ae_fp_eq(beta,(double)(0)) )
-        {
-            for(i=iy1; i<=iy2; i++)
-            {
-                y->ptr.p_double[i] = (double)(0);
-            }
-        }
-        else
-        {
-            ae_v_muld(&y->ptr.p_double[iy1], 1, ae_v_len(iy1,iy2), beta);
-        }
-        
-        /*
-         * alpha*A'*x
-         */
-        for(i=i1; i<=i2; i++)
-        {
-            v = alpha*x->ptr.p_double[ix1+i-i1];
-            ae_v_addd(&y->ptr.p_double[iy1], 1, &a->ptr.pp_double[i][j1], 1, ae_v_len(iy1,iy2), v);
-        }
-    }
-}
-
-
-double pythag2(double x, double y, ae_state *_state)
-{
-    double w;
-    double xabs;
-    double yabs;
-    double z;
-    double result;
-
-
-    xabs = ae_fabs(x, _state);
-    yabs = ae_fabs(y, _state);
-    w = ae_maxreal(xabs, yabs, _state);
-    z = ae_minreal(xabs, yabs, _state);
-    if( ae_fp_eq(z,(double)(0)) )
-    {
-        result = w;
-    }
-    else
-    {
-        result = w*ae_sqrt(1+ae_sqr(z/w, _state), _state);
-    }
-    return result;
-}
-
-
-void matrixmatrixmultiply(/* Real    */ ae_matrix* a,
-     ae_int_t ai1,
-     ae_int_t ai2,
-     ae_int_t aj1,
-     ae_int_t aj2,
-     ae_bool transa,
-     /* Real    */ ae_matrix* b,
-     ae_int_t bi1,
-     ae_int_t bi2,
-     ae_int_t bj1,
-     ae_int_t bj2,
-     ae_bool transb,
-     double alpha,
-     /* Real    */ ae_matrix* c,
-     ae_int_t ci1,
-     ae_int_t ci2,
-     ae_int_t cj1,
-     ae_int_t cj2,
-     double beta,
-     /* Real    */ ae_vector* work,
-     ae_state *_state)
-{
-    ae_int_t arows;
-    ae_int_t acols;
-    ae_int_t brows;
-    ae_int_t bcols;
-    ae_int_t crows;
-    ae_int_t i;
-    ae_int_t j;
     ae_int_t k;
-    ae_int_t l;
-    ae_int_t r;
+    ae_int_t ks;
     double v;
+    double s;
+    double ln2;
+    double chunk;
+    double invchunk;
+    ae_bool allzeros;
 
+    *r = 0;
+    *rerr = 0;
 
     
     /*
-     * Setup
+     * special cases:
+     * * N=0
+     * * N is too large to use integer arithmetics
      */
-    if( !transa )
+    if( n==0 )
     {
-        arows = ai2-ai1+1;
-        acols = aj2-aj1+1;
-    }
-    else
-    {
-        arows = aj2-aj1+1;
-        acols = ai2-ai1+1;
-    }
-    if( !transb )
-    {
-        brows = bi2-bi1+1;
-        bcols = bj2-bj1+1;
-    }
-    else
-    {
-        brows = bj2-bj1+1;
-        bcols = bi2-bi1+1;
-    }
-    ae_assert(acols==brows, "MatrixMatrixMultiply: incorrect matrix sizes!", _state);
-    if( ((arows<=0||acols<=0)||brows<=0)||bcols<=0 )
-    {
+        *r = (double)(0);
+        *rerr = (double)(0);
         return;
     }
-    crows = arows;
-    
-    /*
-     * Test WORK
-     */
-    i = ae_maxint(arows, acols, _state);
-    i = ae_maxint(brows, i, _state);
-    i = ae_maxint(i, bcols, _state);
-    work->ptr.p_double[1] = (double)(0);
-    work->ptr.p_double[i] = (double)(0);
-    
-    /*
-     * Prepare C
-     */
-    if( ae_fp_eq(beta,(double)(0)) )
+    if( ae_fp_eq(mx,(double)(0)) )
     {
-        for(i=ci1; i<=ci2; i++)
-        {
-            for(j=cj1; j<=cj2; j++)
-            {
-                c->ptr.pp_double[i][j] = (double)(0);
-            }
-        }
+        *r = (double)(0);
+        *rerr = (double)(0);
+        return;
     }
-    else
-    {
-        for(i=ci1; i<=ci2; i++)
-        {
-            ae_v_muld(&c->ptr.pp_double[i][cj1], 1, ae_v_len(cj1,cj2), beta);
-        }
-    }
+    ae_assert(n<536870912, "XDot: N is too large!", _state);
     
     /*
-     * A*B
+     * Prepare
      */
-    if( !transa&&!transb )
+    ln2 = ae_log((double)(2), _state);
+    *rerr = mx*ae_machineepsilon;
+    
+    /*
+     * 1. find S such that 0.5<=S*MX<1
+     * 2. multiply W by S, so task is normalized in some sense
+     * 3. S:=1/S so we can obtain original vector multiplying by S
+     */
+    k = ae_round(ae_log(mx, _state)/ln2, _state);
+    s = xblas_xfastpow((double)(2), -k, _state);
+    if( !ae_isfinite(s, _state) )
     {
-        for(l=ai1; l<=ai2; l++)
+        
+        /*
+         * Overflow or underflow during evaluation of S; fallback low-precision code
+         */
+        *r = (double)(0);
+        *rerr = mx*ae_machineepsilon;
+        for(i=0; i<=n-1; i++)
         {
-            for(r=bi1; r<=bi2; r++)
-            {
-                v = alpha*a->ptr.pp_double[l][aj1+r-bi1];
-                k = ci1+l-ai1;
-                ae_v_addd(&c->ptr.pp_double[k][cj1], 1, &b->ptr.pp_double[r][bj1], 1, ae_v_len(cj1,cj2), v);
-            }
+            *r = *r+w->ptr.p_double[i];
         }
         return;
     }
+    while(ae_fp_greater_eq(s*mx,(double)(1)))
+    {
+        s = 0.5*s;
+    }
+    while(ae_fp_less(s*mx,0.5))
+    {
+        s = 2*s;
+    }
+    ae_v_muld(&w->ptr.p_double[0], 1, ae_v_len(0,n-1), s);
+    s = 1/s;
     
     /*
-     * A*B'
+     * find Chunk=2^M such that N*Chunk<2^29
+     *
+     * we have chosen upper limit (2^29) with enough space left
+     * to tolerate possible problems with rounding and N's close
+     * to the limit, so we don't want to be very strict here.
      */
-    if( !transa&&transb )
+    k = ae_trunc(ae_log((double)536870912/(double)n, _state)/ln2, _state);
+    chunk = xblas_xfastpow((double)(2), k, _state);
+    if( ae_fp_less(chunk,(double)(2)) )
     {
-        if( arows*acols<brows*bcols )
+        chunk = (double)(2);
+    }
+    invchunk = 1/chunk;
+    
+    /*
+     * calculate result
+     */
+    *r = (double)(0);
+    ae_v_muld(&w->ptr.p_double[0], 1, ae_v_len(0,n-1), chunk);
+    for(;;)
+    {
+        s = s*invchunk;
+        allzeros = ae_true;
+        ks = 0;
+        for(i=0; i<=n-1; i++)
         {
-            for(r=bi1; r<=bi2; r++)
+            v = w->ptr.p_double[i];
+            k = ae_trunc(v, _state);
+            if( ae_fp_neq(v,(double)(k)) )
             {
-                for(l=ai1; l<=ai2; l++)
-                {
-                    v = ae_v_dotproduct(&a->ptr.pp_double[l][aj1], 1, &b->ptr.pp_double[r][bj1], 1, ae_v_len(aj1,aj2));
-                    c->ptr.pp_double[ci1+l-ai1][cj1+r-bi1] = c->ptr.pp_double[ci1+l-ai1][cj1+r-bi1]+alpha*v;
-                }
+                allzeros = ae_false;
             }
-            return;
+            w->ptr.p_double[i] = chunk*(v-k);
+            ks = ks+k;
+        }
+        *r = *r+s*ks;
+        v = ae_fabs(*r, _state);
+        if( allzeros||ae_fp_eq(s*n+mx,mx) )
+        {
+            break;
+        }
+    }
+    
+    /*
+     * correct error
+     */
+    *rerr = ae_maxreal(*rerr, ae_fabs(*r, _state)*ae_machineepsilon, _state);
+}
+
+
+/*************************************************************************
+Fast Pow
+
+  -- ALGLIB --
+     Copyright 24.08.2009 by Bochkanov Sergey
+*************************************************************************/
+static double xblas_xfastpow(double r, ae_int_t n, ae_state *_state)
+{
+    double result;
+
+
+    result = (double)(0);
+    if( n>0 )
+    {
+        if( n%2==0 )
+        {
+            result = ae_sqr(xblas_xfastpow(r, n/2, _state), _state);
         }
         else
         {
-            for(l=ai1; l<=ai2; l++)
-            {
-                for(r=bi1; r<=bi2; r++)
-                {
-                    v = ae_v_dotproduct(&a->ptr.pp_double[l][aj1], 1, &b->ptr.pp_double[r][bj1], 1, ae_v_len(aj1,aj2));
-                    c->ptr.pp_double[ci1+l-ai1][cj1+r-bi1] = c->ptr.pp_double[ci1+l-ai1][cj1+r-bi1]+alpha*v;
-                }
-            }
-            return;
+            result = r*xblas_xfastpow(r, n-1, _state);
         }
+        return result;
     }
-    
-    /*
-     * A'*B
-     */
-    if( transa&&!transb )
+    if( n==0 )
     {
-        for(l=aj1; l<=aj2; l++)
-        {
-            for(r=bi1; r<=bi2; r++)
-            {
-                v = alpha*a->ptr.pp_double[ai1+r-bi1][l];
-                k = ci1+l-aj1;
-                ae_v_addd(&c->ptr.pp_double[k][cj1], 1, &b->ptr.pp_double[r][bj1], 1, ae_v_len(cj1,cj2), v);
-            }
-        }
-        return;
+        result = (double)(1);
     }
-    
-    /*
-     * A'*B'
-     */
-    if( transa&&transb )
+    if( n<0 )
     {
-        if( arows*acols<brows*bcols )
-        {
-            for(r=bi1; r<=bi2; r++)
-            {
-                k = cj1+r-bi1;
-                for(i=1; i<=crows; i++)
-                {
-                    work->ptr.p_double[i] = 0.0;
-                }
-                for(l=ai1; l<=ai2; l++)
-                {
-                    v = alpha*b->ptr.pp_double[r][bj1+l-ai1];
-                    ae_v_addd(&work->ptr.p_double[1], 1, &a->ptr.pp_double[l][aj1], 1, ae_v_len(1,crows), v);
-                }
-                ae_v_add(&c->ptr.pp_double[ci1][k], c->stride, &work->ptr.p_double[1], 1, ae_v_len(ci1,ci2));
-            }
-            return;
-        }
-        else
-        {
-            for(l=aj1; l<=aj2; l++)
-            {
-                k = ai2-ai1+1;
-                ae_v_move(&work->ptr.p_double[1], 1, &a->ptr.pp_double[ai1][l], a->stride, ae_v_len(1,k));
-                for(r=bi1; r<=bi2; r++)
-                {
-                    v = ae_v_dotproduct(&work->ptr.p_double[1], 1, &b->ptr.pp_double[r][bj1], 1, ae_v_len(1,k));
-                    c->ptr.pp_double[ci1+l-aj1][cj1+r-bi1] = c->ptr.pp_double[ci1+l-aj1][cj1+r-bi1]+alpha*v;
-                }
-            }
-            return;
-        }
+        result = xblas_xfastpow(1/r, -n, _state);
     }
+    return result;
 }
 
 
@@ -14389,826 +16439,95 @@ void _armijostate_destroy(void* _p)
 
 
 #endif
-#if defined(AE_COMPILE_XBLAS) || !defined(AE_PARTIAL_BUILD)
+#if defined(AE_COMPILE_NEARUNITYUNIT) || !defined(AE_PARTIAL_BUILD)
 
 
-/*************************************************************************
-More precise dot-product. Absolute error of  subroutine  result  is  about
-1 ulp of max(MX,V), where:
-    MX = max( |a[i]*b[i]| )
-    V  = |(a,b)|
-
-INPUT PARAMETERS
-    A       -   array[0..N-1], vector 1
-    B       -   array[0..N-1], vector 2
-    N       -   vectors length, N<2^29.
-    Temp    -   array[0..N-1], pre-allocated temporary storage
-
-OUTPUT PARAMETERS
-    R       -   (A,B)
-    RErr    -   estimate of error. This estimate accounts for both  errors
-                during  calculation  of  (A,B)  and  errors  introduced by
-                rounding of A and B to fit in double (about 1 ulp).
-
-  -- ALGLIB --
-     Copyright 24.08.2009 by Bochkanov Sergey
-*************************************************************************/
-void xdot(/* Real    */ ae_vector* a,
-     /* Real    */ ae_vector* b,
-     ae_int_t n,
-     /* Real    */ ae_vector* temp,
-     double* r,
-     double* rerr,
-     ae_state *_state)
+double nulog1p(double x, ae_state *_state)
 {
-    ae_int_t i;
-    double mx;
-    double v;
-
-    *r = 0;
-    *rerr = 0;
-
-    
-    /*
-     * special cases:
-     * * N=0
-     */
-    if( n==0 )
-    {
-        *r = (double)(0);
-        *rerr = (double)(0);
-        return;
-    }
-    mx = (double)(0);
-    for(i=0; i<=n-1; i++)
-    {
-        v = a->ptr.p_double[i]*b->ptr.p_double[i];
-        temp->ptr.p_double[i] = v;
-        mx = ae_maxreal(mx, ae_fabs(v, _state), _state);
-    }
-    if( ae_fp_eq(mx,(double)(0)) )
-    {
-        *r = (double)(0);
-        *rerr = (double)(0);
-        return;
-    }
-    xblas_xsum(temp, mx, n, r, rerr, _state);
-}
-
-
-/*************************************************************************
-More precise complex dot-product. Absolute error of  subroutine  result is
-about 1 ulp of max(MX,V), where:
-    MX = max( |a[i]*b[i]| )
-    V  = |(a,b)|
-
-INPUT PARAMETERS
-    A       -   array[0..N-1], vector 1
-    B       -   array[0..N-1], vector 2
-    N       -   vectors length, N<2^29.
-    Temp    -   array[0..2*N-1], pre-allocated temporary storage
-
-OUTPUT PARAMETERS
-    R       -   (A,B)
-    RErr    -   estimate of error. This estimate accounts for both  errors
-                during  calculation  of  (A,B)  and  errors  introduced by
-                rounding of A and B to fit in double (about 1 ulp).
-
-  -- ALGLIB --
-     Copyright 27.01.2010 by Bochkanov Sergey
-*************************************************************************/
-void xcdot(/* Complex */ ae_vector* a,
-     /* Complex */ ae_vector* b,
-     ae_int_t n,
-     /* Real    */ ae_vector* temp,
-     ae_complex* r,
-     double* rerr,
-     ae_state *_state)
-{
-    ae_int_t i;
-    double mx;
-    double v;
-    double rerrx;
-    double rerry;
-
-    r->x = 0;
-    r->y = 0;
-    *rerr = 0;
-
-    
-    /*
-     * special cases:
-     * * N=0
-     */
-    if( n==0 )
-    {
-        *r = ae_complex_from_i(0);
-        *rerr = (double)(0);
-        return;
-    }
-    
-    /*
-     * calculate real part
-     */
-    mx = (double)(0);
-    for(i=0; i<=n-1; i++)
-    {
-        v = a->ptr.p_complex[i].x*b->ptr.p_complex[i].x;
-        temp->ptr.p_double[2*i+0] = v;
-        mx = ae_maxreal(mx, ae_fabs(v, _state), _state);
-        v = -a->ptr.p_complex[i].y*b->ptr.p_complex[i].y;
-        temp->ptr.p_double[2*i+1] = v;
-        mx = ae_maxreal(mx, ae_fabs(v, _state), _state);
-    }
-    if( ae_fp_eq(mx,(double)(0)) )
-    {
-        r->x = (double)(0);
-        rerrx = (double)(0);
-    }
-    else
-    {
-        xblas_xsum(temp, mx, 2*n, &r->x, &rerrx, _state);
-    }
-    
-    /*
-     * calculate imaginary part
-     */
-    mx = (double)(0);
-    for(i=0; i<=n-1; i++)
-    {
-        v = a->ptr.p_complex[i].x*b->ptr.p_complex[i].y;
-        temp->ptr.p_double[2*i+0] = v;
-        mx = ae_maxreal(mx, ae_fabs(v, _state), _state);
-        v = a->ptr.p_complex[i].y*b->ptr.p_complex[i].x;
-        temp->ptr.p_double[2*i+1] = v;
-        mx = ae_maxreal(mx, ae_fabs(v, _state), _state);
-    }
-    if( ae_fp_eq(mx,(double)(0)) )
-    {
-        r->y = (double)(0);
-        rerry = (double)(0);
-    }
-    else
-    {
-        xblas_xsum(temp, mx, 2*n, &r->y, &rerry, _state);
-    }
-    
-    /*
-     * total error
-     */
-    if( ae_fp_eq(rerrx,(double)(0))&&ae_fp_eq(rerry,(double)(0)) )
-    {
-        *rerr = (double)(0);
-    }
-    else
-    {
-        *rerr = ae_maxreal(rerrx, rerry, _state)*ae_sqrt(1+ae_sqr(ae_minreal(rerrx, rerry, _state)/ae_maxreal(rerrx, rerry, _state), _state), _state);
-    }
-}
-
-
-/*************************************************************************
-Internal subroutine for extra-precise calculation of SUM(w[i]).
-
-INPUT PARAMETERS:
-    W   -   array[0..N-1], values to be added
-            W is modified during calculations.
-    MX  -   max(W[i])
-    N   -   array size
-    
-OUTPUT PARAMETERS:
-    R   -   SUM(w[i])
-    RErr-   error estimate for R
-
-  -- ALGLIB --
-     Copyright 24.08.2009 by Bochkanov Sergey
-*************************************************************************/
-static void xblas_xsum(/* Real    */ ae_vector* w,
-     double mx,
-     ae_int_t n,
-     double* r,
-     double* rerr,
-     ae_state *_state)
-{
-    ae_int_t i;
-    ae_int_t k;
-    ae_int_t ks;
-    double v;
-    double s;
-    double ln2;
-    double chunk;
-    double invchunk;
-    ae_bool allzeros;
-
-    *r = 0;
-    *rerr = 0;
-
-    
-    /*
-     * special cases:
-     * * N=0
-     * * N is too large to use integer arithmetics
-     */
-    if( n==0 )
-    {
-        *r = (double)(0);
-        *rerr = (double)(0);
-        return;
-    }
-    if( ae_fp_eq(mx,(double)(0)) )
-    {
-        *r = (double)(0);
-        *rerr = (double)(0);
-        return;
-    }
-    ae_assert(n<536870912, "XDot: N is too large!", _state);
-    
-    /*
-     * Prepare
-     */
-    ln2 = ae_log((double)(2), _state);
-    *rerr = mx*ae_machineepsilon;
-    
-    /*
-     * 1. find S such that 0.5<=S*MX<1
-     * 2. multiply W by S, so task is normalized in some sense
-     * 3. S:=1/S so we can obtain original vector multiplying by S
-     */
-    k = ae_round(ae_log(mx, _state)/ln2, _state);
-    s = xblas_xfastpow((double)(2), -k, _state);
-    if( !ae_isfinite(s, _state) )
-    {
-        
-        /*
-         * Overflow or underflow during evaluation of S; fallback low-precision code
-         */
-        *r = (double)(0);
-        *rerr = mx*ae_machineepsilon;
-        for(i=0; i<=n-1; i++)
-        {
-            *r = *r+w->ptr.p_double[i];
-        }
-        return;
-    }
-    while(ae_fp_greater_eq(s*mx,(double)(1)))
-    {
-        s = 0.5*s;
-    }
-    while(ae_fp_less(s*mx,0.5))
-    {
-        s = 2*s;
-    }
-    ae_v_muld(&w->ptr.p_double[0], 1, ae_v_len(0,n-1), s);
-    s = 1/s;
-    
-    /*
-     * find Chunk=2^M such that N*Chunk<2^29
-     *
-     * we have chosen upper limit (2^29) with enough space left
-     * to tolerate possible problems with rounding and N's close
-     * to the limit, so we don't want to be very strict here.
-     */
-    k = ae_trunc(ae_log((double)536870912/(double)n, _state)/ln2, _state);
-    chunk = xblas_xfastpow((double)(2), k, _state);
-    if( ae_fp_less(chunk,(double)(2)) )
-    {
-        chunk = (double)(2);
-    }
-    invchunk = 1/chunk;
-    
-    /*
-     * calculate result
-     */
-    *r = (double)(0);
-    ae_v_muld(&w->ptr.p_double[0], 1, ae_v_len(0,n-1), chunk);
-    for(;;)
-    {
-        s = s*invchunk;
-        allzeros = ae_true;
-        ks = 0;
-        for(i=0; i<=n-1; i++)
-        {
-            v = w->ptr.p_double[i];
-            k = ae_trunc(v, _state);
-            if( ae_fp_neq(v,(double)(k)) )
-            {
-                allzeros = ae_false;
-            }
-            w->ptr.p_double[i] = chunk*(v-k);
-            ks = ks+k;
-        }
-        *r = *r+s*ks;
-        v = ae_fabs(*r, _state);
-        if( allzeros||ae_fp_eq(s*n+mx,mx) )
-        {
-            break;
-        }
-    }
-    
-    /*
-     * correct error
-     */
-    *rerr = ae_maxreal(*rerr, ae_fabs(*r, _state)*ae_machineepsilon, _state);
-}
-
-
-/*************************************************************************
-Fast Pow
-
-  -- ALGLIB --
-     Copyright 24.08.2009 by Bochkanov Sergey
-*************************************************************************/
-static double xblas_xfastpow(double r, ae_int_t n, ae_state *_state)
-{
+    double z;
+    double lp;
+    double lq;
     double result;
 
 
-    result = (double)(0);
-    if( n>0 )
+    z = 1.0+x;
+    if( ae_fp_less(z,0.70710678118654752440)||ae_fp_greater(z,1.41421356237309504880) )
     {
-        if( n%2==0 )
-        {
-            result = ae_sqr(xblas_xfastpow(r, n/2, _state), _state);
-        }
-        else
-        {
-            result = r*xblas_xfastpow(r, n-1, _state);
-        }
+        result = ae_log(z, _state);
         return result;
     }
-    if( n==0 )
-    {
-        result = (double)(1);
-    }
-    if( n<0 )
-    {
-        result = xblas_xfastpow(1/r, -n, _state);
-    }
+    z = x*x;
+    lp = 4.5270000862445199635215E-5;
+    lp = lp*x+4.9854102823193375972212E-1;
+    lp = lp*x+6.5787325942061044846969E0;
+    lp = lp*x+2.9911919328553073277375E1;
+    lp = lp*x+6.0949667980987787057556E1;
+    lp = lp*x+5.7112963590585538103336E1;
+    lp = lp*x+2.0039553499201281259648E1;
+    lq = 1.0000000000000000000000E0;
+    lq = lq*x+1.5062909083469192043167E1;
+    lq = lq*x+8.3047565967967209469434E1;
+    lq = lq*x+2.2176239823732856465394E2;
+    lq = lq*x+3.0909872225312059774938E2;
+    lq = lq*x+2.1642788614495947685003E2;
+    lq = lq*x+6.0118660497603843919306E1;
+    z = -0.5*z+x*(z*lp/lq);
+    result = x+z;
     return result;
 }
 
 
-#endif
-#if defined(AE_COMPILE_BASICSTATOPS) || !defined(AE_PARTIAL_BUILD)
-
-
-/*************************************************************************
-Internal tied ranking subroutine.
-
-INPUT PARAMETERS:
-    X       -   array to rank
-    N       -   array size
-    IsCentered- whether ranks are centered or not:
-                * True      -   ranks are centered in such way that  their
-                                sum is zero
-                * False     -   ranks are not centered
-    Buf     -   temporary buffers
-    
-NOTE: when IsCentered is True and all X[] are equal, this  function  fills
-      X by zeros (exact zeros are used, not sum which is only approximately
-      equal to zero).
-*************************************************************************/
-void rankx(/* Real    */ ae_vector* x,
-     ae_int_t n,
-     ae_bool iscentered,
-     apbuffers* buf,
-     ae_state *_state)
+double nuexpm1(double x, ae_state *_state)
 {
-    ae_int_t i;
-    ae_int_t j;
-    ae_int_t k;
-    double tmp;
-    double voffs;
+    double r;
+    double xx;
+    double ep;
+    double eq;
+    double result;
 
 
-    
-    /*
-     * Prepare
-     */
-    if( n<1 )
+    if( ae_fp_less(x,-0.5)||ae_fp_greater(x,0.5) )
     {
-        return;
+        result = ae_exp(x, _state)-1.0;
+        return result;
     }
-    if( n==1 )
-    {
-        x->ptr.p_double[0] = (double)(0);
-        return;
-    }
-    if( buf->ra1.cnt<n )
-    {
-        ae_vector_set_length(&buf->ra1, n, _state);
-    }
-    if( buf->ia1.cnt<n )
-    {
-        ae_vector_set_length(&buf->ia1, n, _state);
-    }
-    for(i=0; i<=n-1; i++)
-    {
-        buf->ra1.ptr.p_double[i] = x->ptr.p_double[i];
-        buf->ia1.ptr.p_int[i] = i;
-    }
-    tagsortfasti(&buf->ra1, &buf->ia1, &buf->ra2, &buf->ia2, n, _state);
-    
-    /*
-     * Special test for all values being equal
-     */
-    if( ae_fp_eq(buf->ra1.ptr.p_double[0],buf->ra1.ptr.p_double[n-1]) )
-    {
-        if( iscentered )
-        {
-            tmp = 0.0;
-        }
-        else
-        {
-            tmp = (double)(n-1)/(double)2;
-        }
-        for(i=0; i<=n-1; i++)
-        {
-            x->ptr.p_double[i] = tmp;
-        }
-        return;
-    }
-    
-    /*
-     * compute tied ranks
-     */
-    i = 0;
-    while(i<=n-1)
-    {
-        j = i+1;
-        while(j<=n-1)
-        {
-            if( ae_fp_neq(buf->ra1.ptr.p_double[j],buf->ra1.ptr.p_double[i]) )
-            {
-                break;
-            }
-            j = j+1;
-        }
-        for(k=i; k<=j-1; k++)
-        {
-            buf->ra1.ptr.p_double[k] = (double)(i+j-1)/(double)2;
-        }
-        i = j;
-    }
-    
-    /*
-     * back to x
-     */
-    if( iscentered )
-    {
-        voffs = (double)(n-1)/(double)2;
-    }
-    else
-    {
-        voffs = 0.0;
-    }
-    for(i=0; i<=n-1; i++)
-    {
-        x->ptr.p_double[buf->ia1.ptr.p_int[i]] = buf->ra1.ptr.p_double[i]-voffs;
-    }
-}
-
-
-/*************************************************************************
-Internal untied ranking subroutine.
-
-INPUT PARAMETERS:
-    X       -   array to rank
-    N       -   array size
-    Buf     -   temporary buffers
-
-Returns untied ranks (in case of a tie ranks are resolved arbitrarily).
-*************************************************************************/
-void rankxuntied(/* Real    */ ae_vector* x,
-     ae_int_t n,
-     apbuffers* buf,
-     ae_state *_state)
-{
-    ae_int_t i;
-
-
-    
-    /*
-     * Prepare
-     */
-    if( n<1 )
-    {
-        return;
-    }
-    if( n==1 )
-    {
-        x->ptr.p_double[0] = (double)(0);
-        return;
-    }
-    if( buf->ra1.cnt<n )
-    {
-        ae_vector_set_length(&buf->ra1, n, _state);
-    }
-    if( buf->ia1.cnt<n )
-    {
-        ae_vector_set_length(&buf->ia1, n, _state);
-    }
-    for(i=0; i<=n-1; i++)
-    {
-        buf->ra1.ptr.p_double[i] = x->ptr.p_double[i];
-        buf->ia1.ptr.p_int[i] = i;
-    }
-    tagsortfasti(&buf->ra1, &buf->ia1, &buf->ra2, &buf->ia2, n, _state);
-    for(i=0; i<=n-1; i++)
-    {
-        x->ptr.p_double[buf->ia1.ptr.p_int[i]] = (double)(i);
-    }
-}
-
-
-#endif
-#if defined(AE_COMPILE_HPCCORES) || !defined(AE_PARTIAL_BUILD)
-
-
-/*************************************************************************
-Prepares HPC compuations  of  chunked  gradient with HPCChunkedGradient().
-You  have to call this function  before  calling  HPCChunkedGradient() for
-a new set of weights. You have to call it only once, see example below:
-
-HOW TO PROCESS DATASET WITH THIS FUNCTION:
-    Grad:=0
-    HPCPrepareChunkedGradient(Weights, WCount, NTotal, NOut, Buf)
-    foreach chunk-of-dataset do
-        HPCChunkedGradient(...)
-    HPCFinalizeChunkedGradient(Buf, Grad)
-
-*************************************************************************/
-void hpcpreparechunkedgradient(/* Real    */ ae_vector* weights,
-     ae_int_t wcount,
-     ae_int_t ntotal,
-     ae_int_t nin,
-     ae_int_t nout,
-     mlpbuffers* buf,
-     ae_state *_state)
-{
-    ae_int_t i;
-    ae_int_t batch4size;
-    ae_int_t chunksize;
-
-
-    chunksize = 4;
-    batch4size = 3*chunksize*ntotal+chunksize*(2*nout+1);
-    if( buf->xy.rows<chunksize||buf->xy.cols<nin+nout )
-    {
-        ae_matrix_set_length(&buf->xy, chunksize, nin+nout, _state);
-    }
-    if( buf->xy2.rows<chunksize||buf->xy2.cols<nin+nout )
-    {
-        ae_matrix_set_length(&buf->xy2, chunksize, nin+nout, _state);
-    }
-    if( buf->xyrow.cnt<nin+nout )
-    {
-        ae_vector_set_length(&buf->xyrow, nin+nout, _state);
-    }
-    if( buf->x.cnt<nin )
-    {
-        ae_vector_set_length(&buf->x, nin, _state);
-    }
-    if( buf->y.cnt<nout )
-    {
-        ae_vector_set_length(&buf->y, nout, _state);
-    }
-    if( buf->desiredy.cnt<nout )
-    {
-        ae_vector_set_length(&buf->desiredy, nout, _state);
-    }
-    if( buf->batch4buf.cnt<batch4size )
-    {
-        ae_vector_set_length(&buf->batch4buf, batch4size, _state);
-    }
-    if( buf->hpcbuf.cnt<wcount )
-    {
-        ae_vector_set_length(&buf->hpcbuf, wcount, _state);
-    }
-    if( buf->g.cnt<wcount )
-    {
-        ae_vector_set_length(&buf->g, wcount, _state);
-    }
-    if( !hpccores_hpcpreparechunkedgradientx(weights, wcount, &buf->hpcbuf, _state) )
-    {
-        for(i=0; i<=wcount-1; i++)
-        {
-            buf->hpcbuf.ptr.p_double[i] = 0.0;
-        }
-    }
-    buf->wcount = wcount;
-    buf->ntotal = ntotal;
-    buf->nin = nin;
-    buf->nout = nout;
-    buf->chunksize = chunksize;
-}
-
-
-/*************************************************************************
-Finalizes HPC compuations  of  chunked gradient with HPCChunkedGradient().
-You  have to call this function  after  calling  HPCChunkedGradient()  for
-a new set of weights. You have to call it only once, see example below:
-
-HOW TO PROCESS DATASET WITH THIS FUNCTION:
-    Grad:=0
-    HPCPrepareChunkedGradient(Weights, WCount, NTotal, NOut, Buf)
-    foreach chunk-of-dataset do
-        HPCChunkedGradient(...)
-    HPCFinalizeChunkedGradient(Buf, Grad)
-
-*************************************************************************/
-void hpcfinalizechunkedgradient(mlpbuffers* buf,
-     /* Real    */ ae_vector* grad,
-     ae_state *_state)
-{
-    ae_int_t i;
-
-
-    if( !hpccores_hpcfinalizechunkedgradientx(&buf->hpcbuf, buf->wcount, grad, _state) )
-    {
-        for(i=0; i<=buf->wcount-1; i++)
-        {
-            grad->ptr.p_double[i] = grad->ptr.p_double[i]+buf->hpcbuf.ptr.p_double[i];
-        }
-    }
-}
-
-
-/*************************************************************************
-Fast kernel for chunked gradient.
-
-*************************************************************************/
-ae_bool hpcchunkedgradient(/* Real    */ ae_vector* weights,
-     /* Integer */ ae_vector* structinfo,
-     /* Real    */ ae_vector* columnmeans,
-     /* Real    */ ae_vector* columnsigmas,
-     /* Real    */ ae_matrix* xy,
-     ae_int_t cstart,
-     ae_int_t csize,
-     /* Real    */ ae_vector* batch4buf,
-     /* Real    */ ae_vector* hpcbuf,
-     double* e,
-     ae_bool naturalerrorfunc,
-     ae_state *_state)
-{
-#ifndef ALGLIB_INTERCEPTS_SSE2
-    ae_bool result;
-
-
-    result = ae_false;
+    xx = x*x;
+    ep = 1.2617719307481059087798E-4;
+    ep = ep*xx+3.0299440770744196129956E-2;
+    ep = ep*xx+9.9999999999999999991025E-1;
+    eq = 3.0019850513866445504159E-6;
+    eq = eq*xx+2.5244834034968410419224E-3;
+    eq = eq*xx+2.2726554820815502876593E-1;
+    eq = eq*xx+2.0000000000000000000897E0;
+    r = x*ep;
+    r = r/(eq-r);
+    result = r+r;
     return result;
-#else
-    return _ialglib_i_hpcchunkedgradient(weights, structinfo, columnmeans, columnsigmas, xy, cstart, csize, batch4buf, hpcbuf, e, naturalerrorfunc);
-#endif
 }
 
 
-/*************************************************************************
-Fast kernel for chunked processing.
-
-*************************************************************************/
-ae_bool hpcchunkedprocess(/* Real    */ ae_vector* weights,
-     /* Integer */ ae_vector* structinfo,
-     /* Real    */ ae_vector* columnmeans,
-     /* Real    */ ae_vector* columnsigmas,
-     /* Real    */ ae_matrix* xy,
-     ae_int_t cstart,
-     ae_int_t csize,
-     /* Real    */ ae_vector* batch4buf,
-     /* Real    */ ae_vector* hpcbuf,
-     ae_state *_state)
+double nucosm1(double x, ae_state *_state)
 {
-#ifndef ALGLIB_INTERCEPTS_SSE2
-    ae_bool result;
+    double xx;
+    double c;
+    double result;
 
 
-    result = ae_false;
+    if( ae_fp_less(x,-0.25*ae_pi)||ae_fp_greater(x,0.25*ae_pi) )
+    {
+        result = ae_cos(x, _state)-1;
+        return result;
+    }
+    xx = x*x;
+    c = 4.7377507964246204691685E-14;
+    c = c*xx-1.1470284843425359765671E-11;
+    c = c*xx+2.0876754287081521758361E-9;
+    c = c*xx-2.7557319214999787979814E-7;
+    c = c*xx+2.4801587301570552304991E-5;
+    c = c*xx-1.3888888888888872993737E-3;
+    c = c*xx+4.1666666666666666609054E-2;
+    result = -0.5*xx+xx*xx*c;
     return result;
-#else
-    return _ialglib_i_hpcchunkedprocess(weights, structinfo, columnmeans, columnsigmas, xy, cstart, csize, batch4buf, hpcbuf);
-#endif
-}
-
-
-/*************************************************************************
-Stub function.
-
-  -- ALGLIB routine --
-     14.06.2013
-     Bochkanov Sergey
-*************************************************************************/
-static ae_bool hpccores_hpcpreparechunkedgradientx(/* Real    */ ae_vector* weights,
-     ae_int_t wcount,
-     /* Real    */ ae_vector* hpcbuf,
-     ae_state *_state)
-{
-#ifndef ALGLIB_INTERCEPTS_SSE2
-    ae_bool result;
-
-
-    result = ae_false;
-    return result;
-#else
-    return _ialglib_i_hpcpreparechunkedgradientx(weights, wcount, hpcbuf);
-#endif
-}
-
-
-/*************************************************************************
-Stub function.
-
-  -- ALGLIB routine --
-     14.06.2013
-     Bochkanov Sergey
-*************************************************************************/
-static ae_bool hpccores_hpcfinalizechunkedgradientx(/* Real    */ ae_vector* buf,
-     ae_int_t wcount,
-     /* Real    */ ae_vector* grad,
-     ae_state *_state)
-{
-#ifndef ALGLIB_INTERCEPTS_SSE2
-    ae_bool result;
-
-
-    result = ae_false;
-    return result;
-#else
-    return _ialglib_i_hpcfinalizechunkedgradientx(buf, wcount, grad);
-#endif
-}
-
-
-void _mlpbuffers_init(void* _p, ae_state *_state, ae_bool make_automatic)
-{
-    mlpbuffers *p = (mlpbuffers*)_p;
-    ae_touch_ptr((void*)p);
-    ae_vector_init(&p->batch4buf, 0, DT_REAL, _state, make_automatic);
-    ae_vector_init(&p->hpcbuf, 0, DT_REAL, _state, make_automatic);
-    ae_matrix_init(&p->xy, 0, 0, DT_REAL, _state, make_automatic);
-    ae_matrix_init(&p->xy2, 0, 0, DT_REAL, _state, make_automatic);
-    ae_vector_init(&p->xyrow, 0, DT_REAL, _state, make_automatic);
-    ae_vector_init(&p->x, 0, DT_REAL, _state, make_automatic);
-    ae_vector_init(&p->y, 0, DT_REAL, _state, make_automatic);
-    ae_vector_init(&p->desiredy, 0, DT_REAL, _state, make_automatic);
-    ae_vector_init(&p->g, 0, DT_REAL, _state, make_automatic);
-    ae_vector_init(&p->tmp0, 0, DT_REAL, _state, make_automatic);
-}
-
-
-void _mlpbuffers_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic)
-{
-    mlpbuffers *dst = (mlpbuffers*)_dst;
-    mlpbuffers *src = (mlpbuffers*)_src;
-    dst->chunksize = src->chunksize;
-    dst->ntotal = src->ntotal;
-    dst->nin = src->nin;
-    dst->nout = src->nout;
-    dst->wcount = src->wcount;
-    ae_vector_init_copy(&dst->batch4buf, &src->batch4buf, _state, make_automatic);
-    ae_vector_init_copy(&dst->hpcbuf, &src->hpcbuf, _state, make_automatic);
-    ae_matrix_init_copy(&dst->xy, &src->xy, _state, make_automatic);
-    ae_matrix_init_copy(&dst->xy2, &src->xy2, _state, make_automatic);
-    ae_vector_init_copy(&dst->xyrow, &src->xyrow, _state, make_automatic);
-    ae_vector_init_copy(&dst->x, &src->x, _state, make_automatic);
-    ae_vector_init_copy(&dst->y, &src->y, _state, make_automatic);
-    ae_vector_init_copy(&dst->desiredy, &src->desiredy, _state, make_automatic);
-    dst->e = src->e;
-    ae_vector_init_copy(&dst->g, &src->g, _state, make_automatic);
-    ae_vector_init_copy(&dst->tmp0, &src->tmp0, _state, make_automatic);
-}
-
-
-void _mlpbuffers_clear(void* _p)
-{
-    mlpbuffers *p = (mlpbuffers*)_p;
-    ae_touch_ptr((void*)p);
-    ae_vector_clear(&p->batch4buf);
-    ae_vector_clear(&p->hpcbuf);
-    ae_matrix_clear(&p->xy);
-    ae_matrix_clear(&p->xy2);
-    ae_vector_clear(&p->xyrow);
-    ae_vector_clear(&p->x);
-    ae_vector_clear(&p->y);
-    ae_vector_clear(&p->desiredy);
-    ae_vector_clear(&p->g);
-    ae_vector_clear(&p->tmp0);
-}
-
-
-void _mlpbuffers_destroy(void* _p)
-{
-    mlpbuffers *p = (mlpbuffers*)_p;
-    ae_touch_ptr((void*)p);
-    ae_vector_destroy(&p->batch4buf);
-    ae_vector_destroy(&p->hpcbuf);
-    ae_matrix_destroy(&p->xy);
-    ae_matrix_destroy(&p->xy2);
-    ae_vector_destroy(&p->xyrow);
-    ae_vector_destroy(&p->x);
-    ae_vector_destroy(&p->y);
-    ae_vector_destroy(&p->desiredy);
-    ae_vector_destroy(&p->g);
-    ae_vector_destroy(&p->tmp0);
 }
 
 
@@ -18329,89 +19648,6 @@ static void ftbase_ffticltrec(/* Real    */ ae_vector* a,
 
 
 /*************************************************************************
-Recurrent subroutine for a InternalRealLinTranspose
-
-
-  -- ALGLIB --
-     Copyright 01.05.2009 by Bochkanov Sergey
-*************************************************************************/
-static void ftbase_fftirltrec(/* Real    */ ae_vector* a,
-     ae_int_t astart,
-     ae_int_t astride,
-     /* Real    */ ae_vector* b,
-     ae_int_t bstart,
-     ae_int_t bstride,
-     ae_int_t m,
-     ae_int_t n,
-     ae_state *_state)
-{
-    ae_int_t i;
-    ae_int_t j;
-    ae_int_t idx1;
-    ae_int_t idx2;
-    ae_int_t m1;
-    ae_int_t n1;
-
-
-    if( m==0||n==0 )
-    {
-        return;
-    }
-    if( ae_maxint(m, n, _state)<=8 )
-    {
-        for(i=0; i<=m-1; i++)
-        {
-            idx1 = bstart+i;
-            idx2 = astart+i*astride;
-            for(j=0; j<=n-1; j++)
-            {
-                b->ptr.p_double[idx1] = a->ptr.p_double[idx2];
-                idx1 = idx1+bstride;
-                idx2 = idx2+1;
-            }
-        }
-        return;
-    }
-    if( n>m )
-    {
-        
-        /*
-         * New partition:
-         *
-         * "A^T -> B" becomes "(A1 A2)^T -> ( B1 )
-         *                                  ( B2 )
-         */
-        n1 = n/2;
-        if( n-n1>=8&&n1%8!=0 )
-        {
-            n1 = n1+(8-n1%8);
-        }
-        ae_assert(n-n1>0, "Assertion failed", _state);
-        ftbase_fftirltrec(a, astart, astride, b, bstart, bstride, m, n1, _state);
-        ftbase_fftirltrec(a, astart+n1, astride, b, bstart+n1*bstride, bstride, m, n-n1, _state);
-    }
-    else
-    {
-        
-        /*
-         * New partition:
-         *
-         * "A^T -> B" becomes "( A1 )^T -> ( B1 B2 )
-         *                     ( A2 )
-         */
-        m1 = m/2;
-        if( m-m1>=8&&m1%8!=0 )
-        {
-            m1 = m1+(8-m1%8);
-        }
-        ae_assert(m-m1>0, "Assertion failed", _state);
-        ftbase_fftirltrec(a, astart, astride, b, bstart, bstride, m1, n, _state);
-        ftbase_fftirltrec(a, astart+m1*astride, astride, b, bstart+m1, bstride, m-m1, n, _state);
-    }
-}
-
-
-/*************************************************************************
 recurrent subroutine for FFTFindSmoothRec
 
   -- ALGLIB --
@@ -18495,95 +19731,293 @@ void _fasttransformplan_destroy(void* _p)
 
 
 #endif
-#if defined(AE_COMPILE_NEARUNITYUNIT) || !defined(AE_PARTIAL_BUILD)
+#if defined(AE_COMPILE_HPCCORES) || !defined(AE_PARTIAL_BUILD)
 
 
-double nulog1p(double x, ae_state *_state)
+/*************************************************************************
+Prepares HPC compuations  of  chunked  gradient with HPCChunkedGradient().
+You  have to call this function  before  calling  HPCChunkedGradient() for
+a new set of weights. You have to call it only once, see example below:
+
+HOW TO PROCESS DATASET WITH THIS FUNCTION:
+    Grad:=0
+    HPCPrepareChunkedGradient(Weights, WCount, NTotal, NOut, Buf)
+    foreach chunk-of-dataset do
+        HPCChunkedGradient(...)
+    HPCFinalizeChunkedGradient(Buf, Grad)
+
+*************************************************************************/
+void hpcpreparechunkedgradient(/* Real    */ ae_vector* weights,
+     ae_int_t wcount,
+     ae_int_t ntotal,
+     ae_int_t nin,
+     ae_int_t nout,
+     mlpbuffers* buf,
+     ae_state *_state)
 {
-    double z;
-    double lp;
-    double lq;
-    double result;
+    ae_int_t i;
+    ae_int_t batch4size;
+    ae_int_t chunksize;
 
 
-    z = 1.0+x;
-    if( ae_fp_less(z,0.70710678118654752440)||ae_fp_greater(z,1.41421356237309504880) )
+    chunksize = 4;
+    batch4size = 3*chunksize*ntotal+chunksize*(2*nout+1);
+    if( buf->xy.rows<chunksize||buf->xy.cols<nin+nout )
     {
-        result = ae_log(z, _state);
-        return result;
+        ae_matrix_set_length(&buf->xy, chunksize, nin+nout, _state);
     }
-    z = x*x;
-    lp = 4.5270000862445199635215E-5;
-    lp = lp*x+4.9854102823193375972212E-1;
-    lp = lp*x+6.5787325942061044846969E0;
-    lp = lp*x+2.9911919328553073277375E1;
-    lp = lp*x+6.0949667980987787057556E1;
-    lp = lp*x+5.7112963590585538103336E1;
-    lp = lp*x+2.0039553499201281259648E1;
-    lq = 1.0000000000000000000000E0;
-    lq = lq*x+1.5062909083469192043167E1;
-    lq = lq*x+8.3047565967967209469434E1;
-    lq = lq*x+2.2176239823732856465394E2;
-    lq = lq*x+3.0909872225312059774938E2;
-    lq = lq*x+2.1642788614495947685003E2;
-    lq = lq*x+6.0118660497603843919306E1;
-    z = -0.5*z+x*(z*lp/lq);
-    result = x+z;
-    return result;
+    if( buf->xy2.rows<chunksize||buf->xy2.cols<nin+nout )
+    {
+        ae_matrix_set_length(&buf->xy2, chunksize, nin+nout, _state);
+    }
+    if( buf->xyrow.cnt<nin+nout )
+    {
+        ae_vector_set_length(&buf->xyrow, nin+nout, _state);
+    }
+    if( buf->x.cnt<nin )
+    {
+        ae_vector_set_length(&buf->x, nin, _state);
+    }
+    if( buf->y.cnt<nout )
+    {
+        ae_vector_set_length(&buf->y, nout, _state);
+    }
+    if( buf->desiredy.cnt<nout )
+    {
+        ae_vector_set_length(&buf->desiredy, nout, _state);
+    }
+    if( buf->batch4buf.cnt<batch4size )
+    {
+        ae_vector_set_length(&buf->batch4buf, batch4size, _state);
+    }
+    if( buf->hpcbuf.cnt<wcount )
+    {
+        ae_vector_set_length(&buf->hpcbuf, wcount, _state);
+    }
+    if( buf->g.cnt<wcount )
+    {
+        ae_vector_set_length(&buf->g, wcount, _state);
+    }
+    if( !hpccores_hpcpreparechunkedgradientx(weights, wcount, &buf->hpcbuf, _state) )
+    {
+        for(i=0; i<=wcount-1; i++)
+        {
+            buf->hpcbuf.ptr.p_double[i] = 0.0;
+        }
+    }
+    buf->wcount = wcount;
+    buf->ntotal = ntotal;
+    buf->nin = nin;
+    buf->nout = nout;
+    buf->chunksize = chunksize;
 }
 
 
-double nuexpm1(double x, ae_state *_state)
+/*************************************************************************
+Finalizes HPC compuations  of  chunked gradient with HPCChunkedGradient().
+You  have to call this function  after  calling  HPCChunkedGradient()  for
+a new set of weights. You have to call it only once, see example below:
+
+HOW TO PROCESS DATASET WITH THIS FUNCTION:
+    Grad:=0
+    HPCPrepareChunkedGradient(Weights, WCount, NTotal, NOut, Buf)
+    foreach chunk-of-dataset do
+        HPCChunkedGradient(...)
+    HPCFinalizeChunkedGradient(Buf, Grad)
+
+*************************************************************************/
+void hpcfinalizechunkedgradient(mlpbuffers* buf,
+     /* Real    */ ae_vector* grad,
+     ae_state *_state)
 {
-    double r;
-    double xx;
-    double ep;
-    double eq;
-    double result;
+    ae_int_t i;
 
 
-    if( ae_fp_less(x,-0.5)||ae_fp_greater(x,0.5) )
+    if( !hpccores_hpcfinalizechunkedgradientx(&buf->hpcbuf, buf->wcount, grad, _state) )
     {
-        result = ae_exp(x, _state)-1.0;
-        return result;
+        for(i=0; i<=buf->wcount-1; i++)
+        {
+            grad->ptr.p_double[i] = grad->ptr.p_double[i]+buf->hpcbuf.ptr.p_double[i];
+        }
     }
-    xx = x*x;
-    ep = 1.2617719307481059087798E-4;
-    ep = ep*xx+3.0299440770744196129956E-2;
-    ep = ep*xx+9.9999999999999999991025E-1;
-    eq = 3.0019850513866445504159E-6;
-    eq = eq*xx+2.5244834034968410419224E-3;
-    eq = eq*xx+2.2726554820815502876593E-1;
-    eq = eq*xx+2.0000000000000000000897E0;
-    r = x*ep;
-    r = r/(eq-r);
-    result = r+r;
-    return result;
 }
 
 
-double nucosm1(double x, ae_state *_state)
+/*************************************************************************
+Fast kernel for chunked gradient.
+
+*************************************************************************/
+ae_bool hpcchunkedgradient(/* Real    */ ae_vector* weights,
+     /* Integer */ ae_vector* structinfo,
+     /* Real    */ ae_vector* columnmeans,
+     /* Real    */ ae_vector* columnsigmas,
+     /* Real    */ ae_matrix* xy,
+     ae_int_t cstart,
+     ae_int_t csize,
+     /* Real    */ ae_vector* batch4buf,
+     /* Real    */ ae_vector* hpcbuf,
+     double* e,
+     ae_bool naturalerrorfunc,
+     ae_state *_state)
 {
-    double xx;
-    double c;
-    double result;
+#ifndef ALGLIB_INTERCEPTS_SSE2
+    ae_bool result;
 
 
-    if( ae_fp_less(x,-0.25*ae_pi)||ae_fp_greater(x,0.25*ae_pi) )
-    {
-        result = ae_cos(x, _state)-1;
-        return result;
-    }
-    xx = x*x;
-    c = 4.7377507964246204691685E-14;
-    c = c*xx-1.1470284843425359765671E-11;
-    c = c*xx+2.0876754287081521758361E-9;
-    c = c*xx-2.7557319214999787979814E-7;
-    c = c*xx+2.4801587301570552304991E-5;
-    c = c*xx-1.3888888888888872993737E-3;
-    c = c*xx+4.1666666666666666609054E-2;
-    result = -0.5*xx+xx*xx*c;
+    result = ae_false;
     return result;
+#else
+    return _ialglib_i_hpcchunkedgradient(weights, structinfo, columnmeans, columnsigmas, xy, cstart, csize, batch4buf, hpcbuf, e, naturalerrorfunc);
+#endif
+}
+
+
+/*************************************************************************
+Fast kernel for chunked processing.
+
+*************************************************************************/
+ae_bool hpcchunkedprocess(/* Real    */ ae_vector* weights,
+     /* Integer */ ae_vector* structinfo,
+     /* Real    */ ae_vector* columnmeans,
+     /* Real    */ ae_vector* columnsigmas,
+     /* Real    */ ae_matrix* xy,
+     ae_int_t cstart,
+     ae_int_t csize,
+     /* Real    */ ae_vector* batch4buf,
+     /* Real    */ ae_vector* hpcbuf,
+     ae_state *_state)
+{
+#ifndef ALGLIB_INTERCEPTS_SSE2
+    ae_bool result;
+
+
+    result = ae_false;
+    return result;
+#else
+    return _ialglib_i_hpcchunkedprocess(weights, structinfo, columnmeans, columnsigmas, xy, cstart, csize, batch4buf, hpcbuf);
+#endif
+}
+
+
+/*************************************************************************
+Stub function.
+
+  -- ALGLIB routine --
+     14.06.2013
+     Bochkanov Sergey
+*************************************************************************/
+static ae_bool hpccores_hpcpreparechunkedgradientx(/* Real    */ ae_vector* weights,
+     ae_int_t wcount,
+     /* Real    */ ae_vector* hpcbuf,
+     ae_state *_state)
+{
+#ifndef ALGLIB_INTERCEPTS_SSE2
+    ae_bool result;
+
+
+    result = ae_false;
+    return result;
+#else
+    return _ialglib_i_hpcpreparechunkedgradientx(weights, wcount, hpcbuf);
+#endif
+}
+
+
+/*************************************************************************
+Stub function.
+
+  -- ALGLIB routine --
+     14.06.2013
+     Bochkanov Sergey
+*************************************************************************/
+static ae_bool hpccores_hpcfinalizechunkedgradientx(/* Real    */ ae_vector* buf,
+     ae_int_t wcount,
+     /* Real    */ ae_vector* grad,
+     ae_state *_state)
+{
+#ifndef ALGLIB_INTERCEPTS_SSE2
+    ae_bool result;
+
+
+    result = ae_false;
+    return result;
+#else
+    return _ialglib_i_hpcfinalizechunkedgradientx(buf, wcount, grad);
+#endif
+}
+
+
+void _mlpbuffers_init(void* _p, ae_state *_state, ae_bool make_automatic)
+{
+    mlpbuffers *p = (mlpbuffers*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_init(&p->batch4buf, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->hpcbuf, 0, DT_REAL, _state, make_automatic);
+    ae_matrix_init(&p->xy, 0, 0, DT_REAL, _state, make_automatic);
+    ae_matrix_init(&p->xy2, 0, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->xyrow, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->x, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->y, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->desiredy, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->g, 0, DT_REAL, _state, make_automatic);
+    ae_vector_init(&p->tmp0, 0, DT_REAL, _state, make_automatic);
+}
+
+
+void _mlpbuffers_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic)
+{
+    mlpbuffers *dst = (mlpbuffers*)_dst;
+    mlpbuffers *src = (mlpbuffers*)_src;
+    dst->chunksize = src->chunksize;
+    dst->ntotal = src->ntotal;
+    dst->nin = src->nin;
+    dst->nout = src->nout;
+    dst->wcount = src->wcount;
+    ae_vector_init_copy(&dst->batch4buf, &src->batch4buf, _state, make_automatic);
+    ae_vector_init_copy(&dst->hpcbuf, &src->hpcbuf, _state, make_automatic);
+    ae_matrix_init_copy(&dst->xy, &src->xy, _state, make_automatic);
+    ae_matrix_init_copy(&dst->xy2, &src->xy2, _state, make_automatic);
+    ae_vector_init_copy(&dst->xyrow, &src->xyrow, _state, make_automatic);
+    ae_vector_init_copy(&dst->x, &src->x, _state, make_automatic);
+    ae_vector_init_copy(&dst->y, &src->y, _state, make_automatic);
+    ae_vector_init_copy(&dst->desiredy, &src->desiredy, _state, make_automatic);
+    dst->e = src->e;
+    ae_vector_init_copy(&dst->g, &src->g, _state, make_automatic);
+    ae_vector_init_copy(&dst->tmp0, &src->tmp0, _state, make_automatic);
+}
+
+
+void _mlpbuffers_clear(void* _p)
+{
+    mlpbuffers *p = (mlpbuffers*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_clear(&p->batch4buf);
+    ae_vector_clear(&p->hpcbuf);
+    ae_matrix_clear(&p->xy);
+    ae_matrix_clear(&p->xy2);
+    ae_vector_clear(&p->xyrow);
+    ae_vector_clear(&p->x);
+    ae_vector_clear(&p->y);
+    ae_vector_clear(&p->desiredy);
+    ae_vector_clear(&p->g);
+    ae_vector_clear(&p->tmp0);
+}
+
+
+void _mlpbuffers_destroy(void* _p)
+{
+    mlpbuffers *p = (mlpbuffers*)_p;
+    ae_touch_ptr((void*)p);
+    ae_vector_destroy(&p->batch4buf);
+    ae_vector_destroy(&p->hpcbuf);
+    ae_matrix_destroy(&p->xy);
+    ae_matrix_destroy(&p->xy2);
+    ae_vector_destroy(&p->xyrow);
+    ae_vector_destroy(&p->x);
+    ae_vector_destroy(&p->y);
+    ae_vector_destroy(&p->desiredy);
+    ae_vector_destroy(&p->g);
+    ae_vector_destroy(&p->tmp0);
 }
 
 

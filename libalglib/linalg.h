@@ -1,5 +1,5 @@
 /*************************************************************************
-ALGLIB 3.17.0 (source code generated 2020-12-27)
+ALGLIB 3.19.0 (source code generated 2022-06-07)
 Copyright (c) Sergey Bochkanov (ALGLIB project).
 
 >>> SOURCE LICENSE >>>
@@ -30,6 +30,12 @@ http://www.fsf.org/licensing/licenses
 /////////////////////////////////////////////////////////////////////////
 namespace alglib_impl
 {
+#if defined(AE_COMPILE_ABLAS) || !defined(AE_PARTIAL_BUILD)
+#endif
+#if defined(AE_COMPILE_ORTFAC) || !defined(AE_PARTIAL_BUILD)
+#endif
+#if defined(AE_COMPILE_MATGEN) || !defined(AE_PARTIAL_BUILD)
+#endif
 #if defined(AE_COMPILE_SPARSE) || !defined(AE_PARTIAL_BUILD)
 typedef struct
 {
@@ -52,7 +58,49 @@ typedef struct
     sparsematrix s;
 } sparsebuffers;
 #endif
-#if defined(AE_COMPILE_ABLAS) || !defined(AE_PARTIAL_BUILD)
+#if defined(AE_COMPILE_HSSCHUR) || !defined(AE_PARTIAL_BUILD)
+#endif
+#if defined(AE_COMPILE_EVD) || !defined(AE_PARTIAL_BUILD)
+typedef struct
+{
+    ae_int_t n;
+    ae_int_t k;
+    ae_int_t nwork;
+    ae_int_t maxits;
+    double eps;
+    ae_int_t eigenvectorsneeded;
+    ae_int_t matrixtype;
+    ae_bool usewarmstart;
+    ae_bool firstcall;
+    hqrndstate rs;
+    ae_bool running;
+    ae_vector tau;
+    ae_matrix q0;
+    ae_matrix qcur;
+    ae_matrix qnew;
+    ae_matrix znew;
+    ae_matrix r;
+    ae_matrix rz;
+    ae_matrix tz;
+    ae_matrix rq;
+    ae_matrix dummy;
+    ae_vector rw;
+    ae_vector tw;
+    ae_vector wcur;
+    ae_vector wprev;
+    ae_vector wrank;
+    apbuffers buf;
+    ae_matrix x;
+    ae_matrix ax;
+    ae_int_t requesttype;
+    ae_int_t requestsize;
+    ae_int_t repiterationscount;
+    rcommstate rstate;
+} eigsubspacestate;
+typedef struct
+{
+    ae_int_t iterationscount;
+} eigsubspacereport;
 #endif
 #if defined(AE_COMPILE_DLU) || !defined(AE_PARTIAL_BUILD)
 #endif
@@ -166,16 +214,19 @@ typedef struct
     amdknset sete;
     amdllmatrix mtxl;
     amdvertexset vertexdegrees;
+    amdnset setq;
     ae_vector perm;
     ae_vector invperm;
     ae_vector columnswaps;
+    amdnset setp;
     amdnset lp;
-    amdnset plp;
+    amdnset setrp;
     amdnset ep;
     amdnset adji;
     amdnset adjj;
     ae_vector ls;
     ae_int_t lscnt;
+    amdnset setqsupercand;
     amdnset exactdegreetmp0;
     amdknset hashbuckets;
     amdnset nonemptybuckets;
@@ -199,6 +250,8 @@ typedef struct
     double modparam3;
     ae_bool extendeddebug;
     ae_bool dotrace;
+    ae_bool dotracesupernodalstructure;
+    ae_vector referenceridx;
     ae_int_t nsuper;
     ae_vector parentsupernode;
     ae_vector supercolrange;
@@ -215,13 +268,15 @@ typedef struct
     ae_vector ladjplusr;
     ae_vector ladjplus;
     ae_vector outrowcounts;
-    sparsematrix wrkat;
-    ae_vector rowstorage;
+    ae_vector inputstorage;
+    ae_vector outputstorage;
     ae_vector rowstrides;
     ae_vector rowoffsets;
     ae_vector diagd;
     ae_vector wrkrows;
     ae_vector flagarray;
+    ae_vector eligible;
+    ae_vector curpriorities;
     ae_vector tmpparent;
     ae_vector node2supernode;
     ae_vector u2smap;
@@ -233,9 +288,17 @@ typedef struct
     ae_vector tmp3;
     ae_vector tmp4;
     sparsematrix tmpa;
+    sparsematrix tmpat;
+    sparsematrix tmpa2;
+    sparsematrix tmpbottomt;
+    sparsematrix tmpupdate;
+    sparsematrix tmpupdatet;
+    sparsematrix tmpnewtailt;
+    ae_vector tmpperm;
+    ae_vector invtmpperm;
+    ae_vector tmpx;
+    ae_vector simdbuf;
 } spcholanalysis;
-#endif
-#if defined(AE_COMPILE_MATGEN) || !defined(AE_PARTIAL_BUILD)
 #endif
 #if defined(AE_COMPILE_TRFAC) || !defined(AE_PARTIAL_BUILD)
 typedef struct
@@ -250,16 +313,11 @@ typedef struct
     sparsematrix crsat;
 } sparsedecompositionanalysis;
 #endif
+#if defined(AE_COMPILE_BDSVD) || !defined(AE_PARTIAL_BUILD)
+#endif
+#if defined(AE_COMPILE_SVD) || !defined(AE_PARTIAL_BUILD)
+#endif
 #if defined(AE_COMPILE_RCOND) || !defined(AE_PARTIAL_BUILD)
-#endif
-#if defined(AE_COMPILE_MATINV) || !defined(AE_PARTIAL_BUILD)
-typedef struct
-{
-    double r1;
-    double rinf;
-} matinvreport;
-#endif
-#if defined(AE_COMPILE_ORTFAC) || !defined(AE_PARTIAL_BUILD)
 #endif
 #if defined(AE_COMPILE_FBLS) || !defined(AE_PARTIAL_BUILD)
 typedef struct
@@ -303,12 +361,9 @@ typedef struct
     double epsdiag;
     ae_int_t itsperformed;
     ae_int_t retcode;
+    double reprelres;
     rcommstate rstate;
 } fblsgmresstate;
-#endif
-#if defined(AE_COMPILE_BDSVD) || !defined(AE_PARTIAL_BUILD)
-#endif
-#if defined(AE_COMPILE_SVD) || !defined(AE_PARTIAL_BUILD)
 #endif
 #if defined(AE_COMPILE_NORMESTIMATOR) || !defined(AE_PARTIAL_BUILD)
 typedef struct
@@ -332,55 +387,18 @@ typedef struct
     rcommstate rstate;
 } normestimatorstate;
 #endif
-#if defined(AE_COMPILE_HSSCHUR) || !defined(AE_PARTIAL_BUILD)
+#if defined(AE_COMPILE_MATINV) || !defined(AE_PARTIAL_BUILD)
+typedef struct
+{
+    double r1;
+    double rinf;
+} matinvreport;
 #endif
-#if defined(AE_COMPILE_EVD) || !defined(AE_PARTIAL_BUILD)
-typedef struct
-{
-    ae_int_t n;
-    ae_int_t k;
-    ae_int_t nwork;
-    ae_int_t maxits;
-    double eps;
-    ae_int_t eigenvectorsneeded;
-    ae_int_t matrixtype;
-    ae_bool usewarmstart;
-    ae_bool firstcall;
-    hqrndstate rs;
-    ae_bool running;
-    ae_vector tau;
-    ae_matrix q0;
-    ae_matrix qcur;
-    ae_matrix qnew;
-    ae_matrix znew;
-    ae_matrix r;
-    ae_matrix rz;
-    ae_matrix tz;
-    ae_matrix rq;
-    ae_matrix dummy;
-    ae_vector rw;
-    ae_vector tw;
-    ae_vector wcur;
-    ae_vector wprev;
-    ae_vector wrank;
-    apbuffers buf;
-    ae_matrix x;
-    ae_matrix ax;
-    ae_int_t requesttype;
-    ae_int_t requestsize;
-    ae_int_t repiterationscount;
-    rcommstate rstate;
-} eigsubspacestate;
-typedef struct
-{
-    ae_int_t iterationscount;
-} eigsubspacereport;
+#if defined(AE_COMPILE_INVERSEUPDATE) || !defined(AE_PARTIAL_BUILD)
 #endif
 #if defined(AE_COMPILE_SCHUR) || !defined(AE_PARTIAL_BUILD)
 #endif
 #if defined(AE_COMPILE_SPDGEVD) || !defined(AE_PARTIAL_BUILD)
-#endif
-#if defined(AE_COMPILE_INVERSEUPDATE) || !defined(AE_PARTIAL_BUILD)
 #endif
 #if defined(AE_COMPILE_MATDET) || !defined(AE_PARTIAL_BUILD)
 #endif
@@ -394,6 +412,18 @@ typedef struct
 /////////////////////////////////////////////////////////////////////////
 namespace alglib
 {
+
+#if defined(AE_COMPILE_ABLAS) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
+#if defined(AE_COMPILE_ORTFAC) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
+#if defined(AE_COMPILE_MATGEN) || !defined(AE_PARTIAL_BUILD)
+
+#endif
 
 #if defined(AE_COMPILE_SPARSE) || !defined(AE_PARTIAL_BUILD)
 /*************************************************************************
@@ -487,139 +517,6 @@ public:
 };
 #endif
 
-#if defined(AE_COMPILE_ABLAS) || !defined(AE_PARTIAL_BUILD)
-
-#endif
-
-#if defined(AE_COMPILE_DLU) || !defined(AE_PARTIAL_BUILD)
-
-#endif
-
-#if defined(AE_COMPILE_SPTRF) || !defined(AE_PARTIAL_BUILD)
-
-#endif
-
-#if defined(AE_COMPILE_AMDORDERING) || !defined(AE_PARTIAL_BUILD)
-
-#endif
-
-#if defined(AE_COMPILE_SPCHOL) || !defined(AE_PARTIAL_BUILD)
-
-#endif
-
-#if defined(AE_COMPILE_MATGEN) || !defined(AE_PARTIAL_BUILD)
-
-#endif
-
-#if defined(AE_COMPILE_TRFAC) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-An analysis of the sparse matrix decomposition, performed prior to  actual
-numerical factorization. You should not directly  access  fields  of  this
-object - use appropriate ALGLIB functions to work with this object.
-*************************************************************************/
-class _sparsedecompositionanalysis_owner
-{
-public:
-    _sparsedecompositionanalysis_owner();
-    _sparsedecompositionanalysis_owner(const _sparsedecompositionanalysis_owner &rhs);
-    _sparsedecompositionanalysis_owner& operator=(const _sparsedecompositionanalysis_owner &rhs);
-    virtual ~_sparsedecompositionanalysis_owner();
-    alglib_impl::sparsedecompositionanalysis* c_ptr();
-    alglib_impl::sparsedecompositionanalysis* c_ptr() const;
-protected:
-    alglib_impl::sparsedecompositionanalysis *p_struct;
-};
-class sparsedecompositionanalysis : public _sparsedecompositionanalysis_owner
-{
-public:
-    sparsedecompositionanalysis();
-    sparsedecompositionanalysis(const sparsedecompositionanalysis &rhs);
-    sparsedecompositionanalysis& operator=(const sparsedecompositionanalysis &rhs);
-    virtual ~sparsedecompositionanalysis();
-
-};
-#endif
-
-#if defined(AE_COMPILE_RCOND) || !defined(AE_PARTIAL_BUILD)
-
-#endif
-
-#if defined(AE_COMPILE_MATINV) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-Matrix inverse report:
-* R1    reciprocal of condition number in 1-norm
-* RInf  reciprocal of condition number in inf-norm
-*************************************************************************/
-class _matinvreport_owner
-{
-public:
-    _matinvreport_owner();
-    _matinvreport_owner(const _matinvreport_owner &rhs);
-    _matinvreport_owner& operator=(const _matinvreport_owner &rhs);
-    virtual ~_matinvreport_owner();
-    alglib_impl::matinvreport* c_ptr();
-    alglib_impl::matinvreport* c_ptr() const;
-protected:
-    alglib_impl::matinvreport *p_struct;
-};
-class matinvreport : public _matinvreport_owner
-{
-public:
-    matinvreport();
-    matinvreport(const matinvreport &rhs);
-    matinvreport& operator=(const matinvreport &rhs);
-    virtual ~matinvreport();
-    double &r1;
-    double &rinf;
-
-};
-#endif
-
-#if defined(AE_COMPILE_ORTFAC) || !defined(AE_PARTIAL_BUILD)
-
-#endif
-
-#if defined(AE_COMPILE_FBLS) || !defined(AE_PARTIAL_BUILD)
-
-#endif
-
-#if defined(AE_COMPILE_BDSVD) || !defined(AE_PARTIAL_BUILD)
-
-#endif
-
-#if defined(AE_COMPILE_SVD) || !defined(AE_PARTIAL_BUILD)
-
-#endif
-
-#if defined(AE_COMPILE_NORMESTIMATOR) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-This object stores state of the iterative norm estimation algorithm.
-
-You should use ALGLIB functions to work with this object.
-*************************************************************************/
-class _normestimatorstate_owner
-{
-public:
-    _normestimatorstate_owner();
-    _normestimatorstate_owner(const _normestimatorstate_owner &rhs);
-    _normestimatorstate_owner& operator=(const _normestimatorstate_owner &rhs);
-    virtual ~_normestimatorstate_owner();
-    alglib_impl::normestimatorstate* c_ptr();
-    alglib_impl::normestimatorstate* c_ptr() const;
-protected:
-    alglib_impl::normestimatorstate *p_struct;
-};
-class normestimatorstate : public _normestimatorstate_owner
-{
-public:
-    normestimatorstate();
-    normestimatorstate(const normestimatorstate &rhs);
-    normestimatorstate& operator=(const normestimatorstate &rhs);
-    virtual ~normestimatorstate();
-
-};
-#endif
-
 #if defined(AE_COMPILE_HSSCHUR) || !defined(AE_PARTIAL_BUILD)
 
 #endif
@@ -682,6 +579,131 @@ public:
 };
 #endif
 
+#if defined(AE_COMPILE_DLU) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
+#if defined(AE_COMPILE_SPTRF) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
+#if defined(AE_COMPILE_AMDORDERING) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
+#if defined(AE_COMPILE_SPCHOL) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
+#if defined(AE_COMPILE_TRFAC) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+An analysis of the sparse matrix decomposition, performed prior to  actual
+numerical factorization. You should not directly  access  fields  of  this
+object - use appropriate ALGLIB functions to work with this object.
+*************************************************************************/
+class _sparsedecompositionanalysis_owner
+{
+public:
+    _sparsedecompositionanalysis_owner();
+    _sparsedecompositionanalysis_owner(const _sparsedecompositionanalysis_owner &rhs);
+    _sparsedecompositionanalysis_owner& operator=(const _sparsedecompositionanalysis_owner &rhs);
+    virtual ~_sparsedecompositionanalysis_owner();
+    alglib_impl::sparsedecompositionanalysis* c_ptr();
+    alglib_impl::sparsedecompositionanalysis* c_ptr() const;
+protected:
+    alglib_impl::sparsedecompositionanalysis *p_struct;
+};
+class sparsedecompositionanalysis : public _sparsedecompositionanalysis_owner
+{
+public:
+    sparsedecompositionanalysis();
+    sparsedecompositionanalysis(const sparsedecompositionanalysis &rhs);
+    sparsedecompositionanalysis& operator=(const sparsedecompositionanalysis &rhs);
+    virtual ~sparsedecompositionanalysis();
+
+};
+#endif
+
+#if defined(AE_COMPILE_BDSVD) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
+#if defined(AE_COMPILE_SVD) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
+#if defined(AE_COMPILE_RCOND) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
+#if defined(AE_COMPILE_FBLS) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
+#if defined(AE_COMPILE_NORMESTIMATOR) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+This object stores state of the iterative norm estimation algorithm.
+
+You should use ALGLIB functions to work with this object.
+*************************************************************************/
+class _normestimatorstate_owner
+{
+public:
+    _normestimatorstate_owner();
+    _normestimatorstate_owner(const _normestimatorstate_owner &rhs);
+    _normestimatorstate_owner& operator=(const _normestimatorstate_owner &rhs);
+    virtual ~_normestimatorstate_owner();
+    alglib_impl::normestimatorstate* c_ptr();
+    alglib_impl::normestimatorstate* c_ptr() const;
+protected:
+    alglib_impl::normestimatorstate *p_struct;
+};
+class normestimatorstate : public _normestimatorstate_owner
+{
+public:
+    normestimatorstate();
+    normestimatorstate(const normestimatorstate &rhs);
+    normestimatorstate& operator=(const normestimatorstate &rhs);
+    virtual ~normestimatorstate();
+
+};
+#endif
+
+#if defined(AE_COMPILE_MATINV) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+Matrix inverse report:
+* R1    reciprocal of condition number in 1-norm
+* RInf  reciprocal of condition number in inf-norm
+*************************************************************************/
+class _matinvreport_owner
+{
+public:
+    _matinvreport_owner();
+    _matinvreport_owner(const _matinvreport_owner &rhs);
+    _matinvreport_owner& operator=(const _matinvreport_owner &rhs);
+    virtual ~_matinvreport_owner();
+    alglib_impl::matinvreport* c_ptr();
+    alglib_impl::matinvreport* c_ptr() const;
+protected:
+    alglib_impl::matinvreport *p_struct;
+};
+class matinvreport : public _matinvreport_owner
+{
+public:
+    matinvreport();
+    matinvreport(const matinvreport &rhs);
+    matinvreport& operator=(const matinvreport &rhs);
+    virtual ~matinvreport();
+    double &r1;
+    double &rinf;
+
+};
+#endif
+
+#if defined(AE_COMPILE_INVERSEUPDATE) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
 #if defined(AE_COMPILE_SCHUR) || !defined(AE_PARTIAL_BUILD)
 
 #endif
@@ -690,15 +712,2184 @@ public:
 
 #endif
 
-#if defined(AE_COMPILE_INVERSEUPDATE) || !defined(AE_PARTIAL_BUILD)
-
-#endif
-
 #if defined(AE_COMPILE_MATDET) || !defined(AE_PARTIAL_BUILD)
 
 #endif
 
+#if defined(AE_COMPILE_ABLAS) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+Cache-oblivous complex "copy-and-transpose"
+
+Input parameters:
+    M   -   number of rows
+    N   -   number of columns
+    A   -   source matrix, MxN submatrix is copied and transposed
+    IA  -   submatrix offset (row index)
+    JA  -   submatrix offset (column index)
+    B   -   destination matrix, must be large enough to store result
+    IB  -   submatrix offset (row index)
+    JB  -   submatrix offset (column index)
+*************************************************************************/
+void cmatrixtranspose(const ae_int_t m, const ae_int_t n, const complex_2d_array &a, const ae_int_t ia, const ae_int_t ja, complex_2d_array &b, const ae_int_t ib, const ae_int_t jb, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Cache-oblivous real "copy-and-transpose"
+
+Input parameters:
+    M   -   number of rows
+    N   -   number of columns
+    A   -   source matrix, MxN submatrix is copied and transposed
+    IA  -   submatrix offset (row index)
+    JA  -   submatrix offset (column index)
+    B   -   destination matrix, must be large enough to store result
+    IB  -   submatrix offset (row index)
+    JB  -   submatrix offset (column index)
+*************************************************************************/
+void rmatrixtranspose(const ae_int_t m, const ae_int_t n, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const real_2d_array &b, const ae_int_t ib, const ae_int_t jb, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This code enforces symmetricy of the matrix by copying Upper part to lower
+one (or vice versa).
+
+INPUT PARAMETERS:
+    A   -   matrix
+    N   -   number of rows/columns
+    IsUpper - whether we want to copy upper triangle to lower one (True)
+            or vice versa (False).
+*************************************************************************/
+void rmatrixenforcesymmetricity(const real_2d_array &a, const ae_int_t n, const bool isupper, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Copy
+
+Input parameters:
+    M   -   number of rows
+    N   -   number of columns
+    A   -   source matrix, MxN submatrix is copied and transposed
+    IA  -   submatrix offset (row index)
+    JA  -   submatrix offset (column index)
+    B   -   destination matrix, must be large enough to store result
+    IB  -   submatrix offset (row index)
+    JB  -   submatrix offset (column index)
+*************************************************************************/
+void cmatrixcopy(const ae_int_t m, const ae_int_t n, const complex_2d_array &a, const ae_int_t ia, const ae_int_t ja, complex_2d_array &b, const ae_int_t ib, const ae_int_t jb, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Copy
+
+Input parameters:
+    N   -   subvector size
+    A   -   source vector, N elements are copied
+    IA  -   source offset (first element index)
+    B   -   destination vector, must be large enough to store result
+    IB  -   destination offset (first element index)
+*************************************************************************/
+void rvectorcopy(const ae_int_t n, const real_1d_array &a, const ae_int_t ia, const real_1d_array &b, const ae_int_t ib, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Copy
+
+Input parameters:
+    M   -   number of rows
+    N   -   number of columns
+    A   -   source matrix, MxN submatrix is copied and transposed
+    IA  -   submatrix offset (row index)
+    JA  -   submatrix offset (column index)
+    B   -   destination matrix, must be large enough to store result
+    IB  -   submatrix offset (row index)
+    JB  -   submatrix offset (column index)
+*************************************************************************/
+void rmatrixcopy(const ae_int_t m, const ae_int_t n, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const real_2d_array &b, const ae_int_t ib, const ae_int_t jb, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Performs generalized copy: B := Beta*B + Alpha*A.
+
+If Beta=0, then previous contents of B is simply ignored. If Alpha=0, then
+A is ignored and not referenced. If both Alpha and Beta  are  zero,  B  is
+filled by zeros.
+
+Input parameters:
+    M   -   number of rows
+    N   -   number of columns
+    Alpha-  coefficient
+    A   -   source matrix, MxN submatrix is copied and transposed
+    IA  -   submatrix offset (row index)
+    JA  -   submatrix offset (column index)
+    Beta-   coefficient
+    B   -   destination matrix, must be large enough to store result
+    IB  -   submatrix offset (row index)
+    JB  -   submatrix offset (column index)
+*************************************************************************/
+void rmatrixgencopy(const ae_int_t m, const ae_int_t n, const double alpha, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const double beta, const real_2d_array &b, const ae_int_t ib, const ae_int_t jb, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Rank-1 correction: A := A + alpha*u*v'
+
+NOTE: this  function  expects  A  to  be  large enough to store result. No
+      automatic preallocation happens for  smaller  arrays.  No  integrity
+      checks is performed for sizes of A, u, v.
+
+INPUT PARAMETERS:
+    M   -   number of rows
+    N   -   number of columns
+    A   -   target matrix, MxN submatrix is updated
+    IA  -   submatrix offset (row index)
+    JA  -   submatrix offset (column index)
+    Alpha-  coefficient
+    U   -   vector #1
+    IU  -   subvector offset
+    V   -   vector #2
+    IV  -   subvector offset
+
+
+  -- ALGLIB routine --
+
+     16.10.2017
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixger(const ae_int_t m, const ae_int_t n, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const double alpha, const real_1d_array &u, const ae_int_t iu, const real_1d_array &v, const ae_int_t iv, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Rank-1 correction: A := A + u*v'
+
+INPUT PARAMETERS:
+    M   -   number of rows
+    N   -   number of columns
+    A   -   target matrix, MxN submatrix is updated
+    IA  -   submatrix offset (row index)
+    JA  -   submatrix offset (column index)
+    U   -   vector #1
+    IU  -   subvector offset
+    V   -   vector #2
+    IV  -   subvector offset
+*************************************************************************/
+void cmatrixrank1(const ae_int_t m, const ae_int_t n, complex_2d_array &a, const ae_int_t ia, const ae_int_t ja, complex_1d_array &u, const ae_int_t iu, complex_1d_array &v, const ae_int_t iv, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+IMPORTANT: this function is deprecated since ALGLIB 3.13. Use RMatrixGER()
+           which is more generic version of this function.
+
+Rank-1 correction: A := A + u*v'
+
+INPUT PARAMETERS:
+    M   -   number of rows
+    N   -   number of columns
+    A   -   target matrix, MxN submatrix is updated
+    IA  -   submatrix offset (row index)
+    JA  -   submatrix offset (column index)
+    U   -   vector #1
+    IU  -   subvector offset
+    V   -   vector #2
+    IV  -   subvector offset
+*************************************************************************/
+void rmatrixrank1(const ae_int_t m, const ae_int_t n, real_2d_array &a, const ae_int_t ia, const ae_int_t ja, real_1d_array &u, const ae_int_t iu, real_1d_array &v, const ae_int_t iv, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+
+*************************************************************************/
+void rmatrixgemv(const ae_int_t m, const ae_int_t n, const double alpha, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const ae_int_t opa, const real_1d_array &x, const ae_int_t ix, const double beta, const real_1d_array &y, const ae_int_t iy, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Matrix-vector product: y := op(A)*x
+
+INPUT PARAMETERS:
+    M   -   number of rows of op(A)
+            M>=0
+    N   -   number of columns of op(A)
+            N>=0
+    A   -   target matrix
+    IA  -   submatrix offset (row index)
+    JA  -   submatrix offset (column index)
+    OpA -   operation type:
+            * OpA=0     =>  op(A) = A
+            * OpA=1     =>  op(A) = A^T
+            * OpA=2     =>  op(A) = A^H
+    X   -   input vector
+    IX  -   subvector offset
+    IY  -   subvector offset
+    Y   -   preallocated matrix, must be large enough to store result
+
+OUTPUT PARAMETERS:
+    Y   -   vector which stores result
+
+if M=0, then subroutine does nothing.
+if N=0, Y is filled by zeros.
+
+
+  -- ALGLIB routine --
+
+     28.01.2010
+     Bochkanov Sergey
+*************************************************************************/
+void cmatrixmv(const ae_int_t m, const ae_int_t n, const complex_2d_array &a, const ae_int_t ia, const ae_int_t ja, const ae_int_t opa, const complex_1d_array &x, const ae_int_t ix, complex_1d_array &y, const ae_int_t iy, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+IMPORTANT: this function is deprecated since ALGLIB 3.13. Use RMatrixGEMV()
+           which is more generic version of this function.
+
+Matrix-vector product: y := op(A)*x
+
+INPUT PARAMETERS:
+    M   -   number of rows of op(A)
+    N   -   number of columns of op(A)
+    A   -   target matrix
+    IA  -   submatrix offset (row index)
+    JA  -   submatrix offset (column index)
+    OpA -   operation type:
+            * OpA=0     =>  op(A) = A
+            * OpA=1     =>  op(A) = A^T
+    X   -   input vector
+    IX  -   subvector offset
+    IY  -   subvector offset
+    Y   -   preallocated matrix, must be large enough to store result
+
+OUTPUT PARAMETERS:
+    Y   -   vector which stores result
+
+if M=0, then subroutine does nothing.
+if N=0, Y is filled by zeros.
+
+
+  -- ALGLIB routine --
+
+     28.01.2010
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixmv(const ae_int_t m, const ae_int_t n, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const ae_int_t opa, const real_1d_array &x, const ae_int_t ix, const real_1d_array &y, const ae_int_t iy, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+
+*************************************************************************/
+void rmatrixsymv(const ae_int_t n, const double alpha, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const bool isupper, const real_1d_array &x, const ae_int_t ix, const double beta, const real_1d_array &y, const ae_int_t iy, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+
+*************************************************************************/
+double rmatrixsyvmv(const ae_int_t n, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const bool isupper, const real_1d_array &x, const ae_int_t ix, const real_1d_array &tmp, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This subroutine solves linear system op(A)*x=b where:
+* A is NxN upper/lower triangular/unitriangular matrix
+* X and B are Nx1 vectors
+* "op" may be identity transformation or transposition
+
+Solution replaces X.
+
+IMPORTANT: * no overflow/underflow/denegeracy tests is performed.
+           * no integrity checks for operand sizes, out-of-bounds accesses
+             and so on is performed
+
+INPUT PARAMETERS
+    N   -   matrix size, N>=0
+    A       -   matrix, actial matrix is stored in A[IA:IA+N-1,JA:JA+N-1]
+    IA      -   submatrix offset
+    JA      -   submatrix offset
+    IsUpper -   whether matrix is upper triangular
+    IsUnit  -   whether matrix is unitriangular
+    OpType  -   transformation type:
+                * 0 - no transformation
+                * 1 - transposition
+    X       -   right part, actual vector is stored in X[IX:IX+N-1]
+    IX      -   offset
+
+OUTPUT PARAMETERS
+    X       -   solution replaces elements X[IX:IX+N-1]
+
+  -- ALGLIB routine / remastering of LAPACK's DTRSV --
+     (c) 2017 Bochkanov Sergey - converted to ALGLIB
+     (c) 2016 Reference BLAS level1 routine (LAPACK version 3.7.0)
+     Reference BLAS is a software package provided by Univ. of Tennessee,
+     Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd.
+*************************************************************************/
+void rmatrixtrsv(const ae_int_t n, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const bool isupper, const bool isunit, const ae_int_t optype, const real_1d_array &x, const ae_int_t ix, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This subroutine calculates X*op(A^-1) where:
+* X is MxN general matrix
+* A is NxN upper/lower triangular/unitriangular matrix
+* "op" may be identity transformation, transposition, conjugate transposition
+Multiplication result replaces X.
+
+INPUT PARAMETERS
+    N   -   matrix size, N>=0
+    M   -   matrix size, N>=0
+    A       -   matrix, actial matrix is stored in A[I1:I1+N-1,J1:J1+N-1]
+    I1      -   submatrix offset
+    J1      -   submatrix offset
+    IsUpper -   whether matrix is upper triangular
+    IsUnit  -   whether matrix is unitriangular
+    OpType  -   transformation type:
+                * 0 - no transformation
+                * 1 - transposition
+                * 2 - conjugate transposition
+    X   -   matrix, actial matrix is stored in X[I2:I2+M-1,J2:J2+N-1]
+    I2  -   submatrix offset
+    J2  -   submatrix offset
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     20.01.2018
+     Bochkanov Sergey
+*************************************************************************/
+void cmatrixrighttrsm(const ae_int_t m, const ae_int_t n, const complex_2d_array &a, const ae_int_t i1, const ae_int_t j1, const bool isupper, const bool isunit, const ae_int_t optype, const complex_2d_array &x, const ae_int_t i2, const ae_int_t j2, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This subroutine calculates op(A^-1)*X where:
+* X is MxN general matrix
+* A is MxM upper/lower triangular/unitriangular matrix
+* "op" may be identity transformation, transposition, conjugate transposition
+Multiplication result replaces X.
+
+INPUT PARAMETERS
+    N   -   matrix size, N>=0
+    M   -   matrix size, N>=0
+    A       -   matrix, actial matrix is stored in A[I1:I1+M-1,J1:J1+M-1]
+    I1      -   submatrix offset
+    J1      -   submatrix offset
+    IsUpper -   whether matrix is upper triangular
+    IsUnit  -   whether matrix is unitriangular
+    OpType  -   transformation type:
+                * 0 - no transformation
+                * 1 - transposition
+                * 2 - conjugate transposition
+    X   -   matrix, actial matrix is stored in X[I2:I2+M-1,J2:J2+N-1]
+    I2  -   submatrix offset
+    J2  -   submatrix offset
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     15.12.2009-22.01.2018
+     Bochkanov Sergey
+*************************************************************************/
+void cmatrixlefttrsm(const ae_int_t m, const ae_int_t n, const complex_2d_array &a, const ae_int_t i1, const ae_int_t j1, const bool isupper, const bool isunit, const ae_int_t optype, const complex_2d_array &x, const ae_int_t i2, const ae_int_t j2, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This subroutine calculates X*op(A^-1) where:
+* X is MxN general matrix
+* A is NxN upper/lower triangular/unitriangular matrix
+* "op" may be identity transformation, transposition
+Multiplication result replaces X.
+
+INPUT PARAMETERS
+    N   -   matrix size, N>=0
+    M   -   matrix size, N>=0
+    A       -   matrix, actial matrix is stored in A[I1:I1+N-1,J1:J1+N-1]
+    I1      -   submatrix offset
+    J1      -   submatrix offset
+    IsUpper -   whether matrix is upper triangular
+    IsUnit  -   whether matrix is unitriangular
+    OpType  -   transformation type:
+                * 0 - no transformation
+                * 1 - transposition
+    X   -   matrix, actial matrix is stored in X[I2:I2+M-1,J2:J2+N-1]
+    I2  -   submatrix offset
+    J2  -   submatrix offset
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     15.12.2009-22.01.2018
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixrighttrsm(const ae_int_t m, const ae_int_t n, const real_2d_array &a, const ae_int_t i1, const ae_int_t j1, const bool isupper, const bool isunit, const ae_int_t optype, const real_2d_array &x, const ae_int_t i2, const ae_int_t j2, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This subroutine calculates op(A^-1)*X where:
+* X is MxN general matrix
+* A is MxM upper/lower triangular/unitriangular matrix
+* "op" may be identity transformation, transposition
+Multiplication result replaces X.
+
+INPUT PARAMETERS
+    N   -   matrix size, N>=0
+    M   -   matrix size, N>=0
+    A       -   matrix, actial matrix is stored in A[I1:I1+M-1,J1:J1+M-1]
+    I1      -   submatrix offset
+    J1      -   submatrix offset
+    IsUpper -   whether matrix is upper triangular
+    IsUnit  -   whether matrix is unitriangular
+    OpType  -   transformation type:
+                * 0 - no transformation
+                * 1 - transposition
+    X   -   matrix, actial matrix is stored in X[I2:I2+M-1,J2:J2+N-1]
+    I2  -   submatrix offset
+    J2  -   submatrix offset
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     15.12.2009-22.01.2018
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixlefttrsm(const ae_int_t m, const ae_int_t n, const real_2d_array &a, const ae_int_t i1, const ae_int_t j1, const bool isupper, const bool isunit, const ae_int_t optype, const real_2d_array &x, const ae_int_t i2, const ae_int_t j2, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This subroutine calculates  C=alpha*A*A^H+beta*C  or  C=alpha*A^H*A+beta*C
+where:
+* C is NxN Hermitian matrix given by its upper/lower triangle
+* A is NxK matrix when A*A^H is calculated, KxN matrix otherwise
+
+Additional info:
+* multiplication result replaces C. If Beta=0, C elements are not used in
+  calculations (not multiplied by zero - just not referenced)
+* if Alpha=0, A is not used (not multiplied by zero - just not referenced)
+* if both Beta and Alpha are zero, C is filled by zeros.
+
+INPUT PARAMETERS
+    N       -   matrix size, N>=0
+    K       -   matrix size, K>=0
+    Alpha   -   coefficient
+    A       -   matrix
+    IA      -   submatrix offset (row index)
+    JA      -   submatrix offset (column index)
+    OpTypeA -   multiplication type:
+                * 0 - A*A^H is calculated
+                * 2 - A^H*A is calculated
+    Beta    -   coefficient
+    C       -   preallocated input/output matrix
+    IC      -   submatrix offset (row index)
+    JC      -   submatrix offset (column index)
+    IsUpper -   whether upper or lower triangle of C is updated;
+                this function updates only one half of C, leaving
+                other half unchanged (not referenced at all).
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     16.12.2009-22.01.2018
+     Bochkanov Sergey
+*************************************************************************/
+void cmatrixherk(const ae_int_t n, const ae_int_t k, const double alpha, const complex_2d_array &a, const ae_int_t ia, const ae_int_t ja, const ae_int_t optypea, const double beta, const complex_2d_array &c, const ae_int_t ic, const ae_int_t jc, const bool isupper, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This subroutine calculates  C=alpha*A*A^T+beta*C  or  C=alpha*A^T*A+beta*C
+where:
+* C is NxN symmetric matrix given by its upper/lower triangle
+* A is NxK matrix when A*A^T is calculated, KxN matrix otherwise
+
+Additional info:
+* multiplication result replaces C. If Beta=0, C elements are not used in
+  calculations (not multiplied by zero - just not referenced)
+* if Alpha=0, A is not used (not multiplied by zero - just not referenced)
+* if both Beta and Alpha are zero, C is filled by zeros.
+
+INPUT PARAMETERS
+    N       -   matrix size, N>=0
+    K       -   matrix size, K>=0
+    Alpha   -   coefficient
+    A       -   matrix
+    IA      -   submatrix offset (row index)
+    JA      -   submatrix offset (column index)
+    OpTypeA -   multiplication type:
+                * 0 - A*A^T is calculated
+                * 2 - A^T*A is calculated
+    Beta    -   coefficient
+    C       -   preallocated input/output matrix
+    IC      -   submatrix offset (row index)
+    JC      -   submatrix offset (column index)
+    IsUpper -   whether C is upper triangular or lower triangular
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     16.12.2009-22.01.2018
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixsyrk(const ae_int_t n, const ae_int_t k, const double alpha, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const ae_int_t optypea, const double beta, const real_2d_array &c, const ae_int_t ic, const ae_int_t jc, const bool isupper, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This subroutine calculates C = alpha*op1(A)*op2(B) +beta*C where:
+* C is MxN general matrix
+* op1(A) is MxK matrix
+* op2(B) is KxN matrix
+* "op" may be identity transformation, transposition, conjugate transposition
+
+Additional info:
+* cache-oblivious algorithm is used.
+* multiplication result replaces C. If Beta=0, C elements are not used in
+  calculations (not multiplied by zero - just not referenced)
+* if Alpha=0, A is not used (not multiplied by zero - just not referenced)
+* if both Beta and Alpha are zero, C is filled by zeros.
+
+IMPORTANT:
+
+This function does NOT preallocate output matrix C, it MUST be preallocated
+by caller prior to calling this function. In case C does not have  enough
+space to store result, exception will be generated.
+
+INPUT PARAMETERS
+    M       -   matrix size, M>0
+    N       -   matrix size, N>0
+    K       -   matrix size, K>0
+    Alpha   -   coefficient
+    A       -   matrix
+    IA      -   submatrix offset
+    JA      -   submatrix offset
+    OpTypeA -   transformation type:
+                * 0 - no transformation
+                * 1 - transposition
+                * 2 - conjugate transposition
+    B       -   matrix
+    IB      -   submatrix offset
+    JB      -   submatrix offset
+    OpTypeB -   transformation type:
+                * 0 - no transformation
+                * 1 - transposition
+                * 2 - conjugate transposition
+    Beta    -   coefficient
+    C       -   matrix (PREALLOCATED, large enough to store result)
+    IC      -   submatrix offset
+    JC      -   submatrix offset
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     2009-2019
+     Bochkanov Sergey
+*************************************************************************/
+void cmatrixgemm(const ae_int_t m, const ae_int_t n, const ae_int_t k, const alglib::complex alpha, const complex_2d_array &a, const ae_int_t ia, const ae_int_t ja, const ae_int_t optypea, const complex_2d_array &b, const ae_int_t ib, const ae_int_t jb, const ae_int_t optypeb, const alglib::complex beta, const complex_2d_array &c, const ae_int_t ic, const ae_int_t jc, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This subroutine calculates C = alpha*op1(A)*op2(B) +beta*C where:
+* C is MxN general matrix
+* op1(A) is MxK matrix
+* op2(B) is KxN matrix
+* "op" may be identity transformation, transposition
+
+Additional info:
+* cache-oblivious algorithm is used.
+* multiplication result replaces C. If Beta=0, C elements are not used in
+  calculations (not multiplied by zero - just not referenced)
+* if Alpha=0, A is not used (not multiplied by zero - just not referenced)
+* if both Beta and Alpha are zero, C is filled by zeros.
+
+IMPORTANT:
+
+This function does NOT preallocate output matrix C, it MUST be preallocated
+by caller prior to calling this function. In case C does not have  enough
+space to store result, exception will be generated.
+
+INPUT PARAMETERS
+    M       -   matrix size, M>0
+    N       -   matrix size, N>0
+    K       -   matrix size, K>0
+    Alpha   -   coefficient
+    A       -   matrix
+    IA      -   submatrix offset
+    JA      -   submatrix offset
+    OpTypeA -   transformation type:
+                * 0 - no transformation
+                * 1 - transposition
+    B       -   matrix
+    IB      -   submatrix offset
+    JB      -   submatrix offset
+    OpTypeB -   transformation type:
+                * 0 - no transformation
+                * 1 - transposition
+    Beta    -   coefficient
+    C       -   PREALLOCATED output matrix, large enough to store result
+    IC      -   submatrix offset
+    JC      -   submatrix offset
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     2009-2019
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixgemm(const ae_int_t m, const ae_int_t n, const ae_int_t k, const double alpha, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const ae_int_t optypea, const real_2d_array &b, const ae_int_t ib, const ae_int_t jb, const ae_int_t optypeb, const double beta, const real_2d_array &c, const ae_int_t ic, const ae_int_t jc, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This subroutine is an older version of CMatrixHERK(), one with wrong  name
+(it is HErmitian update, not SYmmetric). It  is  left  here  for  backward
+compatibility.
+
+  -- ALGLIB routine --
+     16.12.2009
+     Bochkanov Sergey
+*************************************************************************/
+void cmatrixsyrk(const ae_int_t n, const ae_int_t k, const double alpha, const complex_2d_array &a, const ae_int_t ia, const ae_int_t ja, const ae_int_t optypea, const double beta, const complex_2d_array &c, const ae_int_t ic, const ae_int_t jc, const bool isupper, const xparams _xparams = alglib::xdefault);
+#endif
+
+#if defined(AE_COMPILE_ORTFAC) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+QR decomposition of a rectangular matrix of size MxN
+
+Input parameters:
+    A   -   matrix A whose indexes range within [0..M-1, 0..N-1].
+    M   -   number of rows in matrix A.
+    N   -   number of columns in matrix A.
+
+Output parameters:
+    A   -   matrices Q and R in compact form (see below).
+    Tau -   array of scalar factors which are used to form
+            matrix Q. Array whose index ranges within [0.. Min(M-1,N-1)].
+
+Matrix A is represented as A = QR, where Q is an orthogonal matrix of size
+MxM, R - upper triangular (or upper trapezoid) matrix of size M x N.
+
+The elements of matrix R are located on and above the main diagonal of
+matrix A. The elements which are located in Tau array and below the main
+diagonal of matrix A are used to form matrix Q as follows:
+
+Matrix Q is represented as a product of elementary reflections
+
+Q = H(0)*H(2)*...*H(k-1),
+
+where k = min(m,n), and each H(i) is in the form
+
+H(i) = 1 - tau * v * (v^T)
+
+where tau is a scalar stored in Tau[I]; v - real vector,
+so that v(0:i-1) = 0, v(i) = 1, v(i+1:m-1) stored in A(i+1:m-1,i).
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     17.02.2010
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixqr(real_2d_array &a, const ae_int_t m, const ae_int_t n, real_1d_array &tau, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+LQ decomposition of a rectangular matrix of size MxN
+
+Input parameters:
+    A   -   matrix A whose indexes range within [0..M-1, 0..N-1].
+    M   -   number of rows in matrix A.
+    N   -   number of columns in matrix A.
+
+Output parameters:
+    A   -   matrices L and Q in compact form (see below)
+    Tau -   array of scalar factors which are used to form
+            matrix Q. Array whose index ranges within [0..Min(M,N)-1].
+
+Matrix A is represented as A = LQ, where Q is an orthogonal matrix of size
+MxM, L - lower triangular (or lower trapezoid) matrix of size M x N.
+
+The elements of matrix L are located on and below  the  main  diagonal  of
+matrix A. The elements which are located in Tau array and above  the  main
+diagonal of matrix A are used to form matrix Q as follows:
+
+Matrix Q is represented as a product of elementary reflections
+
+Q = H(k-1)*H(k-2)*...*H(1)*H(0),
+
+where k = min(m,n), and each H(i) is of the form
+
+H(i) = 1 - tau * v * (v^T)
+
+where tau is a scalar stored in Tau[I]; v - real vector, so that v(0:i-1)=0,
+v(i) = 1, v(i+1:n-1) stored in A(i,i+1:n-1).
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     17.02.2010
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixlq(real_2d_array &a, const ae_int_t m, const ae_int_t n, real_1d_array &tau, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+QR decomposition of a rectangular complex matrix of size MxN
+
+Input parameters:
+    A   -   matrix A whose indexes range within [0..M-1, 0..N-1]
+    M   -   number of rows in matrix A.
+    N   -   number of columns in matrix A.
+
+Output parameters:
+    A   -   matrices Q and R in compact form
+    Tau -   array of scalar factors which are used to form matrix Q. Array
+            whose indexes range within [0.. Min(M,N)-1]
+
+Matrix A is represented as A = QR, where Q is an orthogonal matrix of size
+MxM, R - upper triangular (or upper trapezoid) matrix of size MxN.
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- LAPACK routine (version 3.0) --
+     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+     Courant Institute, Argonne National Lab, and Rice University
+     September 30, 1994
+*************************************************************************/
+void cmatrixqr(complex_2d_array &a, const ae_int_t m, const ae_int_t n, complex_1d_array &tau, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+LQ decomposition of a rectangular complex matrix of size MxN
+
+Input parameters:
+    A   -   matrix A whose indexes range within [0..M-1, 0..N-1]
+    M   -   number of rows in matrix A.
+    N   -   number of columns in matrix A.
+
+Output parameters:
+    A   -   matrices Q and L in compact form
+    Tau -   array of scalar factors which are used to form matrix Q. Array
+            whose indexes range within [0.. Min(M,N)-1]
+
+Matrix A is represented as A = LQ, where Q is an orthogonal matrix of size
+MxM, L - lower triangular (or lower trapezoid) matrix of size MxN.
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- LAPACK routine (version 3.0) --
+     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+     Courant Institute, Argonne National Lab, and Rice University
+     September 30, 1994
+*************************************************************************/
+void cmatrixlq(complex_2d_array &a, const ae_int_t m, const ae_int_t n, complex_1d_array &tau, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Partial unpacking of matrix Q from the QR decomposition of a matrix A
+
+Input parameters:
+    A       -   matrices Q and R in compact form.
+                Output of RMatrixQR subroutine.
+    M       -   number of rows in given matrix A. M>=0.
+    N       -   number of columns in given matrix A. N>=0.
+    Tau     -   scalar factors which are used to form Q.
+                Output of the RMatrixQR subroutine.
+    QColumns -  required number of columns of matrix Q. M>=QColumns>=0.
+
+Output parameters:
+    Q       -   first QColumns columns of matrix Q.
+                Array whose indexes range within [0..M-1, 0..QColumns-1].
+                If QColumns=0, the array remains unchanged.
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     17.02.2010
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixqrunpackq(const real_2d_array &a, const ae_int_t m, const ae_int_t n, const real_1d_array &tau, const ae_int_t qcolumns, real_2d_array &q, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Unpacking of matrix R from the QR decomposition of a matrix A
+
+Input parameters:
+    A       -   matrices Q and R in compact form.
+                Output of RMatrixQR subroutine.
+    M       -   number of rows in given matrix A. M>=0.
+    N       -   number of columns in given matrix A. N>=0.
+
+Output parameters:
+    R       -   matrix R, array[0..M-1, 0..N-1].
+
+  -- ALGLIB routine --
+     17.02.2010
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixqrunpackr(const real_2d_array &a, const ae_int_t m, const ae_int_t n, real_2d_array &r, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Partial unpacking of matrix Q from the LQ decomposition of a matrix A
+
+Input parameters:
+    A       -   matrices L and Q in compact form.
+                Output of RMatrixLQ subroutine.
+    M       -   number of rows in given matrix A. M>=0.
+    N       -   number of columns in given matrix A. N>=0.
+    Tau     -   scalar factors which are used to form Q.
+                Output of the RMatrixLQ subroutine.
+    QRows   -   required number of rows in matrix Q. N>=QRows>=0.
+
+Output parameters:
+    Q       -   first QRows rows of matrix Q. Array whose indexes range
+                within [0..QRows-1, 0..N-1]. If QRows=0, the array remains
+                unchanged.
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     17.02.2010
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixlqunpackq(const real_2d_array &a, const ae_int_t m, const ae_int_t n, const real_1d_array &tau, const ae_int_t qrows, real_2d_array &q, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Unpacking of matrix L from the LQ decomposition of a matrix A
+
+Input parameters:
+    A       -   matrices Q and L in compact form.
+                Output of RMatrixLQ subroutine.
+    M       -   number of rows in given matrix A. M>=0.
+    N       -   number of columns in given matrix A. N>=0.
+
+Output parameters:
+    L       -   matrix L, array[0..M-1, 0..N-1].
+
+  -- ALGLIB routine --
+     17.02.2010
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixlqunpackl(const real_2d_array &a, const ae_int_t m, const ae_int_t n, real_2d_array &l, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Partial unpacking of matrix Q from QR decomposition of a complex matrix A.
+
+Input parameters:
+    A           -   matrices Q and R in compact form.
+                    Output of CMatrixQR subroutine .
+    M           -   number of rows in matrix A. M>=0.
+    N           -   number of columns in matrix A. N>=0.
+    Tau         -   scalar factors which are used to form Q.
+                    Output of CMatrixQR subroutine .
+    QColumns    -   required number of columns in matrix Q. M>=QColumns>=0.
+
+Output parameters:
+    Q           -   first QColumns columns of matrix Q.
+                    Array whose index ranges within [0..M-1, 0..QColumns-1].
+                    If QColumns=0, array isn't changed.
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     17.02.2010
+     Bochkanov Sergey
+*************************************************************************/
+void cmatrixqrunpackq(const complex_2d_array &a, const ae_int_t m, const ae_int_t n, const complex_1d_array &tau, const ae_int_t qcolumns, complex_2d_array &q, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Unpacking of matrix R from the QR decomposition of a matrix A
+
+Input parameters:
+    A       -   matrices Q and R in compact form.
+                Output of CMatrixQR subroutine.
+    M       -   number of rows in given matrix A. M>=0.
+    N       -   number of columns in given matrix A. N>=0.
+
+Output parameters:
+    R       -   matrix R, array[0..M-1, 0..N-1].
+
+  -- ALGLIB routine --
+     17.02.2010
+     Bochkanov Sergey
+*************************************************************************/
+void cmatrixqrunpackr(const complex_2d_array &a, const ae_int_t m, const ae_int_t n, complex_2d_array &r, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Partial unpacking of matrix Q from LQ decomposition of a complex matrix A.
+
+Input parameters:
+    A           -   matrices Q and R in compact form.
+                    Output of CMatrixLQ subroutine .
+    M           -   number of rows in matrix A. M>=0.
+    N           -   number of columns in matrix A. N>=0.
+    Tau         -   scalar factors which are used to form Q.
+                    Output of CMatrixLQ subroutine .
+    QRows       -   required number of rows in matrix Q. N>=QColumns>=0.
+
+Output parameters:
+    Q           -   first QRows rows of matrix Q.
+                    Array whose index ranges within [0..QRows-1, 0..N-1].
+                    If QRows=0, array isn't changed.
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     17.02.2010
+     Bochkanov Sergey
+*************************************************************************/
+void cmatrixlqunpackq(const complex_2d_array &a, const ae_int_t m, const ae_int_t n, const complex_1d_array &tau, const ae_int_t qrows, complex_2d_array &q, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Unpacking of matrix L from the LQ decomposition of a matrix A
+
+Input parameters:
+    A       -   matrices Q and L in compact form.
+                Output of CMatrixLQ subroutine.
+    M       -   number of rows in given matrix A. M>=0.
+    N       -   number of columns in given matrix A. N>=0.
+
+Output parameters:
+    L       -   matrix L, array[0..M-1, 0..N-1].
+
+  -- ALGLIB routine --
+     17.02.2010
+     Bochkanov Sergey
+*************************************************************************/
+void cmatrixlqunpackl(const complex_2d_array &a, const ae_int_t m, const ae_int_t n, complex_2d_array &l, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Reduction of a rectangular matrix to  bidiagonal form
+
+The algorithm reduces the rectangular matrix A to  bidiagonal form by
+orthogonal transformations P and Q: A = Q*B*(P^T).
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+Input parameters:
+    A       -   source matrix. array[0..M-1, 0..N-1]
+    M       -   number of rows in matrix A.
+    N       -   number of columns in matrix A.
+
+Output parameters:
+    A       -   matrices Q, B, P in compact form (see below).
+    TauQ    -   scalar factors which are used to form matrix Q.
+    TauP    -   scalar factors which are used to form matrix P.
+
+The main diagonal and one of the  secondary  diagonals  of  matrix  A  are
+replaced with bidiagonal  matrix  B.  Other  elements  contain  elementary
+reflections which form MxM matrix Q and NxN matrix P, respectively.
+
+If M>=N, B is the upper  bidiagonal  MxN  matrix  and  is  stored  in  the
+corresponding  elements  of  matrix  A.  Matrix  Q  is  represented  as  a
+product   of   elementary   reflections   Q = H(0)*H(1)*...*H(n-1),  where
+H(i) = 1-tau*v*v'. Here tau is a scalar which is stored  in  TauQ[i],  and
+vector v has the following  structure:  v(0:i-1)=0, v(i)=1, v(i+1:m-1)  is
+stored   in   elements   A(i+1:m-1,i).   Matrix   P  is  as  follows:  P =
+G(0)*G(1)*...*G(n-2), where G(i) = 1 - tau*u*u'. Tau is stored in TauP[i],
+u(0:i)=0, u(i+1)=1, u(i+2:n-1) is stored in elements A(i,i+2:n-1).
+
+If M<N, B is the  lower  bidiagonal  MxN  matrix  and  is  stored  in  the
+corresponding   elements  of  matrix  A.  Q = H(0)*H(1)*...*H(m-2),  where
+H(i) = 1 - tau*v*v', tau is stored in TauQ, v(0:i)=0, v(i+1)=1, v(i+2:m-1)
+is    stored    in   elements   A(i+2:m-1,i).    P = G(0)*G(1)*...*G(m-1),
+G(i) = 1-tau*u*u', tau is stored in  TauP,  u(0:i-1)=0, u(i)=1, u(i+1:n-1)
+is stored in A(i,i+1:n-1).
+
+EXAMPLE:
+
+m=6, n=5 (m > n):               m=5, n=6 (m < n):
+
+(  d   e   u1  u1  u1 )         (  d   u1  u1  u1  u1  u1 )
+(  v1  d   e   u2  u2 )         (  e   d   u2  u2  u2  u2 )
+(  v1  v2  d   e   u3 )         (  v1  e   d   u3  u3  u3 )
+(  v1  v2  v3  d   e  )         (  v1  v2  e   d   u4  u4 )
+(  v1  v2  v3  v4  d  )         (  v1  v2  v3  e   d   u5 )
+(  v1  v2  v3  v4  v5 )
+
+Here vi and ui are vectors which form H(i) and G(i), and d and e -
+are the diagonal and off-diagonal elements of matrix B.
+
+  -- LAPACK routine (version 3.0) --
+     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+     Courant Institute, Argonne National Lab, and Rice University
+     September 30, 1994.
+     Sergey Bochkanov, ALGLIB project, translation from FORTRAN to
+     pseudocode, 2007-2010.
+*************************************************************************/
+void rmatrixbd(real_2d_array &a, const ae_int_t m, const ae_int_t n, real_1d_array &tauq, real_1d_array &taup, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Unpacking matrix Q which reduces a matrix to bidiagonal form.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+Input parameters:
+    QP          -   matrices Q and P in compact form.
+                    Output of ToBidiagonal subroutine.
+    M           -   number of rows in matrix A.
+    N           -   number of columns in matrix A.
+    TAUQ        -   scalar factors which are used to form Q.
+                    Output of ToBidiagonal subroutine.
+    QColumns    -   required number of columns in matrix Q.
+                    M>=QColumns>=0.
+
+Output parameters:
+    Q           -   first QColumns columns of matrix Q.
+                    Array[0..M-1, 0..QColumns-1]
+                    If QColumns=0, the array is not modified.
+
+  -- ALGLIB --
+     2005-2010
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixbdunpackq(const real_2d_array &qp, const ae_int_t m, const ae_int_t n, const real_1d_array &tauq, const ae_int_t qcolumns, real_2d_array &q, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Multiplication by matrix Q which reduces matrix A to  bidiagonal form.
+
+The algorithm allows pre- or post-multiply by Q or Q'.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+Input parameters:
+    QP          -   matrices Q and P in compact form.
+                    Output of ToBidiagonal subroutine.
+    M           -   number of rows in matrix A.
+    N           -   number of columns in matrix A.
+    TAUQ        -   scalar factors which are used to form Q.
+                    Output of ToBidiagonal subroutine.
+    Z           -   multiplied matrix.
+                    array[0..ZRows-1,0..ZColumns-1]
+    ZRows       -   number of rows in matrix Z. If FromTheRight=False,
+                    ZRows=M, otherwise ZRows can be arbitrary.
+    ZColumns    -   number of columns in matrix Z. If FromTheRight=True,
+                    ZColumns=M, otherwise ZColumns can be arbitrary.
+    FromTheRight -  pre- or post-multiply.
+    DoTranspose -   multiply by Q or Q'.
+
+Output parameters:
+    Z           -   product of Z and Q.
+                    Array[0..ZRows-1,0..ZColumns-1]
+                    If ZRows=0 or ZColumns=0, the array is not modified.
+
+  -- ALGLIB --
+     2005-2010
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixbdmultiplybyq(const real_2d_array &qp, const ae_int_t m, const ae_int_t n, const real_1d_array &tauq, real_2d_array &z, const ae_int_t zrows, const ae_int_t zcolumns, const bool fromtheright, const bool dotranspose, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Unpacking matrix P which reduces matrix A to bidiagonal form.
+The subroutine returns transposed matrix P.
+
+Input parameters:
+    QP      -   matrices Q and P in compact form.
+                Output of ToBidiagonal subroutine.
+    M       -   number of rows in matrix A.
+    N       -   number of columns in matrix A.
+    TAUP    -   scalar factors which are used to form P.
+                Output of ToBidiagonal subroutine.
+    PTRows  -   required number of rows of matrix P^T. N >= PTRows >= 0.
+
+Output parameters:
+    PT      -   first PTRows columns of matrix P^T
+                Array[0..PTRows-1, 0..N-1]
+                If PTRows=0, the array is not modified.
+
+  -- ALGLIB --
+     2005-2010
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixbdunpackpt(const real_2d_array &qp, const ae_int_t m, const ae_int_t n, const real_1d_array &taup, const ae_int_t ptrows, real_2d_array &pt, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Multiplication by matrix P which reduces matrix A to  bidiagonal form.
+
+The algorithm allows pre- or post-multiply by P or P'.
+
+Input parameters:
+    QP          -   matrices Q and P in compact form.
+                    Output of RMatrixBD subroutine.
+    M           -   number of rows in matrix A.
+    N           -   number of columns in matrix A.
+    TAUP        -   scalar factors which are used to form P.
+                    Output of RMatrixBD subroutine.
+    Z           -   multiplied matrix.
+                    Array whose indexes range within [0..ZRows-1,0..ZColumns-1].
+    ZRows       -   number of rows in matrix Z. If FromTheRight=False,
+                    ZRows=N, otherwise ZRows can be arbitrary.
+    ZColumns    -   number of columns in matrix Z. If FromTheRight=True,
+                    ZColumns=N, otherwise ZColumns can be arbitrary.
+    FromTheRight -  pre- or post-multiply.
+    DoTranspose -   multiply by P or P'.
+
+Output parameters:
+    Z - product of Z and P.
+                Array whose indexes range within [0..ZRows-1,0..ZColumns-1].
+                If ZRows=0 or ZColumns=0, the array is not modified.
+
+  -- ALGLIB --
+     2005-2010
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixbdmultiplybyp(const real_2d_array &qp, const ae_int_t m, const ae_int_t n, const real_1d_array &taup, real_2d_array &z, const ae_int_t zrows, const ae_int_t zcolumns, const bool fromtheright, const bool dotranspose, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Unpacking of the main and secondary diagonals of bidiagonal decomposition
+of matrix A.
+
+Input parameters:
+    B   -   output of RMatrixBD subroutine.
+    M   -   number of rows in matrix B.
+    N   -   number of columns in matrix B.
+
+Output parameters:
+    IsUpper -   True, if the matrix is upper bidiagonal.
+                otherwise IsUpper is False.
+    D       -   the main diagonal.
+                Array whose index ranges within [0..Min(M,N)-1].
+    E       -   the secondary diagonal (upper or lower, depending on
+                the value of IsUpper).
+                Array index ranges within [0..Min(M,N)-1], the last
+                element is not used.
+
+  -- ALGLIB --
+     2005-2010
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixbdunpackdiagonals(const real_2d_array &b, const ae_int_t m, const ae_int_t n, bool &isupper, real_1d_array &d, real_1d_array &e, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Reduction of a square matrix to  upper Hessenberg form: Q'*A*Q = H,
+where Q is an orthogonal matrix, H - Hessenberg matrix.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+Input parameters:
+    A       -   matrix A with elements [0..N-1, 0..N-1]
+    N       -   size of matrix A.
+
+Output parameters:
+    A       -   matrices Q and P in  compact form (see below).
+    Tau     -   array of scalar factors which are used to form matrix Q.
+                Array whose index ranges within [0..N-2]
+
+Matrix H is located on the main diagonal, on the lower secondary  diagonal
+and above the main diagonal of matrix A. The elements which are used to
+form matrix Q are situated in array Tau and below the lower secondary
+diagonal of matrix A as follows:
+
+Matrix Q is represented as a product of elementary reflections
+
+Q = H(0)*H(2)*...*H(n-2),
+
+where each H(i) is given by
+
+H(i) = 1 - tau * v * (v^T)
+
+where tau is a scalar stored in Tau[I]; v - is a real vector,
+so that v(0:i) = 0, v(i+1) = 1, v(i+2:n-1) stored in A(i+2:n-1,i).
+
+  -- LAPACK routine (version 3.0) --
+     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+     Courant Institute, Argonne National Lab, and Rice University
+     October 31, 1992
+*************************************************************************/
+void rmatrixhessenberg(real_2d_array &a, const ae_int_t n, real_1d_array &tau, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Unpacking matrix Q which reduces matrix A to upper Hessenberg form
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+Input parameters:
+    A   -   output of RMatrixHessenberg subroutine.
+    N   -   size of matrix A.
+    Tau -   scalar factors which are used to form Q.
+            Output of RMatrixHessenberg subroutine.
+
+Output parameters:
+    Q   -   matrix Q.
+            Array whose indexes range within [0..N-1, 0..N-1].
+
+  -- ALGLIB --
+     2005-2010
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixhessenbergunpackq(const real_2d_array &a, const ae_int_t n, const real_1d_array &tau, real_2d_array &q, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Unpacking matrix H (the result of matrix A reduction to upper Hessenberg form)
+
+Input parameters:
+    A   -   output of RMatrixHessenberg subroutine.
+    N   -   size of matrix A.
+
+Output parameters:
+    H   -   matrix H. Array whose indexes range within [0..N-1, 0..N-1].
+
+  -- ALGLIB --
+     2005-2010
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixhessenbergunpackh(const real_2d_array &a, const ae_int_t n, real_2d_array &h, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Reduction of a symmetric matrix which is given by its higher or lower
+triangular part to a tridiagonal matrix using orthogonal similarity
+transformation: Q'*A*Q=T.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+Input parameters:
+    A       -   matrix to be transformed
+                array with elements [0..N-1, 0..N-1].
+    N       -   size of matrix A.
+    IsUpper -   storage format. If IsUpper = True, then matrix A is given
+                by its upper triangle, and the lower triangle is not used
+                and not modified by the algorithm, and vice versa
+                if IsUpper = False.
+
+Output parameters:
+    A       -   matrices T and Q in  compact form (see lower)
+    Tau     -   array of factors which are forming matrices H(i)
+                array with elements [0..N-2].
+    D       -   main diagonal of symmetric matrix T.
+                array with elements [0..N-1].
+    E       -   secondary diagonal of symmetric matrix T.
+                array with elements [0..N-2].
+
+
+  If IsUpper=True, the matrix Q is represented as a product of elementary
+  reflectors
+
+     Q = H(n-2) . . . H(2) H(0).
+
+  Each H(i) has the form
+
+     H(i) = I - tau * v * v'
+
+  where tau is a real scalar, and v is a real vector with
+  v(i+1:n-1) = 0, v(i) = 1, v(0:i-1) is stored on exit in
+  A(0:i-1,i+1), and tau in TAU(i).
+
+  If IsUpper=False, the matrix Q is represented as a product of elementary
+  reflectors
+
+     Q = H(0) H(2) . . . H(n-2).
+
+  Each H(i) has the form
+
+     H(i) = I - tau * v * v'
+
+  where tau is a real scalar, and v is a real vector with
+  v(0:i) = 0, v(i+1) = 1, v(i+2:n-1) is stored on exit in A(i+2:n-1,i),
+  and tau in TAU(i).
+
+  The contents of A on exit are illustrated by the following examples
+  with n = 5:
+
+  if UPLO = 'U':                       if UPLO = 'L':
+
+    (  d   e   v1  v2  v3 )              (  d                  )
+    (      d   e   v2  v3 )              (  e   d              )
+    (          d   e   v3 )              (  v0  e   d          )
+    (              d   e  )              (  v0  v1  e   d      )
+    (                  d  )              (  v0  v1  v2  e   d  )
+
+  where d and e denote diagonal and off-diagonal elements of T, and vi
+  denotes an element of the vector defining H(i).
+
+  -- LAPACK routine (version 3.0) --
+     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+     Courant Institute, Argonne National Lab, and Rice University
+     October 31, 1992
+*************************************************************************/
+void smatrixtd(real_2d_array &a, const ae_int_t n, const bool isupper, real_1d_array &tau, real_1d_array &d, real_1d_array &e, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Unpacking matrix Q which reduces symmetric matrix to a tridiagonal
+form.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+Input parameters:
+    A       -   the result of a SMatrixTD subroutine
+    N       -   size of matrix A.
+    IsUpper -   storage format (a parameter of SMatrixTD subroutine)
+    Tau     -   the result of a SMatrixTD subroutine
+
+Output parameters:
+    Q       -   transformation matrix.
+                array with elements [0..N-1, 0..N-1].
+
+  -- ALGLIB --
+     Copyright 2005-2010 by Bochkanov Sergey
+*************************************************************************/
+void smatrixtdunpackq(const real_2d_array &a, const ae_int_t n, const bool isupper, const real_1d_array &tau, real_2d_array &q, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Reduction of a Hermitian matrix which is given  by  its  higher  or  lower
+triangular part to a real  tridiagonal  matrix  using  unitary  similarity
+transformation: Q'*A*Q = T.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+Input parameters:
+    A       -   matrix to be transformed
+                array with elements [0..N-1, 0..N-1].
+    N       -   size of matrix A.
+    IsUpper -   storage format. If IsUpper = True, then matrix A is  given
+                by its upper triangle, and the lower triangle is not  used
+                and not modified by the algorithm, and vice versa
+                if IsUpper = False.
+
+Output parameters:
+    A       -   matrices T and Q in  compact form (see lower)
+    Tau     -   array of factors which are forming matrices H(i)
+                array with elements [0..N-2].
+    D       -   main diagonal of real symmetric matrix T.
+                array with elements [0..N-1].
+    E       -   secondary diagonal of real symmetric matrix T.
+                array with elements [0..N-2].
+
+
+  If IsUpper=True, the matrix Q is represented as a product of elementary
+  reflectors
+
+     Q = H(n-2) . . . H(2) H(0).
+
+  Each H(i) has the form
+
+     H(i) = I - tau * v * v'
+
+  where tau is a complex scalar, and v is a complex vector with
+  v(i+1:n-1) = 0, v(i) = 1, v(0:i-1) is stored on exit in
+  A(0:i-1,i+1), and tau in TAU(i).
+
+  If IsUpper=False, the matrix Q is represented as a product of elementary
+  reflectors
+
+     Q = H(0) H(2) . . . H(n-2).
+
+  Each H(i) has the form
+
+     H(i) = I - tau * v * v'
+
+  where tau is a complex scalar, and v is a complex vector with
+  v(0:i) = 0, v(i+1) = 1, v(i+2:n-1) is stored on exit in A(i+2:n-1,i),
+  and tau in TAU(i).
+
+  The contents of A on exit are illustrated by the following examples
+  with n = 5:
+
+  if UPLO = 'U':                       if UPLO = 'L':
+
+    (  d   e   v1  v2  v3 )              (  d                  )
+    (      d   e   v2  v3 )              (  e   d              )
+    (          d   e   v3 )              (  v0  e   d          )
+    (              d   e  )              (  v0  v1  e   d      )
+    (                  d  )              (  v0  v1  v2  e   d  )
+
+where d and e denote diagonal and off-diagonal elements of T, and vi
+denotes an element of the vector defining H(i).
+
+  -- LAPACK routine (version 3.0) --
+     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+     Courant Institute, Argonne National Lab, and Rice University
+     October 31, 1992
+*************************************************************************/
+void hmatrixtd(complex_2d_array &a, const ae_int_t n, const bool isupper, complex_1d_array &tau, real_1d_array &d, real_1d_array &e, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Unpacking matrix Q which reduces a Hermitian matrix to a real  tridiagonal
+form.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+Input parameters:
+    A       -   the result of a HMatrixTD subroutine
+    N       -   size of matrix A.
+    IsUpper -   storage format (a parameter of HMatrixTD subroutine)
+    Tau     -   the result of a HMatrixTD subroutine
+
+Output parameters:
+    Q       -   transformation matrix.
+                array with elements [0..N-1, 0..N-1].
+
+  -- ALGLIB --
+     Copyright 2005-2010 by Bochkanov Sergey
+*************************************************************************/
+void hmatrixtdunpackq(const complex_2d_array &a, const ae_int_t n, const bool isupper, const complex_1d_array &tau, complex_2d_array &q, const xparams _xparams = alglib::xdefault);
+#endif
+
+#if defined(AE_COMPILE_MATGEN) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+Generation of a random uniformly distributed (Haar) orthogonal matrix
+
+INPUT PARAMETERS:
+    N   -   matrix size, N>=1
+
+OUTPUT PARAMETERS:
+    A   -   orthogonal NxN matrix, array[0..N-1,0..N-1]
+
+NOTE: this function uses algorithm  described  in  Stewart, G. W.  (1980),
+      "The Efficient Generation of  Random  Orthogonal  Matrices  with  an
+      Application to Condition Estimators".
+
+      Speaking short, to generate an (N+1)x(N+1) orthogonal matrix, it:
+      * takes an NxN one
+      * takes uniformly distributed unit vector of dimension N+1.
+      * constructs a Householder reflection from the vector, then applies
+        it to the smaller matrix (embedded in the larger size with a 1 at
+        the bottom right corner).
+
+  -- ALGLIB routine --
+     04.12.2009
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixrndorthogonal(const ae_int_t n, real_2d_array &a, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Generation of random NxN matrix with given condition number and norm2(A)=1
+
+INPUT PARAMETERS:
+    N   -   matrix size
+    C   -   condition number (in 2-norm)
+
+OUTPUT PARAMETERS:
+    A   -   random matrix with norm2(A)=1 and cond(A)=C
+
+  -- ALGLIB routine --
+     04.12.2009
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixrndcond(const ae_int_t n, const double c, real_2d_array &a, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Generation of a random Haar distributed orthogonal complex matrix
+
+INPUT PARAMETERS:
+    N   -   matrix size, N>=1
+
+OUTPUT PARAMETERS:
+    A   -   orthogonal NxN matrix, array[0..N-1,0..N-1]
+
+NOTE: this function uses algorithm  described  in  Stewart, G. W.  (1980),
+      "The Efficient Generation of  Random  Orthogonal  Matrices  with  an
+      Application to Condition Estimators".
+
+      Speaking short, to generate an (N+1)x(N+1) orthogonal matrix, it:
+      * takes an NxN one
+      * takes uniformly distributed unit vector of dimension N+1.
+      * constructs a Householder reflection from the vector, then applies
+        it to the smaller matrix (embedded in the larger size with a 1 at
+        the bottom right corner).
+
+  -- ALGLIB routine --
+     04.12.2009
+     Bochkanov Sergey
+*************************************************************************/
+void cmatrixrndorthogonal(const ae_int_t n, complex_2d_array &a, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Generation of random NxN complex matrix with given condition number C and
+norm2(A)=1
+
+INPUT PARAMETERS:
+    N   -   matrix size
+    C   -   condition number (in 2-norm)
+
+OUTPUT PARAMETERS:
+    A   -   random matrix with norm2(A)=1 and cond(A)=C
+
+  -- ALGLIB routine --
+     04.12.2009
+     Bochkanov Sergey
+*************************************************************************/
+void cmatrixrndcond(const ae_int_t n, const double c, complex_2d_array &a, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Generation of random NxN symmetric matrix with given condition number  and
+norm2(A)=1
+
+INPUT PARAMETERS:
+    N   -   matrix size
+    C   -   condition number (in 2-norm)
+
+OUTPUT PARAMETERS:
+    A   -   random matrix with norm2(A)=1 and cond(A)=C
+
+  -- ALGLIB routine --
+     04.12.2009
+     Bochkanov Sergey
+*************************************************************************/
+void smatrixrndcond(const ae_int_t n, const double c, real_2d_array &a, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Generation of random NxN symmetric positive definite matrix with given
+condition number and norm2(A)=1
+
+INPUT PARAMETERS:
+    N   -   matrix size
+    C   -   condition number (in 2-norm)
+
+OUTPUT PARAMETERS:
+    A   -   random SPD matrix with norm2(A)=1 and cond(A)=C
+
+  -- ALGLIB routine --
+     04.12.2009
+     Bochkanov Sergey
+*************************************************************************/
+void spdmatrixrndcond(const ae_int_t n, const double c, real_2d_array &a, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Generation of random NxN Hermitian matrix with given condition number  and
+norm2(A)=1
+
+INPUT PARAMETERS:
+    N   -   matrix size
+    C   -   condition number (in 2-norm)
+
+OUTPUT PARAMETERS:
+    A   -   random matrix with norm2(A)=1 and cond(A)=C
+
+  -- ALGLIB routine --
+     04.12.2009
+     Bochkanov Sergey
+*************************************************************************/
+void hmatrixrndcond(const ae_int_t n, const double c, complex_2d_array &a, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Generation of random NxN Hermitian positive definite matrix with given
+condition number and norm2(A)=1
+
+INPUT PARAMETERS:
+    N   -   matrix size
+    C   -   condition number (in 2-norm)
+
+OUTPUT PARAMETERS:
+    A   -   random HPD matrix with norm2(A)=1 and cond(A)=C
+
+  -- ALGLIB routine --
+     04.12.2009
+     Bochkanov Sergey
+*************************************************************************/
+void hpdmatrixrndcond(const ae_int_t n, const double c, complex_2d_array &a, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Multiplication of MxN matrix by NxN random Haar distributed orthogonal matrix
+
+INPUT PARAMETERS:
+    A   -   matrix, array[0..M-1, 0..N-1]
+    M, N-   matrix size
+
+OUTPUT PARAMETERS:
+    A   -   A*Q, where Q is random NxN orthogonal matrix
+
+  -- ALGLIB routine --
+     04.12.2009
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixrndorthogonalfromtheright(real_2d_array &a, const ae_int_t m, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Multiplication of MxN matrix by MxM random Haar distributed orthogonal matrix
+
+INPUT PARAMETERS:
+    A   -   matrix, array[0..M-1, 0..N-1]
+    M, N-   matrix size
+
+OUTPUT PARAMETERS:
+    A   -   Q*A, where Q is random MxM orthogonal matrix
+
+  -- ALGLIB routine --
+     04.12.2009
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixrndorthogonalfromtheleft(real_2d_array &a, const ae_int_t m, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Multiplication of MxN complex matrix by NxN random Haar distributed
+complex orthogonal matrix
+
+INPUT PARAMETERS:
+    A   -   matrix, array[0..M-1, 0..N-1]
+    M, N-   matrix size
+
+OUTPUT PARAMETERS:
+    A   -   A*Q, where Q is random NxN orthogonal matrix
+
+  -- ALGLIB routine --
+     04.12.2009
+     Bochkanov Sergey
+*************************************************************************/
+void cmatrixrndorthogonalfromtheright(complex_2d_array &a, const ae_int_t m, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Multiplication of MxN complex matrix by MxM random Haar distributed
+complex orthogonal matrix
+
+INPUT PARAMETERS:
+    A   -   matrix, array[0..M-1, 0..N-1]
+    M, N-   matrix size
+
+OUTPUT PARAMETERS:
+    A   -   Q*A, where Q is random MxM orthogonal matrix
+
+  -- ALGLIB routine --
+     04.12.2009
+     Bochkanov Sergey
+*************************************************************************/
+void cmatrixrndorthogonalfromtheleft(complex_2d_array &a, const ae_int_t m, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Symmetric multiplication of NxN matrix by random Haar distributed
+orthogonal  matrix
+
+INPUT PARAMETERS:
+    A   -   matrix, array[0..N-1, 0..N-1]
+    N   -   matrix size
+
+OUTPUT PARAMETERS:
+    A   -   Q'*A*Q, where Q is random NxN orthogonal matrix
+
+  -- ALGLIB routine --
+     04.12.2009
+     Bochkanov Sergey
+*************************************************************************/
+void smatrixrndmultiply(real_2d_array &a, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Hermitian multiplication of NxN matrix by random Haar distributed
+complex orthogonal matrix
+
+INPUT PARAMETERS:
+    A   -   matrix, array[0..N-1, 0..N-1]
+    N   -   matrix size
+
+OUTPUT PARAMETERS:
+    A   -   Q^H*A*Q, where Q is random NxN orthogonal matrix
+
+  -- ALGLIB routine --
+     04.12.2009
+     Bochkanov Sergey
+*************************************************************************/
+void hmatrixrndmultiply(complex_2d_array &a, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+#endif
+
 #if defined(AE_COMPILE_SPARSE) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+This function serializes data structure to string.
+
+Important properties of s_out:
+* it contains alphanumeric characters, dots, underscores, minus signs
+* these symbols are grouped into words, which are separated by spaces
+  and Windows-style (CR+LF) newlines
+* although  serializer  uses  spaces and CR+LF as separators, you can 
+  replace any separator character by arbitrary combination of spaces,
+  tabs, Windows or Unix newlines. It allows flexible reformatting  of
+  the  string  in  case you want to include it into text or XML file. 
+  But you should not insert separators into the middle of the "words"
+  nor you should change case of letters.
+* s_out can be freely moved between 32-bit and 64-bit systems, little
+  and big endian machines, and so on. You can serialize structure  on
+  32-bit machine and unserialize it on 64-bit one (or vice versa), or
+  serialize  it  on  SPARC  and  unserialize  on  x86.  You  can also 
+  serialize  it  in  C++ version of ALGLIB and unserialize in C# one, 
+  and vice versa.
+*************************************************************************/
+void sparseserialize(sparsematrix &obj, std::string &s_out);
+
+
+/*************************************************************************
+This function unserializes data structure from string.
+*************************************************************************/
+void sparseunserialize(const std::string &s_in, sparsematrix &obj);
+
+
+
+
+/*************************************************************************
+This function serializes data structure to C++ stream.
+
+Data stream generated by this function is same as  string  representation
+generated  by  string  version  of  serializer - alphanumeric characters,
+dots, underscores, minus signs, which are grouped into words separated by
+spaces and CR+LF.
+
+We recommend you to read comments on string version of serializer to find
+out more about serialization of AlGLIB objects.
+*************************************************************************/
+void sparseserialize(sparsematrix &obj, std::ostream &s_out);
+
+
+/*************************************************************************
+This function unserializes data structure from stream.
+*************************************************************************/
+void sparseunserialize(const std::istream &s_in, sparsematrix &obj);
+
+
 /*************************************************************************
 This function creates sparse matrix in a Hash-Table format.
 
@@ -2266,3804 +4457,6 @@ RESULT: number of non-zero elements strictly below main diagonal
 ae_int_t sparsegetlowercount(const sparsematrix &s, const xparams _xparams = alglib::xdefault);
 #endif
 
-#if defined(AE_COMPILE_ABLAS) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-Cache-oblivous complex "copy-and-transpose"
-
-Input parameters:
-    M   -   number of rows
-    N   -   number of columns
-    A   -   source matrix, MxN submatrix is copied and transposed
-    IA  -   submatrix offset (row index)
-    JA  -   submatrix offset (column index)
-    B   -   destination matrix, must be large enough to store result
-    IB  -   submatrix offset (row index)
-    JB  -   submatrix offset (column index)
-*************************************************************************/
-void cmatrixtranspose(const ae_int_t m, const ae_int_t n, const complex_2d_array &a, const ae_int_t ia, const ae_int_t ja, complex_2d_array &b, const ae_int_t ib, const ae_int_t jb, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Cache-oblivous real "copy-and-transpose"
-
-Input parameters:
-    M   -   number of rows
-    N   -   number of columns
-    A   -   source matrix, MxN submatrix is copied and transposed
-    IA  -   submatrix offset (row index)
-    JA  -   submatrix offset (column index)
-    B   -   destination matrix, must be large enough to store result
-    IB  -   submatrix offset (row index)
-    JB  -   submatrix offset (column index)
-*************************************************************************/
-void rmatrixtranspose(const ae_int_t m, const ae_int_t n, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const real_2d_array &b, const ae_int_t ib, const ae_int_t jb, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This code enforces symmetricy of the matrix by copying Upper part to lower
-one (or vice versa).
-
-INPUT PARAMETERS:
-    A   -   matrix
-    N   -   number of rows/columns
-    IsUpper - whether we want to copy upper triangle to lower one (True)
-            or vice versa (False).
-*************************************************************************/
-void rmatrixenforcesymmetricity(const real_2d_array &a, const ae_int_t n, const bool isupper, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Copy
-
-Input parameters:
-    M   -   number of rows
-    N   -   number of columns
-    A   -   source matrix, MxN submatrix is copied and transposed
-    IA  -   submatrix offset (row index)
-    JA  -   submatrix offset (column index)
-    B   -   destination matrix, must be large enough to store result
-    IB  -   submatrix offset (row index)
-    JB  -   submatrix offset (column index)
-*************************************************************************/
-void cmatrixcopy(const ae_int_t m, const ae_int_t n, const complex_2d_array &a, const ae_int_t ia, const ae_int_t ja, complex_2d_array &b, const ae_int_t ib, const ae_int_t jb, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Copy
-
-Input parameters:
-    N   -   subvector size
-    A   -   source vector, N elements are copied
-    IA  -   source offset (first element index)
-    B   -   destination vector, must be large enough to store result
-    IB  -   destination offset (first element index)
-*************************************************************************/
-void rvectorcopy(const ae_int_t n, const real_1d_array &a, const ae_int_t ia, const real_1d_array &b, const ae_int_t ib, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Copy
-
-Input parameters:
-    M   -   number of rows
-    N   -   number of columns
-    A   -   source matrix, MxN submatrix is copied and transposed
-    IA  -   submatrix offset (row index)
-    JA  -   submatrix offset (column index)
-    B   -   destination matrix, must be large enough to store result
-    IB  -   submatrix offset (row index)
-    JB  -   submatrix offset (column index)
-*************************************************************************/
-void rmatrixcopy(const ae_int_t m, const ae_int_t n, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const real_2d_array &b, const ae_int_t ib, const ae_int_t jb, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Performs generalized copy: B := Beta*B + Alpha*A.
-
-If Beta=0, then previous contents of B is simply ignored. If Alpha=0, then
-A is ignored and not referenced. If both Alpha and Beta  are  zero,  B  is
-filled by zeros.
-
-Input parameters:
-    M   -   number of rows
-    N   -   number of columns
-    Alpha-  coefficient
-    A   -   source matrix, MxN submatrix is copied and transposed
-    IA  -   submatrix offset (row index)
-    JA  -   submatrix offset (column index)
-    Beta-   coefficient
-    B   -   destination matrix, must be large enough to store result
-    IB  -   submatrix offset (row index)
-    JB  -   submatrix offset (column index)
-*************************************************************************/
-void rmatrixgencopy(const ae_int_t m, const ae_int_t n, const double alpha, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const double beta, const real_2d_array &b, const ae_int_t ib, const ae_int_t jb, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Rank-1 correction: A := A + alpha*u*v'
-
-NOTE: this  function  expects  A  to  be  large enough to store result. No
-      automatic preallocation happens for  smaller  arrays.  No  integrity
-      checks is performed for sizes of A, u, v.
-
-INPUT PARAMETERS:
-    M   -   number of rows
-    N   -   number of columns
-    A   -   target matrix, MxN submatrix is updated
-    IA  -   submatrix offset (row index)
-    JA  -   submatrix offset (column index)
-    Alpha-  coefficient
-    U   -   vector #1
-    IU  -   subvector offset
-    V   -   vector #2
-    IV  -   subvector offset
-
-
-  -- ALGLIB routine --
-
-     16.10.2017
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixger(const ae_int_t m, const ae_int_t n, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const double alpha, const real_1d_array &u, const ae_int_t iu, const real_1d_array &v, const ae_int_t iv, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Rank-1 correction: A := A + u*v'
-
-INPUT PARAMETERS:
-    M   -   number of rows
-    N   -   number of columns
-    A   -   target matrix, MxN submatrix is updated
-    IA  -   submatrix offset (row index)
-    JA  -   submatrix offset (column index)
-    U   -   vector #1
-    IU  -   subvector offset
-    V   -   vector #2
-    IV  -   subvector offset
-*************************************************************************/
-void cmatrixrank1(const ae_int_t m, const ae_int_t n, complex_2d_array &a, const ae_int_t ia, const ae_int_t ja, complex_1d_array &u, const ae_int_t iu, complex_1d_array &v, const ae_int_t iv, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-IMPORTANT: this function is deprecated since ALGLIB 3.13. Use RMatrixGER()
-           which is more generic version of this function.
-
-Rank-1 correction: A := A + u*v'
-
-INPUT PARAMETERS:
-    M   -   number of rows
-    N   -   number of columns
-    A   -   target matrix, MxN submatrix is updated
-    IA  -   submatrix offset (row index)
-    JA  -   submatrix offset (column index)
-    U   -   vector #1
-    IU  -   subvector offset
-    V   -   vector #2
-    IV  -   subvector offset
-*************************************************************************/
-void rmatrixrank1(const ae_int_t m, const ae_int_t n, real_2d_array &a, const ae_int_t ia, const ae_int_t ja, real_1d_array &u, const ae_int_t iu, real_1d_array &v, const ae_int_t iv, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-
-*************************************************************************/
-void rmatrixgemv(const ae_int_t m, const ae_int_t n, const double alpha, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const ae_int_t opa, const real_1d_array &x, const ae_int_t ix, const double beta, const real_1d_array &y, const ae_int_t iy, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Matrix-vector product: y := op(A)*x
-
-INPUT PARAMETERS:
-    M   -   number of rows of op(A)
-            M>=0
-    N   -   number of columns of op(A)
-            N>=0
-    A   -   target matrix
-    IA  -   submatrix offset (row index)
-    JA  -   submatrix offset (column index)
-    OpA -   operation type:
-            * OpA=0     =>  op(A) = A
-            * OpA=1     =>  op(A) = A^T
-            * OpA=2     =>  op(A) = A^H
-    X   -   input vector
-    IX  -   subvector offset
-    IY  -   subvector offset
-    Y   -   preallocated matrix, must be large enough to store result
-
-OUTPUT PARAMETERS:
-    Y   -   vector which stores result
-
-if M=0, then subroutine does nothing.
-if N=0, Y is filled by zeros.
-
-
-  -- ALGLIB routine --
-
-     28.01.2010
-     Bochkanov Sergey
-*************************************************************************/
-void cmatrixmv(const ae_int_t m, const ae_int_t n, const complex_2d_array &a, const ae_int_t ia, const ae_int_t ja, const ae_int_t opa, const complex_1d_array &x, const ae_int_t ix, complex_1d_array &y, const ae_int_t iy, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-IMPORTANT: this function is deprecated since ALGLIB 3.13. Use RMatrixGEMV()
-           which is more generic version of this function.
-
-Matrix-vector product: y := op(A)*x
-
-INPUT PARAMETERS:
-    M   -   number of rows of op(A)
-    N   -   number of columns of op(A)
-    A   -   target matrix
-    IA  -   submatrix offset (row index)
-    JA  -   submatrix offset (column index)
-    OpA -   operation type:
-            * OpA=0     =>  op(A) = A
-            * OpA=1     =>  op(A) = A^T
-    X   -   input vector
-    IX  -   subvector offset
-    IY  -   subvector offset
-    Y   -   preallocated matrix, must be large enough to store result
-
-OUTPUT PARAMETERS:
-    Y   -   vector which stores result
-
-if M=0, then subroutine does nothing.
-if N=0, Y is filled by zeros.
-
-
-  -- ALGLIB routine --
-
-     28.01.2010
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixmv(const ae_int_t m, const ae_int_t n, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const ae_int_t opa, const real_1d_array &x, const ae_int_t ix, const real_1d_array &y, const ae_int_t iy, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-
-*************************************************************************/
-void rmatrixsymv(const ae_int_t n, const double alpha, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const bool isupper, const real_1d_array &x, const ae_int_t ix, const double beta, const real_1d_array &y, const ae_int_t iy, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-
-*************************************************************************/
-double rmatrixsyvmv(const ae_int_t n, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const bool isupper, const real_1d_array &x, const ae_int_t ix, const real_1d_array &tmp, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This subroutine solves linear system op(A)*x=b where:
-* A is NxN upper/lower triangular/unitriangular matrix
-* X and B are Nx1 vectors
-* "op" may be identity transformation, transposition, conjugate transposition
-
-Solution replaces X.
-
-IMPORTANT: * no overflow/underflow/denegeracy tests is performed.
-           * no integrity checks for operand sizes, out-of-bounds accesses
-             and so on is performed
-
-INPUT PARAMETERS
-    N   -   matrix size, N>=0
-    A       -   matrix, actial matrix is stored in A[IA:IA+N-1,JA:JA+N-1]
-    IA      -   submatrix offset
-    JA      -   submatrix offset
-    IsUpper -   whether matrix is upper triangular
-    IsUnit  -   whether matrix is unitriangular
-    OpType  -   transformation type:
-                * 0 - no transformation
-                * 1 - transposition
-    X       -   right part, actual vector is stored in X[IX:IX+N-1]
-    IX      -   offset
-
-OUTPUT PARAMETERS
-    X       -   solution replaces elements X[IX:IX+N-1]
-
-  -- ALGLIB routine / remastering of LAPACK's DTRSV --
-     (c) 2017 Bochkanov Sergey - converted to ALGLIB
-     (c) 2016 Reference BLAS level1 routine (LAPACK version 3.7.0)
-     Reference BLAS is a software package provided by Univ. of Tennessee,
-     Univ. of California Berkeley, Univ. of Colorado Denver and NAG Ltd.
-*************************************************************************/
-void rmatrixtrsv(const ae_int_t n, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const bool isupper, const bool isunit, const ae_int_t optype, const real_1d_array &x, const ae_int_t ix, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This subroutine calculates X*op(A^-1) where:
-* X is MxN general matrix
-* A is NxN upper/lower triangular/unitriangular matrix
-* "op" may be identity transformation, transposition, conjugate transposition
-Multiplication result replaces X.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-INPUT PARAMETERS
-    N   -   matrix size, N>=0
-    M   -   matrix size, N>=0
-    A       -   matrix, actial matrix is stored in A[I1:I1+N-1,J1:J1+N-1]
-    I1      -   submatrix offset
-    J1      -   submatrix offset
-    IsUpper -   whether matrix is upper triangular
-    IsUnit  -   whether matrix is unitriangular
-    OpType  -   transformation type:
-                * 0 - no transformation
-                * 1 - transposition
-                * 2 - conjugate transposition
-    X   -   matrix, actial matrix is stored in X[I2:I2+M-1,J2:J2+N-1]
-    I2  -   submatrix offset
-    J2  -   submatrix offset
-
-  -- ALGLIB routine --
-     20.01.2018
-     Bochkanov Sergey
-*************************************************************************/
-void cmatrixrighttrsm(const ae_int_t m, const ae_int_t n, const complex_2d_array &a, const ae_int_t i1, const ae_int_t j1, const bool isupper, const bool isunit, const ae_int_t optype, const complex_2d_array &x, const ae_int_t i2, const ae_int_t j2, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This subroutine calculates op(A^-1)*X where:
-* X is MxN general matrix
-* A is MxM upper/lower triangular/unitriangular matrix
-* "op" may be identity transformation, transposition, conjugate transposition
-Multiplication result replaces X.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-INPUT PARAMETERS
-    N   -   matrix size, N>=0
-    M   -   matrix size, N>=0
-    A       -   matrix, actial matrix is stored in A[I1:I1+M-1,J1:J1+M-1]
-    I1      -   submatrix offset
-    J1      -   submatrix offset
-    IsUpper -   whether matrix is upper triangular
-    IsUnit  -   whether matrix is unitriangular
-    OpType  -   transformation type:
-                * 0 - no transformation
-                * 1 - transposition
-                * 2 - conjugate transposition
-    X   -   matrix, actial matrix is stored in X[I2:I2+M-1,J2:J2+N-1]
-    I2  -   submatrix offset
-    J2  -   submatrix offset
-
-  -- ALGLIB routine --
-     15.12.2009-22.01.2018
-     Bochkanov Sergey
-*************************************************************************/
-void cmatrixlefttrsm(const ae_int_t m, const ae_int_t n, const complex_2d_array &a, const ae_int_t i1, const ae_int_t j1, const bool isupper, const bool isunit, const ae_int_t optype, const complex_2d_array &x, const ae_int_t i2, const ae_int_t j2, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This subroutine calculates X*op(A^-1) where:
-* X is MxN general matrix
-* A is NxN upper/lower triangular/unitriangular matrix
-* "op" may be identity transformation, transposition
-Multiplication result replaces X.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-INPUT PARAMETERS
-    N   -   matrix size, N>=0
-    M   -   matrix size, N>=0
-    A       -   matrix, actial matrix is stored in A[I1:I1+N-1,J1:J1+N-1]
-    I1      -   submatrix offset
-    J1      -   submatrix offset
-    IsUpper -   whether matrix is upper triangular
-    IsUnit  -   whether matrix is unitriangular
-    OpType  -   transformation type:
-                * 0 - no transformation
-                * 1 - transposition
-    X   -   matrix, actial matrix is stored in X[I2:I2+M-1,J2:J2+N-1]
-    I2  -   submatrix offset
-    J2  -   submatrix offset
-
-  -- ALGLIB routine --
-     15.12.2009-22.01.2018
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixrighttrsm(const ae_int_t m, const ae_int_t n, const real_2d_array &a, const ae_int_t i1, const ae_int_t j1, const bool isupper, const bool isunit, const ae_int_t optype, const real_2d_array &x, const ae_int_t i2, const ae_int_t j2, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This subroutine calculates op(A^-1)*X where:
-* X is MxN general matrix
-* A is MxM upper/lower triangular/unitriangular matrix
-* "op" may be identity transformation, transposition
-Multiplication result replaces X.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-INPUT PARAMETERS
-    N   -   matrix size, N>=0
-    M   -   matrix size, N>=0
-    A       -   matrix, actial matrix is stored in A[I1:I1+M-1,J1:J1+M-1]
-    I1      -   submatrix offset
-    J1      -   submatrix offset
-    IsUpper -   whether matrix is upper triangular
-    IsUnit  -   whether matrix is unitriangular
-    OpType  -   transformation type:
-                * 0 - no transformation
-                * 1 - transposition
-    X   -   matrix, actial matrix is stored in X[I2:I2+M-1,J2:J2+N-1]
-    I2  -   submatrix offset
-    J2  -   submatrix offset
-
-  -- ALGLIB routine --
-     15.12.2009-22.01.2018
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixlefttrsm(const ae_int_t m, const ae_int_t n, const real_2d_array &a, const ae_int_t i1, const ae_int_t j1, const bool isupper, const bool isunit, const ae_int_t optype, const real_2d_array &x, const ae_int_t i2, const ae_int_t j2, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This subroutine calculates  C=alpha*A*A^H+beta*C  or  C=alpha*A^H*A+beta*C
-where:
-* C is NxN Hermitian matrix given by its upper/lower triangle
-* A is NxK matrix when A*A^H is calculated, KxN matrix otherwise
-
-Additional info:
-* multiplication result replaces C. If Beta=0, C elements are not used in
-  calculations (not multiplied by zero - just not referenced)
-* if Alpha=0, A is not used (not multiplied by zero - just not referenced)
-* if both Beta and Alpha are zero, C is filled by zeros.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-INPUT PARAMETERS
-    N       -   matrix size, N>=0
-    K       -   matrix size, K>=0
-    Alpha   -   coefficient
-    A       -   matrix
-    IA      -   submatrix offset (row index)
-    JA      -   submatrix offset (column index)
-    OpTypeA -   multiplication type:
-                * 0 - A*A^H is calculated
-                * 2 - A^H*A is calculated
-    Beta    -   coefficient
-    C       -   preallocated input/output matrix
-    IC      -   submatrix offset (row index)
-    JC      -   submatrix offset (column index)
-    IsUpper -   whether upper or lower triangle of C is updated;
-                this function updates only one half of C, leaving
-                other half unchanged (not referenced at all).
-
-  -- ALGLIB routine --
-     16.12.2009-22.01.2018
-     Bochkanov Sergey
-*************************************************************************/
-void cmatrixherk(const ae_int_t n, const ae_int_t k, const double alpha, const complex_2d_array &a, const ae_int_t ia, const ae_int_t ja, const ae_int_t optypea, const double beta, const complex_2d_array &c, const ae_int_t ic, const ae_int_t jc, const bool isupper, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This subroutine calculates  C=alpha*A*A^T+beta*C  or  C=alpha*A^T*A+beta*C
-where:
-* C is NxN symmetric matrix given by its upper/lower triangle
-* A is NxK matrix when A*A^T is calculated, KxN matrix otherwise
-
-Additional info:
-* multiplication result replaces C. If Beta=0, C elements are not used in
-  calculations (not multiplied by zero - just not referenced)
-* if Alpha=0, A is not used (not multiplied by zero - just not referenced)
-* if both Beta and Alpha are zero, C is filled by zeros.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-INPUT PARAMETERS
-    N       -   matrix size, N>=0
-    K       -   matrix size, K>=0
-    Alpha   -   coefficient
-    A       -   matrix
-    IA      -   submatrix offset (row index)
-    JA      -   submatrix offset (column index)
-    OpTypeA -   multiplication type:
-                * 0 - A*A^T is calculated
-                * 2 - A^T*A is calculated
-    Beta    -   coefficient
-    C       -   preallocated input/output matrix
-    IC      -   submatrix offset (row index)
-    JC      -   submatrix offset (column index)
-    IsUpper -   whether C is upper triangular or lower triangular
-
-  -- ALGLIB routine --
-     16.12.2009-22.01.2018
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixsyrk(const ae_int_t n, const ae_int_t k, const double alpha, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const ae_int_t optypea, const double beta, const real_2d_array &c, const ae_int_t ic, const ae_int_t jc, const bool isupper, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This subroutine calculates C = alpha*op1(A)*op2(B) +beta*C where:
-* C is MxN general matrix
-* op1(A) is MxK matrix
-* op2(B) is KxN matrix
-* "op" may be identity transformation, transposition, conjugate transposition
-
-Additional info:
-* cache-oblivious algorithm is used.
-* multiplication result replaces C. If Beta=0, C elements are not used in
-  calculations (not multiplied by zero - just not referenced)
-* if Alpha=0, A is not used (not multiplied by zero - just not referenced)
-* if both Beta and Alpha are zero, C is filled by zeros.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-IMPORTANT:
-
-This function does NOT preallocate output matrix C, it MUST be preallocated
-by caller prior to calling this function. In case C does not have  enough
-space to store result, exception will be generated.
-
-INPUT PARAMETERS
-    M       -   matrix size, M>0
-    N       -   matrix size, N>0
-    K       -   matrix size, K>0
-    Alpha   -   coefficient
-    A       -   matrix
-    IA      -   submatrix offset
-    JA      -   submatrix offset
-    OpTypeA -   transformation type:
-                * 0 - no transformation
-                * 1 - transposition
-                * 2 - conjugate transposition
-    B       -   matrix
-    IB      -   submatrix offset
-    JB      -   submatrix offset
-    OpTypeB -   transformation type:
-                * 0 - no transformation
-                * 1 - transposition
-                * 2 - conjugate transposition
-    Beta    -   coefficient
-    C       -   matrix (PREALLOCATED, large enough to store result)
-    IC      -   submatrix offset
-    JC      -   submatrix offset
-
-  -- ALGLIB routine --
-     2009-2019
-     Bochkanov Sergey
-*************************************************************************/
-void cmatrixgemm(const ae_int_t m, const ae_int_t n, const ae_int_t k, const alglib::complex alpha, const complex_2d_array &a, const ae_int_t ia, const ae_int_t ja, const ae_int_t optypea, const complex_2d_array &b, const ae_int_t ib, const ae_int_t jb, const ae_int_t optypeb, const alglib::complex beta, const complex_2d_array &c, const ae_int_t ic, const ae_int_t jc, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This subroutine calculates C = alpha*op1(A)*op2(B) +beta*C where:
-* C is MxN general matrix
-* op1(A) is MxK matrix
-* op2(B) is KxN matrix
-* "op" may be identity transformation, transposition
-
-Additional info:
-* cache-oblivious algorithm is used.
-* multiplication result replaces C. If Beta=0, C elements are not used in
-  calculations (not multiplied by zero - just not referenced)
-* if Alpha=0, A is not used (not multiplied by zero - just not referenced)
-* if both Beta and Alpha are zero, C is filled by zeros.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-IMPORTANT:
-
-This function does NOT preallocate output matrix C, it MUST be preallocated
-by caller prior to calling this function. In case C does not have  enough
-space to store result, exception will be generated.
-
-INPUT PARAMETERS
-    M       -   matrix size, M>0
-    N       -   matrix size, N>0
-    K       -   matrix size, K>0
-    Alpha   -   coefficient
-    A       -   matrix
-    IA      -   submatrix offset
-    JA      -   submatrix offset
-    OpTypeA -   transformation type:
-                * 0 - no transformation
-                * 1 - transposition
-    B       -   matrix
-    IB      -   submatrix offset
-    JB      -   submatrix offset
-    OpTypeB -   transformation type:
-                * 0 - no transformation
-                * 1 - transposition
-    Beta    -   coefficient
-    C       -   PREALLOCATED output matrix, large enough to store result
-    IC      -   submatrix offset
-    JC      -   submatrix offset
-
-  -- ALGLIB routine --
-     2009-2019
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixgemm(const ae_int_t m, const ae_int_t n, const ae_int_t k, const double alpha, const real_2d_array &a, const ae_int_t ia, const ae_int_t ja, const ae_int_t optypea, const real_2d_array &b, const ae_int_t ib, const ae_int_t jb, const ae_int_t optypeb, const double beta, const real_2d_array &c, const ae_int_t ic, const ae_int_t jc, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This subroutine is an older version of CMatrixHERK(), one with wrong  name
-(it is HErmitian update, not SYmmetric). It  is  left  here  for  backward
-compatibility.
-
-  -- ALGLIB routine --
-     16.12.2009
-     Bochkanov Sergey
-*************************************************************************/
-void cmatrixsyrk(const ae_int_t n, const ae_int_t k, const double alpha, const complex_2d_array &a, const ae_int_t ia, const ae_int_t ja, const ae_int_t optypea, const double beta, const complex_2d_array &c, const ae_int_t ic, const ae_int_t jc, const bool isupper, const xparams _xparams = alglib::xdefault);
-#endif
-
-#if defined(AE_COMPILE_DLU) || !defined(AE_PARTIAL_BUILD)
-
-#endif
-
-#if defined(AE_COMPILE_SPTRF) || !defined(AE_PARTIAL_BUILD)
-
-#endif
-
-#if defined(AE_COMPILE_AMDORDERING) || !defined(AE_PARTIAL_BUILD)
-
-#endif
-
-#if defined(AE_COMPILE_SPCHOL) || !defined(AE_PARTIAL_BUILD)
-
-#endif
-
-#if defined(AE_COMPILE_MATGEN) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-Generation of a random uniformly distributed (Haar) orthogonal matrix
-
-INPUT PARAMETERS:
-    N   -   matrix size, N>=1
-
-OUTPUT PARAMETERS:
-    A   -   orthogonal NxN matrix, array[0..N-1,0..N-1]
-
-NOTE: this function uses algorithm  described  in  Stewart, G. W.  (1980),
-      "The Efficient Generation of  Random  Orthogonal  Matrices  with  an
-      Application to Condition Estimators".
-
-      Speaking short, to generate an (N+1)x(N+1) orthogonal matrix, it:
-      * takes an NxN one
-      * takes uniformly distributed unit vector of dimension N+1.
-      * constructs a Householder reflection from the vector, then applies
-        it to the smaller matrix (embedded in the larger size with a 1 at
-        the bottom right corner).
-
-  -- ALGLIB routine --
-     04.12.2009
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixrndorthogonal(const ae_int_t n, real_2d_array &a, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Generation of random NxN matrix with given condition number and norm2(A)=1
-
-INPUT PARAMETERS:
-    N   -   matrix size
-    C   -   condition number (in 2-norm)
-
-OUTPUT PARAMETERS:
-    A   -   random matrix with norm2(A)=1 and cond(A)=C
-
-  -- ALGLIB routine --
-     04.12.2009
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixrndcond(const ae_int_t n, const double c, real_2d_array &a, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Generation of a random Haar distributed orthogonal complex matrix
-
-INPUT PARAMETERS:
-    N   -   matrix size, N>=1
-
-OUTPUT PARAMETERS:
-    A   -   orthogonal NxN matrix, array[0..N-1,0..N-1]
-
-NOTE: this function uses algorithm  described  in  Stewart, G. W.  (1980),
-      "The Efficient Generation of  Random  Orthogonal  Matrices  with  an
-      Application to Condition Estimators".
-
-      Speaking short, to generate an (N+1)x(N+1) orthogonal matrix, it:
-      * takes an NxN one
-      * takes uniformly distributed unit vector of dimension N+1.
-      * constructs a Householder reflection from the vector, then applies
-        it to the smaller matrix (embedded in the larger size with a 1 at
-        the bottom right corner).
-
-  -- ALGLIB routine --
-     04.12.2009
-     Bochkanov Sergey
-*************************************************************************/
-void cmatrixrndorthogonal(const ae_int_t n, complex_2d_array &a, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Generation of random NxN complex matrix with given condition number C and
-norm2(A)=1
-
-INPUT PARAMETERS:
-    N   -   matrix size
-    C   -   condition number (in 2-norm)
-
-OUTPUT PARAMETERS:
-    A   -   random matrix with norm2(A)=1 and cond(A)=C
-
-  -- ALGLIB routine --
-     04.12.2009
-     Bochkanov Sergey
-*************************************************************************/
-void cmatrixrndcond(const ae_int_t n, const double c, complex_2d_array &a, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Generation of random NxN symmetric matrix with given condition number  and
-norm2(A)=1
-
-INPUT PARAMETERS:
-    N   -   matrix size
-    C   -   condition number (in 2-norm)
-
-OUTPUT PARAMETERS:
-    A   -   random matrix with norm2(A)=1 and cond(A)=C
-
-  -- ALGLIB routine --
-     04.12.2009
-     Bochkanov Sergey
-*************************************************************************/
-void smatrixrndcond(const ae_int_t n, const double c, real_2d_array &a, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Generation of random NxN symmetric positive definite matrix with given
-condition number and norm2(A)=1
-
-INPUT PARAMETERS:
-    N   -   matrix size
-    C   -   condition number (in 2-norm)
-
-OUTPUT PARAMETERS:
-    A   -   random SPD matrix with norm2(A)=1 and cond(A)=C
-
-  -- ALGLIB routine --
-     04.12.2009
-     Bochkanov Sergey
-*************************************************************************/
-void spdmatrixrndcond(const ae_int_t n, const double c, real_2d_array &a, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Generation of random NxN Hermitian matrix with given condition number  and
-norm2(A)=1
-
-INPUT PARAMETERS:
-    N   -   matrix size
-    C   -   condition number (in 2-norm)
-
-OUTPUT PARAMETERS:
-    A   -   random matrix with norm2(A)=1 and cond(A)=C
-
-  -- ALGLIB routine --
-     04.12.2009
-     Bochkanov Sergey
-*************************************************************************/
-void hmatrixrndcond(const ae_int_t n, const double c, complex_2d_array &a, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Generation of random NxN Hermitian positive definite matrix with given
-condition number and norm2(A)=1
-
-INPUT PARAMETERS:
-    N   -   matrix size
-    C   -   condition number (in 2-norm)
-
-OUTPUT PARAMETERS:
-    A   -   random HPD matrix with norm2(A)=1 and cond(A)=C
-
-  -- ALGLIB routine --
-     04.12.2009
-     Bochkanov Sergey
-*************************************************************************/
-void hpdmatrixrndcond(const ae_int_t n, const double c, complex_2d_array &a, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Multiplication of MxN matrix by NxN random Haar distributed orthogonal matrix
-
-INPUT PARAMETERS:
-    A   -   matrix, array[0..M-1, 0..N-1]
-    M, N-   matrix size
-
-OUTPUT PARAMETERS:
-    A   -   A*Q, where Q is random NxN orthogonal matrix
-
-  -- ALGLIB routine --
-     04.12.2009
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixrndorthogonalfromtheright(real_2d_array &a, const ae_int_t m, const ae_int_t n, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Multiplication of MxN matrix by MxM random Haar distributed orthogonal matrix
-
-INPUT PARAMETERS:
-    A   -   matrix, array[0..M-1, 0..N-1]
-    M, N-   matrix size
-
-OUTPUT PARAMETERS:
-    A   -   Q*A, where Q is random MxM orthogonal matrix
-
-  -- ALGLIB routine --
-     04.12.2009
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixrndorthogonalfromtheleft(real_2d_array &a, const ae_int_t m, const ae_int_t n, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Multiplication of MxN complex matrix by NxN random Haar distributed
-complex orthogonal matrix
-
-INPUT PARAMETERS:
-    A   -   matrix, array[0..M-1, 0..N-1]
-    M, N-   matrix size
-
-OUTPUT PARAMETERS:
-    A   -   A*Q, where Q is random NxN orthogonal matrix
-
-  -- ALGLIB routine --
-     04.12.2009
-     Bochkanov Sergey
-*************************************************************************/
-void cmatrixrndorthogonalfromtheright(complex_2d_array &a, const ae_int_t m, const ae_int_t n, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Multiplication of MxN complex matrix by MxM random Haar distributed
-complex orthogonal matrix
-
-INPUT PARAMETERS:
-    A   -   matrix, array[0..M-1, 0..N-1]
-    M, N-   matrix size
-
-OUTPUT PARAMETERS:
-    A   -   Q*A, where Q is random MxM orthogonal matrix
-
-  -- ALGLIB routine --
-     04.12.2009
-     Bochkanov Sergey
-*************************************************************************/
-void cmatrixrndorthogonalfromtheleft(complex_2d_array &a, const ae_int_t m, const ae_int_t n, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Symmetric multiplication of NxN matrix by random Haar distributed
-orthogonal  matrix
-
-INPUT PARAMETERS:
-    A   -   matrix, array[0..N-1, 0..N-1]
-    N   -   matrix size
-
-OUTPUT PARAMETERS:
-    A   -   Q'*A*Q, where Q is random NxN orthogonal matrix
-
-  -- ALGLIB routine --
-     04.12.2009
-     Bochkanov Sergey
-*************************************************************************/
-void smatrixrndmultiply(real_2d_array &a, const ae_int_t n, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Hermitian multiplication of NxN matrix by random Haar distributed
-complex orthogonal matrix
-
-INPUT PARAMETERS:
-    A   -   matrix, array[0..N-1, 0..N-1]
-    N   -   matrix size
-
-OUTPUT PARAMETERS:
-    A   -   Q^H*A*Q, where Q is random NxN orthogonal matrix
-
-  -- ALGLIB routine --
-     04.12.2009
-     Bochkanov Sergey
-*************************************************************************/
-void hmatrixrndmultiply(complex_2d_array &a, const ae_int_t n, const xparams _xparams = alglib::xdefault);
-#endif
-
-#if defined(AE_COMPILE_TRFAC) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-LU decomposition of a general real matrix with row pivoting
-
-A is represented as A = P*L*U, where:
-* L is lower unitriangular matrix
-* U is upper triangular matrix
-* P = P0*P1*...*PK, K=min(M,N)-1,
-  Pi - permutation matrix for I and Pivots[I]
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-INPUT PARAMETERS:
-    A       -   array[0..M-1, 0..N-1].
-    M       -   number of rows in matrix A.
-    N       -   number of columns in matrix A.
-
-
-OUTPUT PARAMETERS:
-    A       -   matrices L and U in compact form:
-                * L is stored under main diagonal
-                * U is stored on and above main diagonal
-    Pivots  -   permutation matrix in compact form.
-                array[0..Min(M-1,N-1)].
-
-  -- ALGLIB routine --
-     10.01.2010
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixlu(real_2d_array &a, const ae_int_t m, const ae_int_t n, integer_1d_array &pivots, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-LU decomposition of a general complex matrix with row pivoting
-
-A is represented as A = P*L*U, where:
-* L is lower unitriangular matrix
-* U is upper triangular matrix
-* P = P0*P1*...*PK, K=min(M,N)-1,
-  Pi - permutation matrix for I and Pivots[I]
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-INPUT PARAMETERS:
-    A       -   array[0..M-1, 0..N-1].
-    M       -   number of rows in matrix A.
-    N       -   number of columns in matrix A.
-
-
-OUTPUT PARAMETERS:
-    A       -   matrices L and U in compact form:
-                * L is stored under main diagonal
-                * U is stored on and above main diagonal
-    Pivots  -   permutation matrix in compact form.
-                array[0..Min(M-1,N-1)].
-
-  -- ALGLIB routine --
-     10.01.2010
-     Bochkanov Sergey
-*************************************************************************/
-void cmatrixlu(complex_2d_array &a, const ae_int_t m, const ae_int_t n, integer_1d_array &pivots, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Cache-oblivious Cholesky decomposition
-
-The algorithm computes Cholesky decomposition  of  a  Hermitian  positive-
-definite matrix. The result of an algorithm is a representation  of  A  as
-A=U'*U  or A=L*L' (here X' denotes conj(X^T)).
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-INPUT PARAMETERS:
-    A       -   upper or lower triangle of a factorized matrix.
-                array with elements [0..N-1, 0..N-1].
-    N       -   size of matrix A.
-    IsUpper -   if IsUpper=True, then A contains an upper triangle of
-                a symmetric matrix, otherwise A contains a lower one.
-
-OUTPUT PARAMETERS:
-    A       -   the result of factorization. If IsUpper=True, then
-                the upper triangle contains matrix U, so that A = U'*U,
-                and the elements below the main diagonal are not modified.
-                Similarly, if IsUpper = False.
-
-RESULT:
-    If  the  matrix  is  positive-definite,  the  function  returns  True.
-    Otherwise, the function returns False. Contents of A is not determined
-    in such case.
-
-  -- ALGLIB routine --
-     15.12.2009-22.01.2018
-     Bochkanov Sergey
-*************************************************************************/
-bool hpdmatrixcholesky(complex_2d_array &a, const ae_int_t n, const bool isupper, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Cache-oblivious Cholesky decomposition
-
-The algorithm computes Cholesky decomposition  of  a  symmetric  positive-
-definite matrix. The result of an algorithm is a representation  of  A  as
-A=U^T*U  or A=L*L^T
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-INPUT PARAMETERS:
-    A       -   upper or lower triangle of a factorized matrix.
-                array with elements [0..N-1, 0..N-1].
-    N       -   size of matrix A.
-    IsUpper -   if IsUpper=True, then A contains an upper triangle of
-                a symmetric matrix, otherwise A contains a lower one.
-
-OUTPUT PARAMETERS:
-    A       -   the result of factorization. If IsUpper=True, then
-                the upper triangle contains matrix U, so that A = U^T*U,
-                and the elements below the main diagonal are not modified.
-                Similarly, if IsUpper = False.
-
-RESULT:
-    If  the  matrix  is  positive-definite,  the  function  returns  True.
-    Otherwise, the function returns False. Contents of A is not determined
-    in such case.
-
-  -- ALGLIB routine --
-     15.12.2009
-     Bochkanov Sergey
-*************************************************************************/
-bool spdmatrixcholesky(real_2d_array &a, const ae_int_t n, const bool isupper, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Update of Cholesky decomposition: rank-1 update to original A.  "Buffered"
-version which uses preallocated buffer which is saved  between  subsequent
-function calls.
-
-This function uses internally allocated buffer which is not saved  between
-subsequent  calls.  So,  if  you  perform  a lot  of  subsequent  updates,
-we  recommend   you   to   use   "buffered"   version   of  this function:
-SPDMatrixCholeskyUpdateAdd1Buf().
-
-INPUT PARAMETERS:
-    A       -   upper or lower Cholesky factor.
-                array with elements [0..N-1, 0..N-1].
-                Exception is thrown if array size is too small.
-    N       -   size of matrix A, N>0
-    IsUpper -   if IsUpper=True, then A contains  upper  Cholesky  factor;
-                otherwise A contains a lower one.
-    U       -   array[N], rank-1 update to A: A_mod = A + u*u'
-                Exception is thrown if array size is too small.
-    BufR    -   possibly preallocated  buffer;  automatically  resized  if
-                needed. It is recommended to  reuse  this  buffer  if  you
-                perform a lot of subsequent decompositions.
-
-OUTPUT PARAMETERS:
-    A       -   updated factorization.  If  IsUpper=True,  then  the  upper
-                triangle contains matrix U, and the elements below the main
-                diagonal are not modified. Similarly, if IsUpper = False.
-
-NOTE: this function always succeeds, so it does not return completion code
-
-NOTE: this function checks sizes of input arrays, but it does  NOT  checks
-      for presence of infinities or NAN's.
-
-  -- ALGLIB --
-     03.02.2014
-     Sergey Bochkanov
-*************************************************************************/
-void spdmatrixcholeskyupdateadd1(const real_2d_array &a, const ae_int_t n, const bool isupper, const real_1d_array &u, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Update of Cholesky decomposition: "fixing" some variables.
-
-This function uses internally allocated buffer which is not saved  between
-subsequent  calls.  So,  if  you  perform  a lot  of  subsequent  updates,
-we  recommend   you   to   use   "buffered"   version   of  this function:
-SPDMatrixCholeskyUpdateFixBuf().
-
-"FIXING" EXPLAINED:
-
-    Suppose we have N*N positive definite matrix A. "Fixing" some variable
-    means filling corresponding row/column of  A  by  zeros,  and  setting
-    diagonal element to 1.
-
-    For example, if we fix 2nd variable in 4*4 matrix A, it becomes Af:
-
-        ( A00  A01  A02  A03 )      ( Af00  0   Af02 Af03 )
-        ( A10  A11  A12  A13 )      (  0    1    0    0   )
-        ( A20  A21  A22  A23 )  =>  ( Af20  0   Af22 Af23 )
-        ( A30  A31  A32  A33 )      ( Af30  0   Af32 Af33 )
-
-    If we have Cholesky decomposition of A, it must be recalculated  after
-    variables were  fixed.  However,  it  is  possible  to  use  efficient
-    algorithm, which needs O(K*N^2)  time  to  "fix"  K  variables,  given
-    Cholesky decomposition of original, "unfixed" A.
-
-INPUT PARAMETERS:
-    A       -   upper or lower Cholesky factor.
-                array with elements [0..N-1, 0..N-1].
-                Exception is thrown if array size is too small.
-    N       -   size of matrix A, N>0
-    IsUpper -   if IsUpper=True, then A contains  upper  Cholesky  factor;
-                otherwise A contains a lower one.
-    Fix     -   array[N], I-th element is True if I-th  variable  must  be
-                fixed. Exception is thrown if array size is too small.
-    BufR    -   possibly preallocated  buffer;  automatically  resized  if
-                needed. It is recommended to  reuse  this  buffer  if  you
-                perform a lot of subsequent decompositions.
-
-OUTPUT PARAMETERS:
-    A       -   updated factorization.  If  IsUpper=True,  then  the  upper
-                triangle contains matrix U, and the elements below the main
-                diagonal are not modified. Similarly, if IsUpper = False.
-
-NOTE: this function always succeeds, so it does not return completion code
-
-NOTE: this function checks sizes of input arrays, but it does  NOT  checks
-      for presence of infinities or NAN's.
-
-NOTE: this  function  is  efficient  only  for  moderate amount of updated
-      variables - say, 0.1*N or 0.3*N. For larger amount of  variables  it
-      will  still  work,  but  you  may  get   better   performance   with
-      straightforward Cholesky.
-
-  -- ALGLIB --
-     03.02.2014
-     Sergey Bochkanov
-*************************************************************************/
-void spdmatrixcholeskyupdatefix(const real_2d_array &a, const ae_int_t n, const bool isupper, const boolean_1d_array &fix, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Update of Cholesky decomposition: rank-1 update to original A.  "Buffered"
-version which uses preallocated buffer which is saved  between  subsequent
-function calls.
-
-See comments for SPDMatrixCholeskyUpdateAdd1() for more information.
-
-INPUT PARAMETERS:
-    A       -   upper or lower Cholesky factor.
-                array with elements [0..N-1, 0..N-1].
-                Exception is thrown if array size is too small.
-    N       -   size of matrix A, N>0
-    IsUpper -   if IsUpper=True, then A contains  upper  Cholesky  factor;
-                otherwise A contains a lower one.
-    U       -   array[N], rank-1 update to A: A_mod = A + u*u'
-                Exception is thrown if array size is too small.
-    BufR    -   possibly preallocated  buffer;  automatically  resized  if
-                needed. It is recommended to  reuse  this  buffer  if  you
-                perform a lot of subsequent decompositions.
-
-OUTPUT PARAMETERS:
-    A       -   updated factorization.  If  IsUpper=True,  then  the  upper
-                triangle contains matrix U, and the elements below the main
-                diagonal are not modified. Similarly, if IsUpper = False.
-
-  -- ALGLIB --
-     03.02.2014
-     Sergey Bochkanov
-*************************************************************************/
-void spdmatrixcholeskyupdateadd1buf(const real_2d_array &a, const ae_int_t n, const bool isupper, const real_1d_array &u, real_1d_array &bufr, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Update of Cholesky  decomposition:  "fixing"  some  variables.  "Buffered"
-version which uses preallocated buffer which is saved  between  subsequent
-function calls.
-
-See comments for SPDMatrixCholeskyUpdateFix() for more information.
-
-INPUT PARAMETERS:
-    A       -   upper or lower Cholesky factor.
-                array with elements [0..N-1, 0..N-1].
-                Exception is thrown if array size is too small.
-    N       -   size of matrix A, N>0
-    IsUpper -   if IsUpper=True, then A contains  upper  Cholesky  factor;
-                otherwise A contains a lower one.
-    Fix     -   array[N], I-th element is True if I-th  variable  must  be
-                fixed. Exception is thrown if array size is too small.
-    BufR    -   possibly preallocated  buffer;  automatically  resized  if
-                needed. It is recommended to  reuse  this  buffer  if  you
-                perform a lot of subsequent decompositions.
-
-OUTPUT PARAMETERS:
-    A       -   updated factorization.  If  IsUpper=True,  then  the  upper
-                triangle contains matrix U, and the elements below the main
-                diagonal are not modified. Similarly, if IsUpper = False.
-
-  -- ALGLIB --
-     03.02.2014
-     Sergey Bochkanov
-*************************************************************************/
-void spdmatrixcholeskyupdatefixbuf(const real_2d_array &a, const ae_int_t n, const bool isupper, const boolean_1d_array &fix, real_1d_array &bufr, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Sparse LU decomposition with column pivoting for sparsity and row pivoting
-for stability. Input must be square sparse matrix stored in CRS format.
-
-The algorithm  computes  LU  decomposition  of  a  general  square  matrix
-(rectangular ones are not supported). The result  of  an  algorithm  is  a
-representation of A as A = P*L*U*Q, where:
-* L is lower unitriangular matrix
-* U is upper triangular matrix
-* P = P0*P1*...*PK, K=N-1, Pi - permutation matrix for I and P[I]
-* Q = QK*...*Q1*Q0, K=N-1, Qi - permutation matrix for I and Q[I]
-
-This function pivots columns for higher sparsity, and then pivots rows for
-stability (larger element at the diagonal).
-
-INPUT PARAMETERS:
-    A       -   sparse NxN matrix in CRS format. An exception is generated
-                if matrix is non-CRS or non-square.
-    PivotType-  pivoting strategy:
-                * 0 for best pivoting available (2 in current version)
-                * 1 for row-only pivoting (NOT RECOMMENDED)
-                * 2 for complete pivoting which produces most sparse outputs
-
-OUTPUT PARAMETERS:
-    A       -   the result of factorization, matrices L and U stored in
-                compact form using CRS sparse storage format:
-                * lower unitriangular L is stored strictly under main diagonal
-                * upper triangilar U is stored ON and ABOVE main diagonal
-    P       -   row permutation matrix in compact form, array[N]
-    Q       -   col permutation matrix in compact form, array[N]
-
-This function always succeeds, i.e. it ALWAYS returns valid factorization,
-but for your convenience it also returns  boolean  value  which  helps  to
-detect symbolically degenerate matrices:
-* function returns TRUE, if the matrix was factorized AND symbolically
-  non-degenerate
-* function returns FALSE, if the matrix was factorized but U has strictly
-  zero elements at the diagonal (the factorization is returned anyway).
-
-
-  -- ALGLIB routine --
-     03.09.2018
-     Bochkanov Sergey
-*************************************************************************/
-bool sparselu(const sparsematrix &a, const ae_int_t pivottype, integer_1d_array &p, integer_1d_array &q, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Sparse Cholesky decomposition for skyline matrixm using in-place algorithm
-without allocating additional storage.
-
-The algorithm computes Cholesky decomposition  of  a  symmetric  positive-
-definite sparse matrix. The result of an algorithm is a representation  of
-A as A=U^T*U or A=L*L^T
-
-This function allows to perform very efficient decomposition of low-profile
-matrices (average bandwidth is ~5-10 elements). For larger matrices it  is
-recommended to use supernodal Cholesky decomposition: SparseCholeskyP() or
-SparseCholeskyAnalyze()/SparseCholeskyFactorize().
-
-INPUT PARAMETERS:
-    A       -   sparse matrix in skyline storage (SKS) format.
-    N       -   size of matrix A (can be smaller than actual size of A)
-    IsUpper -   if IsUpper=True, then factorization is performed on  upper
-                triangle. Another triangle is ignored (it may contant some
-                data, but it is not changed).
-
-
-OUTPUT PARAMETERS:
-    A       -   the result of factorization, stored in SKS. If IsUpper=True,
-                then the upper  triangle  contains  matrix  U,  such  that
-                A = U^T*U. Lower triangle is not changed.
-                Similarly, if IsUpper = False. In this case L is returned,
-                and we have A = L*(L^T).
-                Note that THIS function does not  perform  permutation  of
-                rows to reduce bandwidth.
-
-RESULT:
-    If  the  matrix  is  positive-definite,  the  function  returns  True.
-    Otherwise, the function returns False. Contents of A is not determined
-    in such case.
-
-NOTE: for  performance  reasons  this  function  does NOT check that input
-      matrix  includes  only  finite  values. It is your responsibility to
-      make sure that there are no infinite or NAN values in the matrix.
-
-  -- ALGLIB routine --
-     16.01.2014
-     Bochkanov Sergey
-*************************************************************************/
-bool sparsecholeskyskyline(const sparsematrix &a, const ae_int_t n, const bool isupper, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Sparse Cholesky decomposition for a matrix  stored  in  any sparse storage,
-without rows/cols permutation.
-
-This function is the most convenient (less parameters to specify), although
-less efficient, version of sparse Cholesky.
-
-Internally it:
-* calls SparseCholeskyAnalyze()  function  to  perform  symbolic  analysis
-  phase with no permutation being configured.
-* calls SparseCholeskyFactorize() function to perform numerical  phase  of
-  the factorization
-
-Following alternatives may result in better performance:
-* using SparseCholeskyP(), which selects best  pivoting  available,  which
-  almost always results in improved sparsity and cache locality
-* using  SparseCholeskyAnalyze() and SparseCholeskyFactorize()   functions
-  directly,  which  may  improve  performance of repetitive factorizations
-  with same sparsity patterns.
-
-The latter also allows one to perform  LDLT  factorization  of  indefinite
-matrix (one with strictly diagonal D, which is known  to  be  stable  only
-in few special cases, like quasi-definite matrices).
-
-INPUT PARAMETERS:
-    A       -   a square NxN sparse matrix, stored in any storage format.
-    IsUpper -   if IsUpper=True, then factorization is performed on  upper
-                triangle.  Another triangle is ignored on  input,  dropped
-                on output. Similarly, if IsUpper=False, the lower triangle
-                is processed.
-
-OUTPUT PARAMETERS:
-    A       -   the result of factorization, stored in CRS format:
-                * if IsUpper=True, then the upper triangle contains matrix
-                  U such  that  A = U^T*U and the lower triangle is empty.
-                * similarly, if IsUpper=False, then lower triangular L  is
-                  returned and we have A = L*(L^T).
-                Note that THIS function does not  perform  permutation  of
-                the rows to reduce fill-in.
-
-RESULT:
-    If  the  matrix  is  positive-definite,  the  function  returns  True.
-    Otherwise, the function returns False.  Contents  of  A  is  undefined
-    in such case.
-
-NOTE: for  performance  reasons  this  function  does NOT check that input
-      matrix  includes  only  finite  values. It is your responsibility to
-      make sure that there are no infinite or NAN values in the matrix.
-
-  -- ALGLIB routine --
-     16.09.2020
-     Bochkanov Sergey
-*************************************************************************/
-bool sparsecholesky(const sparsematrix &a, const bool isupper, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Sparse Cholesky decomposition for a matrix  stored  in  any sparse storage
-format, with performance-enhancing permutation of rows/cols.
-
-Present version is configured  to  perform  supernodal  permutation  which
-sparsity reducing ordering.
-
-This function is a wrapper around generic sparse  decomposition  functions
-that internally:
-* calls SparseCholeskyAnalyze()  function  to  perform  symbolic  analysis
-  phase with best available permutation being configured.
-* calls SparseCholeskyFactorize() function to perform numerical  phase  of
-  the factorization.
-
-NOTE: using  SparseCholeskyAnalyze() and SparseCholeskyFactorize() directly
-      may improve  performance  of  repetitive  factorizations  with  same
-      sparsity patterns. It also allows one to perform  LDLT factorization
-      of  indefinite  matrix  -  a factorization with strictly diagonal D,
-      which  is  known to be stable only in few special cases, like quasi-
-      definite matrices.
-
-INPUT PARAMETERS:
-    A       -   a square NxN sparse matrix, stored in any storage format.
-    IsUpper -   if IsUpper=True, then factorization is performed on  upper
-                triangle.  Another triangle is ignored on  input,  dropped
-                on output. Similarly, if IsUpper=False, the lower triangle
-                is processed.
-
-OUTPUT PARAMETERS:
-    A       -   the result of factorization, stored in CRS format:
-                * if IsUpper=True, then the upper triangle contains matrix
-                  U such  that  A = U^T*U and the lower triangle is empty.
-                * similarly, if IsUpper=False, then lower triangular L  is
-                  returned and we have A = L*(L^T).
-    P       -   a row/column permutation, a product of P0*P1*...*Pk, k=N-1,
-                with Pi being permutation of rows/cols I and P[I]
-
-RESULT:
-    If  the  matrix  is  positive-definite,  the  function  returns  True.
-    Otherwise, the function returns False.  Contents  of  A  is  undefined
-    in such case.
-
-NOTE: for  performance  reasons  this  function  does NOT check that input
-      matrix  includes  only  finite  values. It is your responsibility to
-      make sure that there are no infinite or NAN values in the matrix.
-
-  -- ALGLIB routine --
-     16.09.2020
-     Bochkanov Sergey
-*************************************************************************/
-bool sparsecholeskyp(const sparsematrix &a, const bool isupper, integer_1d_array &p, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Sparse Cholesky/LDLT decomposition: symbolic analysis phase.
-
-This function is a part of the 'expert' sparse Cholesky API:
-* SparseCholeskyAnalyze(), that performs symbolic analysis phase and loads
-  matrix to be factorized into internal storage
-* SparseCholeskySetModType(), that allows to  use  modified  Cholesky/LDLT
-  with lower bounds on pivot magnitudes and additional overflow safeguards
-* SparseCholeskyFactorize(),  that performs  numeric  factorization  using
-  precomputed symbolic analysis and internally stored matrix - and outputs
-  result
-* SparseCholeskyReload(), that reloads one more matrix with same  sparsity
-  pattern into internal storage so  one  may  reuse  previously  allocated
-  temporaries and previously performed symbolic analysis
-
-This specific function performs preliminary analysis of the  Cholesky/LDLT
-factorization. It allows to choose  different  permutation  types  and  to
-choose between classic Cholesky and  indefinite  LDLT  factorization  (the
-latter is computed with strictly diagonal D, i.e.  without  Bunch-Kauffman
-pivoting).
-
-NOTE: L*D*LT family of factorization may be used to  factorize  indefinite
-      matrices. However, numerical stability is guaranteed ONLY for a class
-      of quasi-definite matrices.
-
-NOTE: all internal processing is performed with lower triangular  matrices
-      stored  in  CRS  format.  Any  other  storage  formats  and/or upper
-      triangular storage means  that  one  format  conversion  and/or  one
-      transposition will be performed  internally  for  the  analysis  and
-      factorization phases. Thus, highest  performance  is  achieved  when
-      input is a lower triangular CRS matrix.
-
-INPUT PARAMETERS:
-    A           -   sparse square matrix in any sparse storage format.
-    IsUpper     -   whether upper or lower  triangle  is  decomposed  (the
-                    other one is ignored).
-    FactType    -   factorization type:
-                    * 0 for traditional Cholesky of SPD matrix
-                    * 1 for LDLT decomposition with strictly  diagonal  D,
-                        which may have non-positive entries.
-    PermType    -   permutation type:
-                    *-1 for absence of permutation
-                    * 0 for best fill-in reducing permutation available
-                    * 1 for supernodal ordering (improves locality and
-                      performance, does NOT change fill-in factor)
-                    * 2 for AMD (approximate minimum degree) ordering
-
-OUTPUT PARAMETERS:
-    Analysis    -   contains:
-                    * symbolic analysis of the matrix structure which will
-                      be used later to guide numerical factorization.
-                    * specific numeric values loaded into internal  memory
-                      waiting for the factorization to be performed
-
-This function fails if and only if the matrix A is symbolically degenerate
-i.e. has diagonal element which is exactly zero. In  such  case  False  is
-returned, contents of Analysis object is undefined.
-
-  -- ALGLIB routine --
-     20.09.2020
-     Bochkanov Sergey
-*************************************************************************/
-bool sparsecholeskyanalyze(const sparsematrix &a, const bool isupper, const ae_int_t facttype, const ae_int_t permtype, sparsedecompositionanalysis &analysis, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Sparse Cholesky decomposition: numerical analysis phase.
-
-This function is a part of the 'expert' sparse Cholesky API:
-* SparseCholeskyAnalyze(), that performs symbolic analysis phase and loads
-  matrix to be factorized into internal storage
-* SparseCholeskySetModType(), that allows to  use  modified  Cholesky/LDLT
-  with lower bounds on pivot magnitudes and additional overflow safeguards
-* SparseCholeskyFactorize(),  that performs  numeric  factorization  using
-  precomputed symbolic analysis and internally stored matrix - and outputs
-  result
-* SparseCholeskyReload(), that reloads one more matrix with same  sparsity
-  pattern into internal storage so  one  may  reuse  previously  allocated
-  temporaries and previously performed symbolic analysis
-
-Depending on settings specified during SparseCholeskyAnalyze() call it may
-produce classic Cholesky or L*D*LT  decomposition  (with strictly diagonal
-D), without permutation or with performance-enhancing permutation P.
-
-NOTE: all internal processing is performed with lower triangular  matrices
-      stored  in  CRS  format.  Any  other  storage  formats  and/or upper
-      triangular storage means  that  one  format  conversion  and/or  one
-      transposition will be performed  internally  for  the  analysis  and
-      factorization phases. Thus, highest  performance  is  achieved  when
-      input is a lower triangular CRS matrix, and lower triangular  output
-      is requested.
-
-NOTE: L*D*LT family of factorization may be used to  factorize  indefinite
-      matrices. However, numerical stability is guaranteed ONLY for a class
-      of quasi-definite matrices.
-
-INPUT PARAMETERS:
-    Analysis    -   prior analysis with internally stored matrix which will
-                    be factorized
-    NeedUpper   -   whether upper triangular or lower triangular output is
-                    needed
-
-OUTPUT PARAMETERS:
-    A           -   Cholesky decomposition of A stored in lower triangular
-                    CRS format, i.e. A=L*L' (or upper triangular CRS, with
-                    A=U'*U, depending on NeedUpper parameter).
-    D           -   array[N], diagonal factor. If no diagonal  factor  was
-                    required during analysis  phase,  still  returned  but
-                    filled with 1's
-    P           -   array[N], pivots. Permutation matrix P is a product of
-                    P(0)*P(1)*...*P(N-1), where P(i) is a  permutation  of
-                    row/col I and P[I] (with P[I]>=I).
-                    If no permutation was requested during analysis phase,
-                    still returned but filled with identity permutation.
-
-The function returns True  when  factorization  resulted  in nondegenerate
-matrix. False is returned when factorization fails (Cholesky factorization
-of indefinite matrix) or LDLT factorization has exactly zero  elements  at
-the diagonal. In the latter case contents of A, D and P is undefined.
-
-The analysis object is not changed during  the  factorization.  Subsequent
-calls to SparseCholeskyFactorize() will result in same factorization being
-performed one more time.
-
-  -- ALGLIB routine --
-     20.09.2020
-     Bochkanov Sergey
-*************************************************************************/
-bool sparsecholeskyfactorize(const sparsedecompositionanalysis &analysis, const bool needupper, sparsematrix &a, real_1d_array &d, integer_1d_array &p, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Sparse  Cholesky  decomposition:  update  internally  stored  matrix  with
-another one with exactly same sparsity pattern.
-
-This function is a part of the 'expert' sparse Cholesky API:
-* SparseCholeskyAnalyze(), that performs symbolic analysis phase and loads
-  matrix to be factorized into internal storage
-* SparseCholeskySetModType(), that allows to  use  modified  Cholesky/LDLT
-  with lower bounds on pivot magnitudes and additional overflow safeguards
-* SparseCholeskyFactorize(),  that performs  numeric  factorization  using
-  precomputed symbolic analysis and internally stored matrix - and outputs
-  result
-* SparseCholeskyReload(), that reloads one more matrix with same  sparsity
-  pattern into internal storage so  one  may  reuse  previously  allocated
-  temporaries and previously performed symbolic analysis
-
-This specific function replaces internally stored  numerical  values  with
-ones from another sparse matrix (but having exactly same sparsity  pattern
-as one that was used for initial SparseCholeskyAnalyze() call).
-
-NOTE: all internal processing is performed with lower triangular  matrices
-      stored  in  CRS  format.  Any  other  storage  formats  and/or upper
-      triangular storage means  that  one  format  conversion  and/or  one
-      transposition will be performed  internally  for  the  analysis  and
-      factorization phases. Thus, highest  performance  is  achieved  when
-      input is a lower triangular CRS matrix.
-
-INPUT PARAMETERS:
-    Analysis    -   analysis object
-    A           -   sparse square matrix in any sparse storage format.  It
-                    MUST have exactly same sparsity pattern as that of the
-                    matrix that was passed to SparseCholeskyAnalyze().
-                    Any difference (missing elements or additional elements)
-                    may result in unpredictable and undefined  behavior  -
-                    an algorithm may fail due to memory access violation.
-    IsUpper     -   whether upper or lower  triangle  is  decomposed  (the
-                    other one is ignored).
-
-OUTPUT PARAMETERS:
-    Analysis    -   contains:
-                    * symbolic analysis of the matrix structure which will
-                      be used later to guide numerical factorization.
-                    * specific numeric values loaded into internal  memory
-                      waiting for the factorization to be performed
-
-  -- ALGLIB routine --
-     20.09.2020
-     Bochkanov Sergey
-*************************************************************************/
-void sparsecholeskyreload(const sparsedecompositionanalysis &analysis, const sparsematrix &a, const bool isupper, const xparams _xparams = alglib::xdefault);
-#endif
-
-#if defined(AE_COMPILE_RCOND) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-Estimate of a matrix condition number (1-norm)
-
-The algorithm calculates a lower bound of the condition number. In this case,
-the algorithm does not return a lower bound of the condition number, but an
-inverse number (to avoid an overflow in case of a singular matrix).
-
-Input parameters:
-    A   -   matrix. Array whose indexes range within [0..N-1, 0..N-1].
-    N   -   size of matrix A.
-
-Result: 1/LowerBound(cond(A))
-
-NOTE:
-    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
-    0.0 is returned in such cases.
-*************************************************************************/
-double rmatrixrcond1(const real_2d_array &a, const ae_int_t n, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Estimate of a matrix condition number (infinity-norm).
-
-The algorithm calculates a lower bound of the condition number. In this case,
-the algorithm does not return a lower bound of the condition number, but an
-inverse number (to avoid an overflow in case of a singular matrix).
-
-Input parameters:
-    A   -   matrix. Array whose indexes range within [0..N-1, 0..N-1].
-    N   -   size of matrix A.
-
-Result: 1/LowerBound(cond(A))
-
-NOTE:
-    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
-    0.0 is returned in such cases.
-*************************************************************************/
-double rmatrixrcondinf(const real_2d_array &a, const ae_int_t n, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Condition number estimate of a symmetric positive definite matrix.
-
-The algorithm calculates a lower bound of the condition number. In this case,
-the algorithm does not return a lower bound of the condition number, but an
-inverse number (to avoid an overflow in case of a singular matrix).
-
-It should be noted that 1-norm and inf-norm of condition numbers of symmetric
-matrices are equal, so the algorithm doesn't take into account the
-differences between these types of norms.
-
-Input parameters:
-    A       -   symmetric positive definite matrix which is given by its
-                upper or lower triangle depending on the value of
-                IsUpper. Array with elements [0..N-1, 0..N-1].
-    N       -   size of matrix A.
-    IsUpper -   storage format.
-
-Result:
-    1/LowerBound(cond(A)), if matrix A is positive definite,
-   -1, if matrix A is not positive definite, and its condition number
-    could not be found by this algorithm.
-
-NOTE:
-    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
-    0.0 is returned in such cases.
-*************************************************************************/
-double spdmatrixrcond(const real_2d_array &a, const ae_int_t n, const bool isupper, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Triangular matrix: estimate of a condition number (1-norm)
-
-The algorithm calculates a lower bound of the condition number. In this case,
-the algorithm does not return a lower bound of the condition number, but an
-inverse number (to avoid an overflow in case of a singular matrix).
-
-Input parameters:
-    A       -   matrix. Array[0..N-1, 0..N-1].
-    N       -   size of A.
-    IsUpper -   True, if the matrix is upper triangular.
-    IsUnit  -   True, if the matrix has a unit diagonal.
-
-Result: 1/LowerBound(cond(A))
-
-NOTE:
-    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
-    0.0 is returned in such cases.
-*************************************************************************/
-double rmatrixtrrcond1(const real_2d_array &a, const ae_int_t n, const bool isupper, const bool isunit, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Triangular matrix: estimate of a matrix condition number (infinity-norm).
-
-The algorithm calculates a lower bound of the condition number. In this case,
-the algorithm does not return a lower bound of the condition number, but an
-inverse number (to avoid an overflow in case of a singular matrix).
-
-Input parameters:
-    A   -   matrix. Array whose indexes range within [0..N-1, 0..N-1].
-    N   -   size of matrix A.
-    IsUpper -   True, if the matrix is upper triangular.
-    IsUnit  -   True, if the matrix has a unit diagonal.
-
-Result: 1/LowerBound(cond(A))
-
-NOTE:
-    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
-    0.0 is returned in such cases.
-*************************************************************************/
-double rmatrixtrrcondinf(const real_2d_array &a, const ae_int_t n, const bool isupper, const bool isunit, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Condition number estimate of a Hermitian positive definite matrix.
-
-The algorithm calculates a lower bound of the condition number. In this case,
-the algorithm does not return a lower bound of the condition number, but an
-inverse number (to avoid an overflow in case of a singular matrix).
-
-It should be noted that 1-norm and inf-norm of condition numbers of symmetric
-matrices are equal, so the algorithm doesn't take into account the
-differences between these types of norms.
-
-Input parameters:
-    A       -   Hermitian positive definite matrix which is given by its
-                upper or lower triangle depending on the value of
-                IsUpper. Array with elements [0..N-1, 0..N-1].
-    N       -   size of matrix A.
-    IsUpper -   storage format.
-
-Result:
-    1/LowerBound(cond(A)), if matrix A is positive definite,
-   -1, if matrix A is not positive definite, and its condition number
-    could not be found by this algorithm.
-
-NOTE:
-    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
-    0.0 is returned in such cases.
-*************************************************************************/
-double hpdmatrixrcond(const complex_2d_array &a, const ae_int_t n, const bool isupper, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Estimate of a matrix condition number (1-norm)
-
-The algorithm calculates a lower bound of the condition number. In this case,
-the algorithm does not return a lower bound of the condition number, but an
-inverse number (to avoid an overflow in case of a singular matrix).
-
-Input parameters:
-    A   -   matrix. Array whose indexes range within [0..N-1, 0..N-1].
-    N   -   size of matrix A.
-
-Result: 1/LowerBound(cond(A))
-
-NOTE:
-    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
-    0.0 is returned in such cases.
-*************************************************************************/
-double cmatrixrcond1(const complex_2d_array &a, const ae_int_t n, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Estimate of a matrix condition number (infinity-norm).
-
-The algorithm calculates a lower bound of the condition number. In this case,
-the algorithm does not return a lower bound of the condition number, but an
-inverse number (to avoid an overflow in case of a singular matrix).
-
-Input parameters:
-    A   -   matrix. Array whose indexes range within [0..N-1, 0..N-1].
-    N   -   size of matrix A.
-
-Result: 1/LowerBound(cond(A))
-
-NOTE:
-    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
-    0.0 is returned in such cases.
-*************************************************************************/
-double cmatrixrcondinf(const complex_2d_array &a, const ae_int_t n, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Estimate of the condition number of a matrix given by its LU decomposition (1-norm)
-
-The algorithm calculates a lower bound of the condition number. In this case,
-the algorithm does not return a lower bound of the condition number, but an
-inverse number (to avoid an overflow in case of a singular matrix).
-
-Input parameters:
-    LUA         -   LU decomposition of a matrix in compact form. Output of
-                    the RMatrixLU subroutine.
-    N           -   size of matrix A.
-
-Result: 1/LowerBound(cond(A))
-
-NOTE:
-    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
-    0.0 is returned in such cases.
-*************************************************************************/
-double rmatrixlurcond1(const real_2d_array &lua, const ae_int_t n, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Estimate of the condition number of a matrix given by its LU decomposition
-(infinity norm).
-
-The algorithm calculates a lower bound of the condition number. In this case,
-the algorithm does not return a lower bound of the condition number, but an
-inverse number (to avoid an overflow in case of a singular matrix).
-
-Input parameters:
-    LUA     -   LU decomposition of a matrix in compact form. Output of
-                the RMatrixLU subroutine.
-    N       -   size of matrix A.
-
-Result: 1/LowerBound(cond(A))
-
-NOTE:
-    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
-    0.0 is returned in such cases.
-*************************************************************************/
-double rmatrixlurcondinf(const real_2d_array &lua, const ae_int_t n, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Condition number estimate of a symmetric positive definite matrix given by
-Cholesky decomposition.
-
-The algorithm calculates a lower bound of the condition number. In this
-case, the algorithm does not return a lower bound of the condition number,
-but an inverse number (to avoid an overflow in case of a singular matrix).
-
-It should be noted that 1-norm and inf-norm condition numbers of symmetric
-matrices are equal, so the algorithm doesn't take into account the
-differences between these types of norms.
-
-Input parameters:
-    CD  - Cholesky decomposition of matrix A,
-          output of SMatrixCholesky subroutine.
-    N   - size of matrix A.
-
-Result: 1/LowerBound(cond(A))
-
-NOTE:
-    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
-    0.0 is returned in such cases.
-*************************************************************************/
-double spdmatrixcholeskyrcond(const real_2d_array &a, const ae_int_t n, const bool isupper, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Condition number estimate of a Hermitian positive definite matrix given by
-Cholesky decomposition.
-
-The algorithm calculates a lower bound of the condition number. In this
-case, the algorithm does not return a lower bound of the condition number,
-but an inverse number (to avoid an overflow in case of a singular matrix).
-
-It should be noted that 1-norm and inf-norm condition numbers of symmetric
-matrices are equal, so the algorithm doesn't take into account the
-differences between these types of norms.
-
-Input parameters:
-    CD  - Cholesky decomposition of matrix A,
-          output of SMatrixCholesky subroutine.
-    N   - size of matrix A.
-
-Result: 1/LowerBound(cond(A))
-
-NOTE:
-    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
-    0.0 is returned in such cases.
-*************************************************************************/
-double hpdmatrixcholeskyrcond(const complex_2d_array &a, const ae_int_t n, const bool isupper, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Estimate of the condition number of a matrix given by its LU decomposition (1-norm)
-
-The algorithm calculates a lower bound of the condition number. In this case,
-the algorithm does not return a lower bound of the condition number, but an
-inverse number (to avoid an overflow in case of a singular matrix).
-
-Input parameters:
-    LUA         -   LU decomposition of a matrix in compact form. Output of
-                    the CMatrixLU subroutine.
-    N           -   size of matrix A.
-
-Result: 1/LowerBound(cond(A))
-
-NOTE:
-    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
-    0.0 is returned in such cases.
-*************************************************************************/
-double cmatrixlurcond1(const complex_2d_array &lua, const ae_int_t n, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Estimate of the condition number of a matrix given by its LU decomposition
-(infinity norm).
-
-The algorithm calculates a lower bound of the condition number. In this case,
-the algorithm does not return a lower bound of the condition number, but an
-inverse number (to avoid an overflow in case of a singular matrix).
-
-Input parameters:
-    LUA     -   LU decomposition of a matrix in compact form. Output of
-                the CMatrixLU subroutine.
-    N       -   size of matrix A.
-
-Result: 1/LowerBound(cond(A))
-
-NOTE:
-    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
-    0.0 is returned in such cases.
-*************************************************************************/
-double cmatrixlurcondinf(const complex_2d_array &lua, const ae_int_t n, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Triangular matrix: estimate of a condition number (1-norm)
-
-The algorithm calculates a lower bound of the condition number. In this case,
-the algorithm does not return a lower bound of the condition number, but an
-inverse number (to avoid an overflow in case of a singular matrix).
-
-Input parameters:
-    A       -   matrix. Array[0..N-1, 0..N-1].
-    N       -   size of A.
-    IsUpper -   True, if the matrix is upper triangular.
-    IsUnit  -   True, if the matrix has a unit diagonal.
-
-Result: 1/LowerBound(cond(A))
-
-NOTE:
-    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
-    0.0 is returned in such cases.
-*************************************************************************/
-double cmatrixtrrcond1(const complex_2d_array &a, const ae_int_t n, const bool isupper, const bool isunit, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Triangular matrix: estimate of a matrix condition number (infinity-norm).
-
-The algorithm calculates a lower bound of the condition number. In this case,
-the algorithm does not return a lower bound of the condition number, but an
-inverse number (to avoid an overflow in case of a singular matrix).
-
-Input parameters:
-    A   -   matrix. Array whose indexes range within [0..N-1, 0..N-1].
-    N   -   size of matrix A.
-    IsUpper -   True, if the matrix is upper triangular.
-    IsUnit  -   True, if the matrix has a unit diagonal.
-
-Result: 1/LowerBound(cond(A))
-
-NOTE:
-    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
-    0.0 is returned in such cases.
-*************************************************************************/
-double cmatrixtrrcondinf(const complex_2d_array &a, const ae_int_t n, const bool isupper, const bool isunit, const xparams _xparams = alglib::xdefault);
-#endif
-
-#if defined(AE_COMPILE_MATINV) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-Inversion of a matrix given by its LU decomposition.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-INPUT PARAMETERS:
-    A       -   LU decomposition of the matrix
-                (output of RMatrixLU subroutine).
-    Pivots  -   table of permutations
-                (the output of RMatrixLU subroutine).
-    N       -   size of matrix A (optional) :
-                * if given, only principal NxN submatrix is processed  and
-                  overwritten. other elements are unchanged.
-                * if not given,  size  is  automatically  determined  from
-                  matrix size (A must be square matrix)
-
-OUTPUT PARAMETERS:
-    Info    -   return code:
-                * -3    A is singular, or VERY close to singular.
-                        it is filled by zeros in such cases.
-                *  1    task is solved (but matrix A may be ill-conditioned,
-                        check R1/RInf parameters for condition numbers).
-    Rep     -   solver report, see below for more info
-    A       -   inverse of matrix A.
-                Array whose indexes range within [0..N-1, 0..N-1].
-
-SOLVER REPORT
-
-Subroutine sets following fields of the Rep structure:
-* R1        reciprocal of condition number: 1/cond(A), 1-norm.
-* RInf      reciprocal of condition number: 1/cond(A), inf-norm.
-
-  -- ALGLIB routine --
-     05.02.2010
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixluinverse(real_2d_array &a, const integer_1d_array &pivots, const ae_int_t n, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
-void rmatrixluinverse(real_2d_array &a, const integer_1d_array &pivots, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Inversion of a general matrix.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A       -   matrix.
-    N       -   size of matrix A (optional) :
-                * if given, only principal NxN submatrix is processed  and
-                  overwritten. other elements are unchanged.
-                * if not given,  size  is  automatically  determined  from
-                  matrix size (A must be square matrix)
-
-Output parameters:
-    Info    -   return code, same as in RMatrixLUInverse
-    Rep     -   solver report, same as in RMatrixLUInverse
-    A       -   inverse of matrix A, same as in RMatrixLUInverse
-
-Result:
-    True, if the matrix is not singular.
-    False, if the matrix is singular.
-
-  -- ALGLIB --
-     Copyright 2005-2010 by Bochkanov Sergey
-*************************************************************************/
-void rmatrixinverse(real_2d_array &a, const ae_int_t n, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
-void rmatrixinverse(real_2d_array &a, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Inversion of a matrix given by its LU decomposition.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-INPUT PARAMETERS:
-    A       -   LU decomposition of the matrix
-                (output of CMatrixLU subroutine).
-    Pivots  -   table of permutations
-                (the output of CMatrixLU subroutine).
-    N       -   size of matrix A (optional) :
-                * if given, only principal NxN submatrix is processed  and
-                  overwritten. other elements are unchanged.
-                * if not given,  size  is  automatically  determined  from
-                  matrix size (A must be square matrix)
-
-OUTPUT PARAMETERS:
-    Info    -   return code, same as in RMatrixLUInverse
-    Rep     -   solver report, same as in RMatrixLUInverse
-    A       -   inverse of matrix A, same as in RMatrixLUInverse
-
-  -- ALGLIB routine --
-     05.02.2010
-     Bochkanov Sergey
-*************************************************************************/
-void cmatrixluinverse(complex_2d_array &a, const integer_1d_array &pivots, const ae_int_t n, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
-void cmatrixluinverse(complex_2d_array &a, const integer_1d_array &pivots, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Inversion of a general matrix.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A       -   matrix
-    N       -   size of matrix A (optional) :
-                * if given, only principal NxN submatrix is processed  and
-                  overwritten. other elements are unchanged.
-                * if not given,  size  is  automatically  determined  from
-                  matrix size (A must be square matrix)
-
-Output parameters:
-    Info    -   return code, same as in RMatrixLUInverse
-    Rep     -   solver report, same as in RMatrixLUInverse
-    A       -   inverse of matrix A, same as in RMatrixLUInverse
-
-  -- ALGLIB --
-     Copyright 2005 by Bochkanov Sergey
-*************************************************************************/
-void cmatrixinverse(complex_2d_array &a, const ae_int_t n, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
-void cmatrixinverse(complex_2d_array &a, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Inversion of a symmetric positive definite matrix which is given
-by Cholesky decomposition.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A       -   Cholesky decomposition of the matrix to be inverted:
-                A=U'*U or A = L*L'.
-                Output of  SPDMatrixCholesky subroutine.
-    N       -   size of matrix A (optional) :
-                * if given, only principal NxN submatrix is processed  and
-                  overwritten. other elements are unchanged.
-                * if not given,  size  is  automatically  determined  from
-                  matrix size (A must be square matrix)
-    IsUpper -   storage type (optional):
-                * if True, symmetric  matrix  A  is  given  by  its  upper
-                  triangle, and the lower triangle isn't  used/changed  by
-                  function
-                * if False,  symmetric matrix  A  is  given  by  its lower
-                  triangle, and the  upper triangle isn't used/changed  by
-                  function
-                * if not given, lower half is used.
-
-Output parameters:
-    Info    -   return code, same as in RMatrixLUInverse
-    Rep     -   solver report, same as in RMatrixLUInverse
-    A       -   inverse of matrix A, same as in RMatrixLUInverse
-
-  -- ALGLIB routine --
-     10.02.2010
-     Bochkanov Sergey
-*************************************************************************/
-void spdmatrixcholeskyinverse(real_2d_array &a, const ae_int_t n, const bool isupper, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
-void spdmatrixcholeskyinverse(real_2d_array &a, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Inversion of a symmetric positive definite matrix.
-
-Given an upper or lower triangle of a symmetric positive definite matrix,
-the algorithm generates matrix A^-1 and saves the upper or lower triangle
-depending on the input.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A       -   matrix to be inverted (upper or lower triangle).
-                Array with elements [0..N-1,0..N-1].
-    N       -   size of matrix A (optional) :
-                * if given, only principal NxN submatrix is processed  and
-                  overwritten. other elements are unchanged.
-                * if not given,  size  is  automatically  determined  from
-                  matrix size (A must be square matrix)
-    IsUpper -   storage type (optional):
-                * if True, symmetric  matrix  A  is  given  by  its  upper
-                  triangle, and the lower triangle isn't  used/changed  by
-                  function
-                * if False,  symmetric matrix  A  is  given  by  its lower
-                  triangle, and the  upper triangle isn't used/changed  by
-                  function
-                * if not given,  both lower and upper  triangles  must  be
-                  filled.
-
-Output parameters:
-    Info    -   return code, same as in RMatrixLUInverse
-    Rep     -   solver report, same as in RMatrixLUInverse
-    A       -   inverse of matrix A, same as in RMatrixLUInverse
-
-  -- ALGLIB routine --
-     10.02.2010
-     Bochkanov Sergey
-*************************************************************************/
-void spdmatrixinverse(real_2d_array &a, const ae_int_t n, const bool isupper, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
-void spdmatrixinverse(real_2d_array &a, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Inversion of a Hermitian positive definite matrix which is given
-by Cholesky decomposition.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A       -   Cholesky decomposition of the matrix to be inverted:
-                A=U'*U or A = L*L'.
-                Output of  HPDMatrixCholesky subroutine.
-    N       -   size of matrix A (optional) :
-                * if given, only principal NxN submatrix is processed  and
-                  overwritten. other elements are unchanged.
-                * if not given,  size  is  automatically  determined  from
-                  matrix size (A must be square matrix)
-    IsUpper -   storage type (optional):
-                * if True, symmetric  matrix  A  is  given  by  its  upper
-                  triangle, and the lower triangle isn't  used/changed  by
-                  function
-                * if False,  symmetric matrix  A  is  given  by  its lower
-                  triangle, and the  upper triangle isn't used/changed  by
-                  function
-                * if not given, lower half is used.
-
-Output parameters:
-    Info    -   return code, same as in RMatrixLUInverse
-    Rep     -   solver report, same as in RMatrixLUInverse
-    A       -   inverse of matrix A, same as in RMatrixLUInverse
-
-  -- ALGLIB routine --
-     10.02.2010
-     Bochkanov Sergey
-*************************************************************************/
-void hpdmatrixcholeskyinverse(complex_2d_array &a, const ae_int_t n, const bool isupper, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
-void hpdmatrixcholeskyinverse(complex_2d_array &a, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Inversion of a Hermitian positive definite matrix.
-
-Given an upper or lower triangle of a Hermitian positive definite matrix,
-the algorithm generates matrix A^-1 and saves the upper or lower triangle
-depending on the input.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A       -   matrix to be inverted (upper or lower triangle).
-                Array with elements [0..N-1,0..N-1].
-    N       -   size of matrix A (optional) :
-                * if given, only principal NxN submatrix is processed  and
-                  overwritten. other elements are unchanged.
-                * if not given,  size  is  automatically  determined  from
-                  matrix size (A must be square matrix)
-    IsUpper -   storage type (optional):
-                * if True, symmetric  matrix  A  is  given  by  its  upper
-                  triangle, and the lower triangle isn't  used/changed  by
-                  function
-                * if False,  symmetric matrix  A  is  given  by  its lower
-                  triangle, and the  upper triangle isn't used/changed  by
-                  function
-                * if not given,  both lower and upper  triangles  must  be
-                  filled.
-
-Output parameters:
-    Info    -   return code, same as in RMatrixLUInverse
-    Rep     -   solver report, same as in RMatrixLUInverse
-    A       -   inverse of matrix A, same as in RMatrixLUInverse
-
-  -- ALGLIB routine --
-     10.02.2010
-     Bochkanov Sergey
-*************************************************************************/
-void hpdmatrixinverse(complex_2d_array &a, const ae_int_t n, const bool isupper, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
-void hpdmatrixinverse(complex_2d_array &a, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Triangular matrix inverse (real)
-
-The subroutine inverts the following types of matrices:
-    * upper triangular
-    * upper triangular with unit diagonal
-    * lower triangular
-    * lower triangular with unit diagonal
-
-In case of an upper (lower) triangular matrix,  the  inverse  matrix  will
-also be upper (lower) triangular, and after the end of the algorithm,  the
-inverse matrix replaces the source matrix. The elements  below (above) the
-main diagonal are not changed by the algorithm.
-
-If  the matrix  has a unit diagonal, the inverse matrix also  has  a  unit
-diagonal, and the diagonal elements are not passed to the algorithm.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A       -   matrix, array[0..N-1, 0..N-1].
-    N       -   size of matrix A (optional) :
-                * if given, only principal NxN submatrix is processed  and
-                  overwritten. other elements are unchanged.
-                * if not given,  size  is  automatically  determined  from
-                  matrix size (A must be square matrix)
-    IsUpper -   True, if the matrix is upper triangular.
-    IsUnit  -   diagonal type (optional):
-                * if True, matrix has unit diagonal (a[i,i] are NOT used)
-                * if False, matrix diagonal is arbitrary
-                * if not given, False is assumed
-
-Output parameters:
-    Info    -   same as for RMatrixLUInverse
-    Rep     -   same as for RMatrixLUInverse
-    A       -   same as for RMatrixLUInverse.
-
-  -- ALGLIB --
-     Copyright 05.02.2010 by Bochkanov Sergey
-*************************************************************************/
-void rmatrixtrinverse(real_2d_array &a, const ae_int_t n, const bool isupper, const bool isunit, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
-void rmatrixtrinverse(real_2d_array &a, const bool isupper, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Triangular matrix inverse (complex)
-
-The subroutine inverts the following types of matrices:
-    * upper triangular
-    * upper triangular with unit diagonal
-    * lower triangular
-    * lower triangular with unit diagonal
-
-In case of an upper (lower) triangular matrix,  the  inverse  matrix  will
-also be upper (lower) triangular, and after the end of the algorithm,  the
-inverse matrix replaces the source matrix. The elements  below (above) the
-main diagonal are not changed by the algorithm.
-
-If  the matrix  has a unit diagonal, the inverse matrix also  has  a  unit
-diagonal, and the diagonal elements are not passed to the algorithm.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A       -   matrix, array[0..N-1, 0..N-1].
-    N       -   size of matrix A (optional) :
-                * if given, only principal NxN submatrix is processed  and
-                  overwritten. other elements are unchanged.
-                * if not given,  size  is  automatically  determined  from
-                  matrix size (A must be square matrix)
-    IsUpper -   True, if the matrix is upper triangular.
-    IsUnit  -   diagonal type (optional):
-                * if True, matrix has unit diagonal (a[i,i] are NOT used)
-                * if False, matrix diagonal is arbitrary
-                * if not given, False is assumed
-
-Output parameters:
-    Info    -   same as for RMatrixLUInverse
-    Rep     -   same as for RMatrixLUInverse
-    A       -   same as for RMatrixLUInverse.
-
-  -- ALGLIB --
-     Copyright 05.02.2010 by Bochkanov Sergey
-*************************************************************************/
-void cmatrixtrinverse(complex_2d_array &a, const ae_int_t n, const bool isupper, const bool isunit, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
-void cmatrixtrinverse(complex_2d_array &a, const bool isupper, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
-#endif
-
-#if defined(AE_COMPILE_ORTFAC) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-QR decomposition of a rectangular matrix of size MxN
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A   -   matrix A whose indexes range within [0..M-1, 0..N-1].
-    M   -   number of rows in matrix A.
-    N   -   number of columns in matrix A.
-
-Output parameters:
-    A   -   matrices Q and R in compact form (see below).
-    Tau -   array of scalar factors which are used to form
-            matrix Q. Array whose index ranges within [0.. Min(M-1,N-1)].
-
-Matrix A is represented as A = QR, where Q is an orthogonal matrix of size
-MxM, R - upper triangular (or upper trapezoid) matrix of size M x N.
-
-The elements of matrix R are located on and above the main diagonal of
-matrix A. The elements which are located in Tau array and below the main
-diagonal of matrix A are used to form matrix Q as follows:
-
-Matrix Q is represented as a product of elementary reflections
-
-Q = H(0)*H(2)*...*H(k-1),
-
-where k = min(m,n), and each H(i) is in the form
-
-H(i) = 1 - tau * v * (v^T)
-
-where tau is a scalar stored in Tau[I]; v - real vector,
-so that v(0:i-1) = 0, v(i) = 1, v(i+1:m-1) stored in A(i+1:m-1,i).
-
-  -- ALGLIB routine --
-     17.02.2010
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixqr(real_2d_array &a, const ae_int_t m, const ae_int_t n, real_1d_array &tau, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-LQ decomposition of a rectangular matrix of size MxN
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A   -   matrix A whose indexes range within [0..M-1, 0..N-1].
-    M   -   number of rows in matrix A.
-    N   -   number of columns in matrix A.
-
-Output parameters:
-    A   -   matrices L and Q in compact form (see below)
-    Tau -   array of scalar factors which are used to form
-            matrix Q. Array whose index ranges within [0..Min(M,N)-1].
-
-Matrix A is represented as A = LQ, where Q is an orthogonal matrix of size
-MxM, L - lower triangular (or lower trapezoid) matrix of size M x N.
-
-The elements of matrix L are located on and below  the  main  diagonal  of
-matrix A. The elements which are located in Tau array and above  the  main
-diagonal of matrix A are used to form matrix Q as follows:
-
-Matrix Q is represented as a product of elementary reflections
-
-Q = H(k-1)*H(k-2)*...*H(1)*H(0),
-
-where k = min(m,n), and each H(i) is of the form
-
-H(i) = 1 - tau * v * (v^T)
-
-where tau is a scalar stored in Tau[I]; v - real vector, so that v(0:i-1)=0,
-v(i) = 1, v(i+1:n-1) stored in A(i,i+1:n-1).
-
-  -- ALGLIB routine --
-     17.02.2010
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixlq(real_2d_array &a, const ae_int_t m, const ae_int_t n, real_1d_array &tau, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-QR decomposition of a rectangular complex matrix of size MxN
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A   -   matrix A whose indexes range within [0..M-1, 0..N-1]
-    M   -   number of rows in matrix A.
-    N   -   number of columns in matrix A.
-
-Output parameters:
-    A   -   matrices Q and R in compact form
-    Tau -   array of scalar factors which are used to form matrix Q. Array
-            whose indexes range within [0.. Min(M,N)-1]
-
-Matrix A is represented as A = QR, where Q is an orthogonal matrix of size
-MxM, R - upper triangular (or upper trapezoid) matrix of size MxN.
-
-  -- LAPACK routine (version 3.0) --
-     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
-     Courant Institute, Argonne National Lab, and Rice University
-     September 30, 1994
-*************************************************************************/
-void cmatrixqr(complex_2d_array &a, const ae_int_t m, const ae_int_t n, complex_1d_array &tau, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-LQ decomposition of a rectangular complex matrix of size MxN
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A   -   matrix A whose indexes range within [0..M-1, 0..N-1]
-    M   -   number of rows in matrix A.
-    N   -   number of columns in matrix A.
-
-Output parameters:
-    A   -   matrices Q and L in compact form
-    Tau -   array of scalar factors which are used to form matrix Q. Array
-            whose indexes range within [0.. Min(M,N)-1]
-
-Matrix A is represented as A = LQ, where Q is an orthogonal matrix of size
-MxM, L - lower triangular (or lower trapezoid) matrix of size MxN.
-
-  -- LAPACK routine (version 3.0) --
-     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
-     Courant Institute, Argonne National Lab, and Rice University
-     September 30, 1994
-*************************************************************************/
-void cmatrixlq(complex_2d_array &a, const ae_int_t m, const ae_int_t n, complex_1d_array &tau, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Partial unpacking of matrix Q from the QR decomposition of a matrix A
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A       -   matrices Q and R in compact form.
-                Output of RMatrixQR subroutine.
-    M       -   number of rows in given matrix A. M>=0.
-    N       -   number of columns in given matrix A. N>=0.
-    Tau     -   scalar factors which are used to form Q.
-                Output of the RMatrixQR subroutine.
-    QColumns -  required number of columns of matrix Q. M>=QColumns>=0.
-
-Output parameters:
-    Q       -   first QColumns columns of matrix Q.
-                Array whose indexes range within [0..M-1, 0..QColumns-1].
-                If QColumns=0, the array remains unchanged.
-
-  -- ALGLIB routine --
-     17.02.2010
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixqrunpackq(const real_2d_array &a, const ae_int_t m, const ae_int_t n, const real_1d_array &tau, const ae_int_t qcolumns, real_2d_array &q, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Unpacking of matrix R from the QR decomposition of a matrix A
-
-Input parameters:
-    A       -   matrices Q and R in compact form.
-                Output of RMatrixQR subroutine.
-    M       -   number of rows in given matrix A. M>=0.
-    N       -   number of columns in given matrix A. N>=0.
-
-Output parameters:
-    R       -   matrix R, array[0..M-1, 0..N-1].
-
-  -- ALGLIB routine --
-     17.02.2010
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixqrunpackr(const real_2d_array &a, const ae_int_t m, const ae_int_t n, real_2d_array &r, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Partial unpacking of matrix Q from the LQ decomposition of a matrix A
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A       -   matrices L and Q in compact form.
-                Output of RMatrixLQ subroutine.
-    M       -   number of rows in given matrix A. M>=0.
-    N       -   number of columns in given matrix A. N>=0.
-    Tau     -   scalar factors which are used to form Q.
-                Output of the RMatrixLQ subroutine.
-    QRows   -   required number of rows in matrix Q. N>=QRows>=0.
-
-Output parameters:
-    Q       -   first QRows rows of matrix Q. Array whose indexes range
-                within [0..QRows-1, 0..N-1]. If QRows=0, the array remains
-                unchanged.
-
-  -- ALGLIB routine --
-     17.02.2010
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixlqunpackq(const real_2d_array &a, const ae_int_t m, const ae_int_t n, const real_1d_array &tau, const ae_int_t qrows, real_2d_array &q, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Unpacking of matrix L from the LQ decomposition of a matrix A
-
-Input parameters:
-    A       -   matrices Q and L in compact form.
-                Output of RMatrixLQ subroutine.
-    M       -   number of rows in given matrix A. M>=0.
-    N       -   number of columns in given matrix A. N>=0.
-
-Output parameters:
-    L       -   matrix L, array[0..M-1, 0..N-1].
-
-  -- ALGLIB routine --
-     17.02.2010
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixlqunpackl(const real_2d_array &a, const ae_int_t m, const ae_int_t n, real_2d_array &l, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Partial unpacking of matrix Q from QR decomposition of a complex matrix A.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A           -   matrices Q and R in compact form.
-                    Output of CMatrixQR subroutine .
-    M           -   number of rows in matrix A. M>=0.
-    N           -   number of columns in matrix A. N>=0.
-    Tau         -   scalar factors which are used to form Q.
-                    Output of CMatrixQR subroutine .
-    QColumns    -   required number of columns in matrix Q. M>=QColumns>=0.
-
-Output parameters:
-    Q           -   first QColumns columns of matrix Q.
-                    Array whose index ranges within [0..M-1, 0..QColumns-1].
-                    If QColumns=0, array isn't changed.
-
-  -- ALGLIB routine --
-     17.02.2010
-     Bochkanov Sergey
-*************************************************************************/
-void cmatrixqrunpackq(const complex_2d_array &a, const ae_int_t m, const ae_int_t n, const complex_1d_array &tau, const ae_int_t qcolumns, complex_2d_array &q, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Unpacking of matrix R from the QR decomposition of a matrix A
-
-Input parameters:
-    A       -   matrices Q and R in compact form.
-                Output of CMatrixQR subroutine.
-    M       -   number of rows in given matrix A. M>=0.
-    N       -   number of columns in given matrix A. N>=0.
-
-Output parameters:
-    R       -   matrix R, array[0..M-1, 0..N-1].
-
-  -- ALGLIB routine --
-     17.02.2010
-     Bochkanov Sergey
-*************************************************************************/
-void cmatrixqrunpackr(const complex_2d_array &a, const ae_int_t m, const ae_int_t n, complex_2d_array &r, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Partial unpacking of matrix Q from LQ decomposition of a complex matrix A.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A           -   matrices Q and R in compact form.
-                    Output of CMatrixLQ subroutine .
-    M           -   number of rows in matrix A. M>=0.
-    N           -   number of columns in matrix A. N>=0.
-    Tau         -   scalar factors which are used to form Q.
-                    Output of CMatrixLQ subroutine .
-    QRows       -   required number of rows in matrix Q. N>=QColumns>=0.
-
-Output parameters:
-    Q           -   first QRows rows of matrix Q.
-                    Array whose index ranges within [0..QRows-1, 0..N-1].
-                    If QRows=0, array isn't changed.
-
-  -- ALGLIB routine --
-     17.02.2010
-     Bochkanov Sergey
-*************************************************************************/
-void cmatrixlqunpackq(const complex_2d_array &a, const ae_int_t m, const ae_int_t n, const complex_1d_array &tau, const ae_int_t qrows, complex_2d_array &q, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Unpacking of matrix L from the LQ decomposition of a matrix A
-
-Input parameters:
-    A       -   matrices Q and L in compact form.
-                Output of CMatrixLQ subroutine.
-    M       -   number of rows in given matrix A. M>=0.
-    N       -   number of columns in given matrix A. N>=0.
-
-Output parameters:
-    L       -   matrix L, array[0..M-1, 0..N-1].
-
-  -- ALGLIB routine --
-     17.02.2010
-     Bochkanov Sergey
-*************************************************************************/
-void cmatrixlqunpackl(const complex_2d_array &a, const ae_int_t m, const ae_int_t n, complex_2d_array &l, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Reduction of a rectangular matrix to  bidiagonal form
-
-The algorithm reduces the rectangular matrix A to  bidiagonal form by
-orthogonal transformations P and Q: A = Q*B*(P^T).
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A       -   source matrix. array[0..M-1, 0..N-1]
-    M       -   number of rows in matrix A.
-    N       -   number of columns in matrix A.
-
-Output parameters:
-    A       -   matrices Q, B, P in compact form (see below).
-    TauQ    -   scalar factors which are used to form matrix Q.
-    TauP    -   scalar factors which are used to form matrix P.
-
-The main diagonal and one of the  secondary  diagonals  of  matrix  A  are
-replaced with bidiagonal  matrix  B.  Other  elements  contain  elementary
-reflections which form MxM matrix Q and NxN matrix P, respectively.
-
-If M>=N, B is the upper  bidiagonal  MxN  matrix  and  is  stored  in  the
-corresponding  elements  of  matrix  A.  Matrix  Q  is  represented  as  a
-product   of   elementary   reflections   Q = H(0)*H(1)*...*H(n-1),  where
-H(i) = 1-tau*v*v'. Here tau is a scalar which is stored  in  TauQ[i],  and
-vector v has the following  structure:  v(0:i-1)=0, v(i)=1, v(i+1:m-1)  is
-stored   in   elements   A(i+1:m-1,i).   Matrix   P  is  as  follows:  P =
-G(0)*G(1)*...*G(n-2), where G(i) = 1 - tau*u*u'. Tau is stored in TauP[i],
-u(0:i)=0, u(i+1)=1, u(i+2:n-1) is stored in elements A(i,i+2:n-1).
-
-If M<N, B is the  lower  bidiagonal  MxN  matrix  and  is  stored  in  the
-corresponding   elements  of  matrix  A.  Q = H(0)*H(1)*...*H(m-2),  where
-H(i) = 1 - tau*v*v', tau is stored in TauQ, v(0:i)=0, v(i+1)=1, v(i+2:m-1)
-is    stored    in   elements   A(i+2:m-1,i).    P = G(0)*G(1)*...*G(m-1),
-G(i) = 1-tau*u*u', tau is stored in  TauP,  u(0:i-1)=0, u(i)=1, u(i+1:n-1)
-is stored in A(i,i+1:n-1).
-
-EXAMPLE:
-
-m=6, n=5 (m > n):               m=5, n=6 (m < n):
-
-(  d   e   u1  u1  u1 )         (  d   u1  u1  u1  u1  u1 )
-(  v1  d   e   u2  u2 )         (  e   d   u2  u2  u2  u2 )
-(  v1  v2  d   e   u3 )         (  v1  e   d   u3  u3  u3 )
-(  v1  v2  v3  d   e  )         (  v1  v2  e   d   u4  u4 )
-(  v1  v2  v3  v4  d  )         (  v1  v2  v3  e   d   u5 )
-(  v1  v2  v3  v4  v5 )
-
-Here vi and ui are vectors which form H(i) and G(i), and d and e -
-are the diagonal and off-diagonal elements of matrix B.
-
-  -- LAPACK routine (version 3.0) --
-     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
-     Courant Institute, Argonne National Lab, and Rice University
-     September 30, 1994.
-     Sergey Bochkanov, ALGLIB project, translation from FORTRAN to
-     pseudocode, 2007-2010.
-*************************************************************************/
-void rmatrixbd(real_2d_array &a, const ae_int_t m, const ae_int_t n, real_1d_array &tauq, real_1d_array &taup, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Unpacking matrix Q which reduces a matrix to bidiagonal form.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    QP          -   matrices Q and P in compact form.
-                    Output of ToBidiagonal subroutine.
-    M           -   number of rows in matrix A.
-    N           -   number of columns in matrix A.
-    TAUQ        -   scalar factors which are used to form Q.
-                    Output of ToBidiagonal subroutine.
-    QColumns    -   required number of columns in matrix Q.
-                    M>=QColumns>=0.
-
-Output parameters:
-    Q           -   first QColumns columns of matrix Q.
-                    Array[0..M-1, 0..QColumns-1]
-                    If QColumns=0, the array is not modified.
-
-  -- ALGLIB --
-     2005-2010
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixbdunpackq(const real_2d_array &qp, const ae_int_t m, const ae_int_t n, const real_1d_array &tauq, const ae_int_t qcolumns, real_2d_array &q, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Multiplication by matrix Q which reduces matrix A to  bidiagonal form.
-
-The algorithm allows pre- or post-multiply by Q or Q'.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    QP          -   matrices Q and P in compact form.
-                    Output of ToBidiagonal subroutine.
-    M           -   number of rows in matrix A.
-    N           -   number of columns in matrix A.
-    TAUQ        -   scalar factors which are used to form Q.
-                    Output of ToBidiagonal subroutine.
-    Z           -   multiplied matrix.
-                    array[0..ZRows-1,0..ZColumns-1]
-    ZRows       -   number of rows in matrix Z. If FromTheRight=False,
-                    ZRows=M, otherwise ZRows can be arbitrary.
-    ZColumns    -   number of columns in matrix Z. If FromTheRight=True,
-                    ZColumns=M, otherwise ZColumns can be arbitrary.
-    FromTheRight -  pre- or post-multiply.
-    DoTranspose -   multiply by Q or Q'.
-
-Output parameters:
-    Z           -   product of Z and Q.
-                    Array[0..ZRows-1,0..ZColumns-1]
-                    If ZRows=0 or ZColumns=0, the array is not modified.
-
-  -- ALGLIB --
-     2005-2010
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixbdmultiplybyq(const real_2d_array &qp, const ae_int_t m, const ae_int_t n, const real_1d_array &tauq, real_2d_array &z, const ae_int_t zrows, const ae_int_t zcolumns, const bool fromtheright, const bool dotranspose, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Unpacking matrix P which reduces matrix A to bidiagonal form.
-The subroutine returns transposed matrix P.
-
-Input parameters:
-    QP      -   matrices Q and P in compact form.
-                Output of ToBidiagonal subroutine.
-    M       -   number of rows in matrix A.
-    N       -   number of columns in matrix A.
-    TAUP    -   scalar factors which are used to form P.
-                Output of ToBidiagonal subroutine.
-    PTRows  -   required number of rows of matrix P^T. N >= PTRows >= 0.
-
-Output parameters:
-    PT      -   first PTRows columns of matrix P^T
-                Array[0..PTRows-1, 0..N-1]
-                If PTRows=0, the array is not modified.
-
-  -- ALGLIB --
-     2005-2010
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixbdunpackpt(const real_2d_array &qp, const ae_int_t m, const ae_int_t n, const real_1d_array &taup, const ae_int_t ptrows, real_2d_array &pt, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Multiplication by matrix P which reduces matrix A to  bidiagonal form.
-
-The algorithm allows pre- or post-multiply by P or P'.
-
-Input parameters:
-    QP          -   matrices Q and P in compact form.
-                    Output of RMatrixBD subroutine.
-    M           -   number of rows in matrix A.
-    N           -   number of columns in matrix A.
-    TAUP        -   scalar factors which are used to form P.
-                    Output of RMatrixBD subroutine.
-    Z           -   multiplied matrix.
-                    Array whose indexes range within [0..ZRows-1,0..ZColumns-1].
-    ZRows       -   number of rows in matrix Z. If FromTheRight=False,
-                    ZRows=N, otherwise ZRows can be arbitrary.
-    ZColumns    -   number of columns in matrix Z. If FromTheRight=True,
-                    ZColumns=N, otherwise ZColumns can be arbitrary.
-    FromTheRight -  pre- or post-multiply.
-    DoTranspose -   multiply by P or P'.
-
-Output parameters:
-    Z - product of Z and P.
-                Array whose indexes range within [0..ZRows-1,0..ZColumns-1].
-                If ZRows=0 or ZColumns=0, the array is not modified.
-
-  -- ALGLIB --
-     2005-2010
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixbdmultiplybyp(const real_2d_array &qp, const ae_int_t m, const ae_int_t n, const real_1d_array &taup, real_2d_array &z, const ae_int_t zrows, const ae_int_t zcolumns, const bool fromtheright, const bool dotranspose, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Unpacking of the main and secondary diagonals of bidiagonal decomposition
-of matrix A.
-
-Input parameters:
-    B   -   output of RMatrixBD subroutine.
-    M   -   number of rows in matrix B.
-    N   -   number of columns in matrix B.
-
-Output parameters:
-    IsUpper -   True, if the matrix is upper bidiagonal.
-                otherwise IsUpper is False.
-    D       -   the main diagonal.
-                Array whose index ranges within [0..Min(M,N)-1].
-    E       -   the secondary diagonal (upper or lower, depending on
-                the value of IsUpper).
-                Array index ranges within [0..Min(M,N)-1], the last
-                element is not used.
-
-  -- ALGLIB --
-     2005-2010
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixbdunpackdiagonals(const real_2d_array &b, const ae_int_t m, const ae_int_t n, bool &isupper, real_1d_array &d, real_1d_array &e, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Reduction of a square matrix to  upper Hessenberg form: Q'*A*Q = H,
-where Q is an orthogonal matrix, H - Hessenberg matrix.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A       -   matrix A with elements [0..N-1, 0..N-1]
-    N       -   size of matrix A.
-
-Output parameters:
-    A       -   matrices Q and P in  compact form (see below).
-    Tau     -   array of scalar factors which are used to form matrix Q.
-                Array whose index ranges within [0..N-2]
-
-Matrix H is located on the main diagonal, on the lower secondary  diagonal
-and above the main diagonal of matrix A. The elements which are used to
-form matrix Q are situated in array Tau and below the lower secondary
-diagonal of matrix A as follows:
-
-Matrix Q is represented as a product of elementary reflections
-
-Q = H(0)*H(2)*...*H(n-2),
-
-where each H(i) is given by
-
-H(i) = 1 - tau * v * (v^T)
-
-where tau is a scalar stored in Tau[I]; v - is a real vector,
-so that v(0:i) = 0, v(i+1) = 1, v(i+2:n-1) stored in A(i+2:n-1,i).
-
-  -- LAPACK routine (version 3.0) --
-     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
-     Courant Institute, Argonne National Lab, and Rice University
-     October 31, 1992
-*************************************************************************/
-void rmatrixhessenberg(real_2d_array &a, const ae_int_t n, real_1d_array &tau, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Unpacking matrix Q which reduces matrix A to upper Hessenberg form
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A   -   output of RMatrixHessenberg subroutine.
-    N   -   size of matrix A.
-    Tau -   scalar factors which are used to form Q.
-            Output of RMatrixHessenberg subroutine.
-
-Output parameters:
-    Q   -   matrix Q.
-            Array whose indexes range within [0..N-1, 0..N-1].
-
-  -- ALGLIB --
-     2005-2010
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixhessenbergunpackq(const real_2d_array &a, const ae_int_t n, const real_1d_array &tau, real_2d_array &q, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Unpacking matrix H (the result of matrix A reduction to upper Hessenberg form)
-
-Input parameters:
-    A   -   output of RMatrixHessenberg subroutine.
-    N   -   size of matrix A.
-
-Output parameters:
-    H   -   matrix H. Array whose indexes range within [0..N-1, 0..N-1].
-
-  -- ALGLIB --
-     2005-2010
-     Bochkanov Sergey
-*************************************************************************/
-void rmatrixhessenbergunpackh(const real_2d_array &a, const ae_int_t n, real_2d_array &h, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Reduction of a symmetric matrix which is given by its higher or lower
-triangular part to a tridiagonal matrix using orthogonal similarity
-transformation: Q'*A*Q=T.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A       -   matrix to be transformed
-                array with elements [0..N-1, 0..N-1].
-    N       -   size of matrix A.
-    IsUpper -   storage format. If IsUpper = True, then matrix A is given
-                by its upper triangle, and the lower triangle is not used
-                and not modified by the algorithm, and vice versa
-                if IsUpper = False.
-
-Output parameters:
-    A       -   matrices T and Q in  compact form (see lower)
-    Tau     -   array of factors which are forming matrices H(i)
-                array with elements [0..N-2].
-    D       -   main diagonal of symmetric matrix T.
-                array with elements [0..N-1].
-    E       -   secondary diagonal of symmetric matrix T.
-                array with elements [0..N-2].
-
-
-  If IsUpper=True, the matrix Q is represented as a product of elementary
-  reflectors
-
-     Q = H(n-2) . . . H(2) H(0).
-
-  Each H(i) has the form
-
-     H(i) = I - tau * v * v'
-
-  where tau is a real scalar, and v is a real vector with
-  v(i+1:n-1) = 0, v(i) = 1, v(0:i-1) is stored on exit in
-  A(0:i-1,i+1), and tau in TAU(i).
-
-  If IsUpper=False, the matrix Q is represented as a product of elementary
-  reflectors
-
-     Q = H(0) H(2) . . . H(n-2).
-
-  Each H(i) has the form
-
-     H(i) = I - tau * v * v'
-
-  where tau is a real scalar, and v is a real vector with
-  v(0:i) = 0, v(i+1) = 1, v(i+2:n-1) is stored on exit in A(i+2:n-1,i),
-  and tau in TAU(i).
-
-  The contents of A on exit are illustrated by the following examples
-  with n = 5:
-
-  if UPLO = 'U':                       if UPLO = 'L':
-
-    (  d   e   v1  v2  v3 )              (  d                  )
-    (      d   e   v2  v3 )              (  e   d              )
-    (          d   e   v3 )              (  v0  e   d          )
-    (              d   e  )              (  v0  v1  e   d      )
-    (                  d  )              (  v0  v1  v2  e   d  )
-
-  where d and e denote diagonal and off-diagonal elements of T, and vi
-  denotes an element of the vector defining H(i).
-
-  -- LAPACK routine (version 3.0) --
-     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
-     Courant Institute, Argonne National Lab, and Rice University
-     October 31, 1992
-*************************************************************************/
-void smatrixtd(real_2d_array &a, const ae_int_t n, const bool isupper, real_1d_array &tau, real_1d_array &d, real_1d_array &e, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Unpacking matrix Q which reduces symmetric matrix to a tridiagonal
-form.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A       -   the result of a SMatrixTD subroutine
-    N       -   size of matrix A.
-    IsUpper -   storage format (a parameter of SMatrixTD subroutine)
-    Tau     -   the result of a SMatrixTD subroutine
-
-Output parameters:
-    Q       -   transformation matrix.
-                array with elements [0..N-1, 0..N-1].
-
-  -- ALGLIB --
-     Copyright 2005-2010 by Bochkanov Sergey
-*************************************************************************/
-void smatrixtdunpackq(const real_2d_array &a, const ae_int_t n, const bool isupper, const real_1d_array &tau, real_2d_array &q, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Reduction of a Hermitian matrix which is given  by  its  higher  or  lower
-triangular part to a real  tridiagonal  matrix  using  unitary  similarity
-transformation: Q'*A*Q = T.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A       -   matrix to be transformed
-                array with elements [0..N-1, 0..N-1].
-    N       -   size of matrix A.
-    IsUpper -   storage format. If IsUpper = True, then matrix A is  given
-                by its upper triangle, and the lower triangle is not  used
-                and not modified by the algorithm, and vice versa
-                if IsUpper = False.
-
-Output parameters:
-    A       -   matrices T and Q in  compact form (see lower)
-    Tau     -   array of factors which are forming matrices H(i)
-                array with elements [0..N-2].
-    D       -   main diagonal of real symmetric matrix T.
-                array with elements [0..N-1].
-    E       -   secondary diagonal of real symmetric matrix T.
-                array with elements [0..N-2].
-
-
-  If IsUpper=True, the matrix Q is represented as a product of elementary
-  reflectors
-
-     Q = H(n-2) . . . H(2) H(0).
-
-  Each H(i) has the form
-
-     H(i) = I - tau * v * v'
-
-  where tau is a complex scalar, and v is a complex vector with
-  v(i+1:n-1) = 0, v(i) = 1, v(0:i-1) is stored on exit in
-  A(0:i-1,i+1), and tau in TAU(i).
-
-  If IsUpper=False, the matrix Q is represented as a product of elementary
-  reflectors
-
-     Q = H(0) H(2) . . . H(n-2).
-
-  Each H(i) has the form
-
-     H(i) = I - tau * v * v'
-
-  where tau is a complex scalar, and v is a complex vector with
-  v(0:i) = 0, v(i+1) = 1, v(i+2:n-1) is stored on exit in A(i+2:n-1,i),
-  and tau in TAU(i).
-
-  The contents of A on exit are illustrated by the following examples
-  with n = 5:
-
-  if UPLO = 'U':                       if UPLO = 'L':
-
-    (  d   e   v1  v2  v3 )              (  d                  )
-    (      d   e   v2  v3 )              (  e   d              )
-    (          d   e   v3 )              (  v0  e   d          )
-    (              d   e  )              (  v0  v1  e   d      )
-    (                  d  )              (  v0  v1  v2  e   d  )
-
-where d and e denote diagonal and off-diagonal elements of T, and vi
-denotes an element of the vector defining H(i).
-
-  -- LAPACK routine (version 3.0) --
-     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
-     Courant Institute, Argonne National Lab, and Rice University
-     October 31, 1992
-*************************************************************************/
-void hmatrixtd(complex_2d_array &a, const ae_int_t n, const bool isupper, complex_1d_array &tau, real_1d_array &d, real_1d_array &e, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Unpacking matrix Q which reduces a Hermitian matrix to a real  tridiagonal
-form.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-Input parameters:
-    A       -   the result of a HMatrixTD subroutine
-    N       -   size of matrix A.
-    IsUpper -   storage format (a parameter of HMatrixTD subroutine)
-    Tau     -   the result of a HMatrixTD subroutine
-
-Output parameters:
-    Q       -   transformation matrix.
-                array with elements [0..N-1, 0..N-1].
-
-  -- ALGLIB --
-     Copyright 2005-2010 by Bochkanov Sergey
-*************************************************************************/
-void hmatrixtdunpackq(const complex_2d_array &a, const ae_int_t n, const bool isupper, const complex_1d_array &tau, complex_2d_array &q, const xparams _xparams = alglib::xdefault);
-#endif
-
-#if defined(AE_COMPILE_FBLS) || !defined(AE_PARTIAL_BUILD)
-
-#endif
-
-#if defined(AE_COMPILE_BDSVD) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-Singular value decomposition of a bidiagonal matrix (extended algorithm)
-
-COMMERCIAL EDITION OF ALGLIB:
-
-  ! Commercial version of ALGLIB includes one  important  improvement   of
-  ! this function, which can be used from C++ and C#:
-  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
-  !
-  ! Intel MKL gives approximately constant  (with  respect  to  number  of
-  ! worker threads) acceleration factor which depends on CPU  being  used,
-  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
-  ! comparison.
-  !
-  ! Generally, commercial ALGLIB is several times faster than  open-source
-  ! generic C edition, and many times faster than open-source C# edition.
-  !
-  ! Multithreaded acceleration is NOT supported for this function.
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-The algorithm performs the singular value decomposition  of  a  bidiagonal
-matrix B (upper or lower) representing it as B = Q*S*P^T, where Q and  P -
-orthogonal matrices, S - diagonal matrix with non-negative elements on the
-main diagonal, in descending order.
-
-The  algorithm  finds  singular  values.  In  addition,  the algorithm can
-calculate  matrices  Q  and P (more precisely, not the matrices, but their
-product  with  given  matrices U and VT - U*Q and (P^T)*VT)).  Of  course,
-matrices U and VT can be of any type, including identity. Furthermore, the
-algorithm can calculate Q'*C (this product is calculated more  effectively
-than U*Q,  because  this calculation operates with rows instead  of matrix
-columns).
-
-The feature of the algorithm is its ability to find  all  singular  values
-including those which are arbitrarily close to 0  with  relative  accuracy
-close to  machine precision. If the parameter IsFractionalAccuracyRequired
-is set to True, all singular values will have high relative accuracy close
-to machine precision. If the parameter is set to False, only  the  biggest
-singular value will have relative accuracy  close  to  machine  precision.
-The absolute error of other singular values is equal to the absolute error
-of the biggest singular value.
-
-Input parameters:
-    D       -   main diagonal of matrix B.
-                Array whose index ranges within [0..N-1].
-    E       -   superdiagonal (or subdiagonal) of matrix B.
-                Array whose index ranges within [0..N-2].
-    N       -   size of matrix B.
-    IsUpper -   True, if the matrix is upper bidiagonal.
-    IsFractionalAccuracyRequired -
-                THIS PARAMETER IS IGNORED SINCE ALGLIB 3.5.0
-                SINGULAR VALUES ARE ALWAYS SEARCHED WITH HIGH ACCURACY.
-    U       -   matrix to be multiplied by Q.
-                Array whose indexes range within [0..NRU-1, 0..N-1].
-                The matrix can be bigger, in that case only the  submatrix
-                [0..NRU-1, 0..N-1] will be multiplied by Q.
-    NRU     -   number of rows in matrix U.
-    C       -   matrix to be multiplied by Q'.
-                Array whose indexes range within [0..N-1, 0..NCC-1].
-                The matrix can be bigger, in that case only the  submatrix
-                [0..N-1, 0..NCC-1] will be multiplied by Q'.
-    NCC     -   number of columns in matrix C.
-    VT      -   matrix to be multiplied by P^T.
-                Array whose indexes range within [0..N-1, 0..NCVT-1].
-                The matrix can be bigger, in that case only the  submatrix
-                [0..N-1, 0..NCVT-1] will be multiplied by P^T.
-    NCVT    -   number of columns in matrix VT.
-
-Output parameters:
-    D       -   singular values of matrix B in descending order.
-    U       -   if NRU>0, contains matrix U*Q.
-    VT      -   if NCVT>0, contains matrix (P^T)*VT.
-    C       -   if NCC>0, contains matrix Q'*C.
-
-Result:
-    True, if the algorithm has converged.
-    False, if the algorithm hasn't converged (rare case).
-
-NOTE: multiplication U*Q is performed by means of transposition to internal
-      buffer, multiplication and backward transposition. It helps to avoid
-      costly columnwise operations and speed-up algorithm.
-
-Additional information:
-    The type of convergence is controlled by the internal  parameter  TOL.
-    If the parameter is greater than 0, the singular values will have
-    relative accuracy TOL. If TOL<0, the singular values will have
-    absolute accuracy ABS(TOL)*norm(B).
-    By default, |TOL| falls within the range of 10*Epsilon and 100*Epsilon,
-    where Epsilon is the machine precision. It is not  recommended  to  use
-    TOL less than 10*Epsilon since this will  considerably  slow  down  the
-    algorithm and may not lead to error decreasing.
-
-History:
-    * 31 March, 2007.
-        changed MAXITR from 6 to 12.
-
-  -- LAPACK routine (version 3.0) --
-     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
-     Courant Institute, Argonne National Lab, and Rice University
-     October 31, 1999.
-*************************************************************************/
-bool rmatrixbdsvd(real_1d_array &d, const real_1d_array &e, const ae_int_t n, const bool isupper, const bool isfractionalaccuracyrequired, real_2d_array &u, const ae_int_t nru, real_2d_array &c, const ae_int_t ncc, real_2d_array &vt, const ae_int_t ncvt, const xparams _xparams = alglib::xdefault);
-#endif
-
-#if defined(AE_COMPILE_SVD) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-Singular value decomposition of a rectangular matrix.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
-
-The algorithm calculates the singular value decomposition of a matrix of
-size MxN: A = U * S * V^T
-
-The algorithm finds the singular values and, optionally, matrices U and V^T.
-The algorithm can find both first min(M,N) columns of matrix U and rows of
-matrix V^T (singular vectors), and matrices U and V^T wholly (of sizes MxM
-and NxN respectively).
-
-Take into account that the subroutine does not return matrix V but V^T.
-
-Input parameters:
-    A           -   matrix to be decomposed.
-                    Array whose indexes range within [0..M-1, 0..N-1].
-    M           -   number of rows in matrix A.
-    N           -   number of columns in matrix A.
-    UNeeded     -   0, 1 or 2. See the description of the parameter U.
-    VTNeeded    -   0, 1 or 2. See the description of the parameter VT.
-    AdditionalMemory -
-                    If the parameter:
-                     * equals 0, the algorithm doesn't use additional
-                       memory (lower requirements, lower performance).
-                     * equals 1, the algorithm uses additional
-                       memory of size min(M,N)*min(M,N) of real numbers.
-                       It often speeds up the algorithm.
-                     * equals 2, the algorithm uses additional
-                       memory of size M*min(M,N) of real numbers.
-                       It allows to get a maximum performance.
-                    The recommended value of the parameter is 2.
-
-Output parameters:
-    W           -   contains singular values in descending order.
-    U           -   if UNeeded=0, U isn't changed, the left singular vectors
-                    are not calculated.
-                    if Uneeded=1, U contains left singular vectors (first
-                    min(M,N) columns of matrix U). Array whose indexes range
-                    within [0..M-1, 0..Min(M,N)-1].
-                    if UNeeded=2, U contains matrix U wholly. Array whose
-                    indexes range within [0..M-1, 0..M-1].
-    VT          -   if VTNeeded=0, VT isn't changed, the right singular vectors
-                    are not calculated.
-                    if VTNeeded=1, VT contains right singular vectors (first
-                    min(M,N) rows of matrix V^T). Array whose indexes range
-                    within [0..min(M,N)-1, 0..N-1].
-                    if VTNeeded=2, VT contains matrix V^T wholly. Array whose
-                    indexes range within [0..N-1, 0..N-1].
-
-  -- ALGLIB --
-     Copyright 2005 by Bochkanov Sergey
-*************************************************************************/
-bool rmatrixsvd(const real_2d_array &a, const ae_int_t m, const ae_int_t n, const ae_int_t uneeded, const ae_int_t vtneeded, const ae_int_t additionalmemory, real_1d_array &w, real_2d_array &u, real_2d_array &vt, const xparams _xparams = alglib::xdefault);
-#endif
-
-#if defined(AE_COMPILE_NORMESTIMATOR) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-This procedure initializes matrix norm estimator.
-
-USAGE:
-1. User initializes algorithm state with NormEstimatorCreate() call
-2. User calls NormEstimatorEstimateSparse() (or NormEstimatorIteration())
-3. User calls NormEstimatorResults() to get solution.
-
-INPUT PARAMETERS:
-    M       -   number of rows in the matrix being estimated, M>0
-    N       -   number of columns in the matrix being estimated, N>0
-    NStart  -   number of random starting vectors
-                recommended value - at least 5.
-    NIts    -   number of iterations to do with best starting vector
-                recommended value - at least 5.
-
-OUTPUT PARAMETERS:
-    State   -   structure which stores algorithm state
-
-
-NOTE: this algorithm is effectively deterministic, i.e. it always  returns
-same result when repeatedly called for the same matrix. In fact, algorithm
-uses randomized starting vectors, but internal  random  numbers  generator
-always generates same sequence of the random values (it is a  feature, not
-bug).
-
-Algorithm can be made non-deterministic with NormEstimatorSetSeed(0) call.
-
-  -- ALGLIB --
-     Copyright 06.12.2011 by Bochkanov Sergey
-*************************************************************************/
-void normestimatorcreate(const ae_int_t m, const ae_int_t n, const ae_int_t nstart, const ae_int_t nits, normestimatorstate &state, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function changes seed value used by algorithm. In some cases we  need
-deterministic processing, i.e. subsequent calls must return equal results,
-in other cases we need non-deterministic algorithm which returns different
-results for the same matrix on every pass.
-
-Setting zero seed will lead to non-deterministic algorithm, while non-zero
-value will make our algorithm deterministic.
-
-INPUT PARAMETERS:
-    State       -   norm estimator state, must be initialized with a  call
-                    to NormEstimatorCreate()
-    SeedVal     -   seed value, >=0. Zero value = non-deterministic algo.
-
-  -- ALGLIB --
-     Copyright 06.12.2011 by Bochkanov Sergey
-*************************************************************************/
-void normestimatorsetseed(const normestimatorstate &state, const ae_int_t seedval, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-This function estimates norm of the sparse M*N matrix A.
-
-INPUT PARAMETERS:
-    State       -   norm estimator state, must be initialized with a  call
-                    to NormEstimatorCreate()
-    A           -   sparse M*N matrix, must be converted to CRS format
-                    prior to calling this function.
-
-After this function  is  over  you can call NormEstimatorResults() to get
-estimate of the norm(A).
-
-  -- ALGLIB --
-     Copyright 06.12.2011 by Bochkanov Sergey
-*************************************************************************/
-void normestimatorestimatesparse(const normestimatorstate &state, const sparsematrix &a, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Matrix norm estimation results
-
-INPUT PARAMETERS:
-    State   -   algorithm state
-
-OUTPUT PARAMETERS:
-    Nrm     -   estimate of the matrix norm, Nrm>=0
-
-  -- ALGLIB --
-     Copyright 06.12.2011 by Bochkanov Sergey
-*************************************************************************/
-void normestimatorresults(const normestimatorstate &state, double &nrm, const xparams _xparams = alglib::xdefault);
-#endif
-
 #if defined(AE_COMPILE_HSSCHUR) || !defined(AE_PARTIAL_BUILD)
 
 #endif
@@ -6376,23 +4769,10 @@ void eigsubspaceoocstop(const eigsubspacestate &state, real_1d_array &w, real_2d
 
 
 /*************************************************************************
-This  function runs eigensolver for dense NxN symmetric matrix A, given by
-upper or lower triangle.
+This  function runs subspace eigensolver for dense NxN symmetric matrix A,
+given by its upper or lower triangle.
 
 This function can not process nonsymmetric matrices.
-
-  ! COMMERCIAL EDITION OF ALGLIB:
-  !
-  ! Commercial Edition of ALGLIB includes following important improvements
-  ! of this function:
-  ! * high-performance native backend with same C# interface (C# version)
-  ! * multithreading support (C++ and C# versions)
-  ! * hardware vendor (Intel) implementations of linear algebra primitives
-  !   (C++ and C# versions, x86/x64 platform)
-  !
-  ! We recommend you to read 'Working with commercial version' section  of
-  ! ALGLIB Reference Manual in order to find out how to  use  performance-
-  ! related features provided by commercial edition of ALGLIB.
 
 INPUT PARAMETERS:
     State       -   solver state
@@ -6410,6 +4790,30 @@ OUTPUT PARAMETERS:
 NOTE: internally this function allocates a copy of NxN dense A. You should
       take it into account when working with very large matrices occupying
       almost all RAM.
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
 
   -- ALGLIB --
      Copyright 16.01.2017 by Bochkanov Sergey
@@ -6988,6 +5392,2113 @@ The algorithm is based on the LAPACK 3.0 library.
 bool rmatrixevd(const real_2d_array &a, const ae_int_t n, const ae_int_t vneeded, real_1d_array &wr, real_1d_array &wi, real_2d_array &vl, real_2d_array &vr, const xparams _xparams = alglib::xdefault);
 #endif
 
+#if defined(AE_COMPILE_DLU) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
+#if defined(AE_COMPILE_SPTRF) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
+#if defined(AE_COMPILE_AMDORDERING) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
+#if defined(AE_COMPILE_SPCHOL) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
+#if defined(AE_COMPILE_TRFAC) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+LU decomposition of a general real matrix with row pivoting
+
+A is represented as A = P*L*U, where:
+* L is lower unitriangular matrix
+* U is upper triangular matrix
+* P = P0*P1*...*PK, K=min(M,N)-1,
+  Pi - permutation matrix for I and Pivots[I]
+
+INPUT PARAMETERS:
+    A       -   array[0..M-1, 0..N-1].
+    M       -   number of rows in matrix A.
+    N       -   number of columns in matrix A.
+
+
+OUTPUT PARAMETERS:
+    A       -   matrices L and U in compact form:
+                * L is stored under main diagonal
+                * U is stored on and above main diagonal
+    Pivots  -   permutation matrix in compact form.
+                array[0..Min(M-1,N-1)].
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     10.01.2010
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixlu(real_2d_array &a, const ae_int_t m, const ae_int_t n, integer_1d_array &pivots, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+LU decomposition of a general complex matrix with row pivoting
+
+A is represented as A = P*L*U, where:
+* L is lower unitriangular matrix
+* U is upper triangular matrix
+* P = P0*P1*...*PK, K=min(M,N)-1,
+  Pi - permutation matrix for I and Pivots[I]
+
+INPUT PARAMETERS:
+    A       -   array[0..M-1, 0..N-1].
+    M       -   number of rows in matrix A.
+    N       -   number of columns in matrix A.
+
+
+OUTPUT PARAMETERS:
+    A       -   matrices L and U in compact form:
+                * L is stored under main diagonal
+                * U is stored on and above main diagonal
+    Pivots  -   permutation matrix in compact form.
+                array[0..Min(M-1,N-1)].
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     10.01.2010
+     Bochkanov Sergey
+*************************************************************************/
+void cmatrixlu(complex_2d_array &a, const ae_int_t m, const ae_int_t n, integer_1d_array &pivots, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Cache-oblivious Cholesky decomposition
+
+The algorithm computes Cholesky decomposition  of  a  Hermitian  positive-
+definite matrix. The result of an algorithm is a representation  of  A  as
+A=U'*U  or A=L*L' (here X' denotes conj(X^T)).
+
+INPUT PARAMETERS:
+    A       -   upper or lower triangle of a factorized matrix.
+                array with elements [0..N-1, 0..N-1].
+    N       -   size of matrix A.
+    IsUpper -   if IsUpper=True, then A contains an upper triangle of
+                a symmetric matrix, otherwise A contains a lower one.
+
+OUTPUT PARAMETERS:
+    A       -   the result of factorization. If IsUpper=True, then
+                the upper triangle contains matrix U, so that A = U'*U,
+                and the elements below the main diagonal are not modified.
+                Similarly, if IsUpper = False.
+
+RESULT:
+    If  the  matrix  is  positive-definite,  the  function  returns  True.
+    Otherwise, the function returns False. Contents of A is not determined
+    in such case.
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     15.12.2009-22.01.2018
+     Bochkanov Sergey
+*************************************************************************/
+bool hpdmatrixcholesky(complex_2d_array &a, const ae_int_t n, const bool isupper, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Cache-oblivious Cholesky decomposition
+
+The algorithm computes Cholesky decomposition  of  a  symmetric  positive-
+definite matrix. The result of an algorithm is a representation  of  A  as
+A=U^T*U  or A=L*L^T
+
+INPUT PARAMETERS:
+    A       -   upper or lower triangle of a factorized matrix.
+                array with elements [0..N-1, 0..N-1].
+    N       -   size of matrix A.
+    IsUpper -   if IsUpper=True, then A contains an upper triangle of
+                a symmetric matrix, otherwise A contains a lower one.
+
+OUTPUT PARAMETERS:
+    A       -   the result of factorization. If IsUpper=True, then
+                the upper triangle contains matrix U, so that A = U^T*U,
+                and the elements below the main diagonal are not modified.
+                Similarly, if IsUpper = False.
+
+RESULT:
+    If  the  matrix  is  positive-definite,  the  function  returns  True.
+    Otherwise, the function returns False. Contents of A is not determined
+    in such case.
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     15.12.2009
+     Bochkanov Sergey
+*************************************************************************/
+bool spdmatrixcholesky(real_2d_array &a, const ae_int_t n, const bool isupper, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Update of Cholesky decomposition: rank-1 update to original A.  "Buffered"
+version which uses preallocated buffer which is saved  between  subsequent
+function calls.
+
+This function uses internally allocated buffer which is not saved  between
+subsequent  calls.  So,  if  you  perform  a lot  of  subsequent  updates,
+we  recommend   you   to   use   "buffered"   version   of  this function:
+SPDMatrixCholeskyUpdateAdd1Buf().
+
+INPUT PARAMETERS:
+    A       -   upper or lower Cholesky factor.
+                array with elements [0..N-1, 0..N-1].
+                Exception is thrown if array size is too small.
+    N       -   size of matrix A, N>0
+    IsUpper -   if IsUpper=True, then A contains  upper  Cholesky  factor;
+                otherwise A contains a lower one.
+    U       -   array[N], rank-1 update to A: A_mod = A + u*u'
+                Exception is thrown if array size is too small.
+    BufR    -   possibly preallocated  buffer;  automatically  resized  if
+                needed. It is recommended to  reuse  this  buffer  if  you
+                perform a lot of subsequent decompositions.
+
+OUTPUT PARAMETERS:
+    A       -   updated factorization.  If  IsUpper=True,  then  the  upper
+                triangle contains matrix U, and the elements below the main
+                diagonal are not modified. Similarly, if IsUpper = False.
+
+NOTE: this function always succeeds, so it does not return completion code
+
+NOTE: this function checks sizes of input arrays, but it does  NOT  checks
+      for presence of infinities or NAN's.
+
+  -- ALGLIB --
+     03.02.2014
+     Sergey Bochkanov
+*************************************************************************/
+void spdmatrixcholeskyupdateadd1(const real_2d_array &a, const ae_int_t n, const bool isupper, const real_1d_array &u, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Update of Cholesky decomposition: "fixing" some variables.
+
+This function uses internally allocated buffer which is not saved  between
+subsequent  calls.  So,  if  you  perform  a lot  of  subsequent  updates,
+we  recommend   you   to   use   "buffered"   version   of  this function:
+SPDMatrixCholeskyUpdateFixBuf().
+
+"FIXING" EXPLAINED:
+
+    Suppose we have N*N positive definite matrix A. "Fixing" some variable
+    means filling corresponding row/column of  A  by  zeros,  and  setting
+    diagonal element to 1.
+
+    For example, if we fix 2nd variable in 4*4 matrix A, it becomes Af:
+
+        ( A00  A01  A02  A03 )      ( Af00  0   Af02 Af03 )
+        ( A10  A11  A12  A13 )      (  0    1    0    0   )
+        ( A20  A21  A22  A23 )  =>  ( Af20  0   Af22 Af23 )
+        ( A30  A31  A32  A33 )      ( Af30  0   Af32 Af33 )
+
+    If we have Cholesky decomposition of A, it must be recalculated  after
+    variables were  fixed.  However,  it  is  possible  to  use  efficient
+    algorithm, which needs O(K*N^2)  time  to  "fix"  K  variables,  given
+    Cholesky decomposition of original, "unfixed" A.
+
+INPUT PARAMETERS:
+    A       -   upper or lower Cholesky factor.
+                array with elements [0..N-1, 0..N-1].
+                Exception is thrown if array size is too small.
+    N       -   size of matrix A, N>0
+    IsUpper -   if IsUpper=True, then A contains  upper  Cholesky  factor;
+                otherwise A contains a lower one.
+    Fix     -   array[N], I-th element is True if I-th  variable  must  be
+                fixed. Exception is thrown if array size is too small.
+    BufR    -   possibly preallocated  buffer;  automatically  resized  if
+                needed. It is recommended to  reuse  this  buffer  if  you
+                perform a lot of subsequent decompositions.
+
+OUTPUT PARAMETERS:
+    A       -   updated factorization.  If  IsUpper=True,  then  the  upper
+                triangle contains matrix U, and the elements below the main
+                diagonal are not modified. Similarly, if IsUpper = False.
+
+NOTE: this function always succeeds, so it does not return completion code
+
+NOTE: this function checks sizes of input arrays, but it does  NOT  checks
+      for presence of infinities or NAN's.
+
+NOTE: this  function  is  efficient  only  for  moderate amount of updated
+      variables - say, 0.1*N or 0.3*N. For larger amount of  variables  it
+      will  still  work,  but  you  may  get   better   performance   with
+      straightforward Cholesky.
+
+  -- ALGLIB --
+     03.02.2014
+     Sergey Bochkanov
+*************************************************************************/
+void spdmatrixcholeskyupdatefix(const real_2d_array &a, const ae_int_t n, const bool isupper, const boolean_1d_array &fix, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Update of Cholesky decomposition: rank-1 update to original A.  "Buffered"
+version which uses preallocated buffer which is saved  between  subsequent
+function calls.
+
+See comments for SPDMatrixCholeskyUpdateAdd1() for more information.
+
+INPUT PARAMETERS:
+    A       -   upper or lower Cholesky factor.
+                array with elements [0..N-1, 0..N-1].
+                Exception is thrown if array size is too small.
+    N       -   size of matrix A, N>0
+    IsUpper -   if IsUpper=True, then A contains  upper  Cholesky  factor;
+                otherwise A contains a lower one.
+    U       -   array[N], rank-1 update to A: A_mod = A + u*u'
+                Exception is thrown if array size is too small.
+    BufR    -   possibly preallocated  buffer;  automatically  resized  if
+                needed. It is recommended to  reuse  this  buffer  if  you
+                perform a lot of subsequent decompositions.
+
+OUTPUT PARAMETERS:
+    A       -   updated factorization.  If  IsUpper=True,  then  the  upper
+                triangle contains matrix U, and the elements below the main
+                diagonal are not modified. Similarly, if IsUpper = False.
+
+  -- ALGLIB --
+     03.02.2014
+     Sergey Bochkanov
+*************************************************************************/
+void spdmatrixcholeskyupdateadd1buf(const real_2d_array &a, const ae_int_t n, const bool isupper, const real_1d_array &u, real_1d_array &bufr, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Update of Cholesky  decomposition:  "fixing"  some  variables.  "Buffered"
+version which uses preallocated buffer which is saved  between  subsequent
+function calls.
+
+See comments for SPDMatrixCholeskyUpdateFix() for more information.
+
+INPUT PARAMETERS:
+    A       -   upper or lower Cholesky factor.
+                array with elements [0..N-1, 0..N-1].
+                Exception is thrown if array size is too small.
+    N       -   size of matrix A, N>0
+    IsUpper -   if IsUpper=True, then A contains  upper  Cholesky  factor;
+                otherwise A contains a lower one.
+    Fix     -   array[N], I-th element is True if I-th  variable  must  be
+                fixed. Exception is thrown if array size is too small.
+    BufR    -   possibly preallocated  buffer;  automatically  resized  if
+                needed. It is recommended to  reuse  this  buffer  if  you
+                perform a lot of subsequent decompositions.
+
+OUTPUT PARAMETERS:
+    A       -   updated factorization.  If  IsUpper=True,  then  the  upper
+                triangle contains matrix U, and the elements below the main
+                diagonal are not modified. Similarly, if IsUpper = False.
+
+  -- ALGLIB --
+     03.02.2014
+     Sergey Bochkanov
+*************************************************************************/
+void spdmatrixcholeskyupdatefixbuf(const real_2d_array &a, const ae_int_t n, const bool isupper, const boolean_1d_array &fix, real_1d_array &bufr, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Sparse LU decomposition with column pivoting for sparsity and row pivoting
+for stability. Input must be square sparse matrix stored in CRS format.
+
+The algorithm  computes  LU  decomposition  of  a  general  square  matrix
+(rectangular ones are not supported). The result  of  an  algorithm  is  a
+representation of A as A = P*L*U*Q, where:
+* L is lower unitriangular matrix
+* U is upper triangular matrix
+* P = P0*P1*...*PK, K=N-1, Pi - permutation matrix for I and P[I]
+* Q = QK*...*Q1*Q0, K=N-1, Qi - permutation matrix for I and Q[I]
+
+This function pivots columns for higher sparsity, and then pivots rows for
+stability (larger element at the diagonal).
+
+INPUT PARAMETERS:
+    A       -   sparse NxN matrix in CRS format. An exception is generated
+                if matrix is non-CRS or non-square.
+    PivotType-  pivoting strategy:
+                * 0 for best pivoting available (2 in current version)
+                * 1 for row-only pivoting (NOT RECOMMENDED)
+                * 2 for complete pivoting which produces most sparse outputs
+
+OUTPUT PARAMETERS:
+    A       -   the result of factorization, matrices L and U stored in
+                compact form using CRS sparse storage format:
+                * lower unitriangular L is stored strictly under main diagonal
+                * upper triangilar U is stored ON and ABOVE main diagonal
+    P       -   row permutation matrix in compact form, array[N]
+    Q       -   col permutation matrix in compact form, array[N]
+
+This function always succeeds, i.e. it ALWAYS returns valid factorization,
+but for your convenience it also returns  boolean  value  which  helps  to
+detect symbolically degenerate matrices:
+* function returns TRUE, if the matrix was factorized AND symbolically
+  non-degenerate
+* function returns FALSE, if the matrix was factorized but U has strictly
+  zero elements at the diagonal (the factorization is returned anyway).
+
+
+  -- ALGLIB routine --
+     03.09.2018
+     Bochkanov Sergey
+*************************************************************************/
+bool sparselu(const sparsematrix &a, const ae_int_t pivottype, integer_1d_array &p, integer_1d_array &q, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Sparse Cholesky decomposition for skyline matrixm using in-place algorithm
+without allocating additional storage.
+
+The algorithm computes Cholesky decomposition  of  a  symmetric  positive-
+definite sparse matrix. The result of an algorithm is a representation  of
+A as A=U^T*U or A=L*L^T
+
+This function allows to perform very efficient decomposition of low-profile
+matrices (average bandwidth is ~5-10 elements). For larger matrices it  is
+recommended to use supernodal Cholesky decomposition: SparseCholeskyP() or
+SparseCholeskyAnalyze()/SparseCholeskyFactorize().
+
+INPUT PARAMETERS:
+    A       -   sparse matrix in skyline storage (SKS) format.
+    N       -   size of matrix A (can be smaller than actual size of A)
+    IsUpper -   if IsUpper=True, then factorization is performed on  upper
+                triangle. Another triangle is ignored (it may contant some
+                data, but it is not changed).
+
+
+OUTPUT PARAMETERS:
+    A       -   the result of factorization, stored in SKS. If IsUpper=True,
+                then the upper  triangle  contains  matrix  U,  such  that
+                A = U^T*U. Lower triangle is not changed.
+                Similarly, if IsUpper = False. In this case L is returned,
+                and we have A = L*(L^T).
+                Note that THIS function does not  perform  permutation  of
+                rows to reduce bandwidth.
+
+RESULT:
+    If  the  matrix  is  positive-definite,  the  function  returns  True.
+    Otherwise, the function returns False. Contents of A is not determined
+    in such case.
+
+NOTE: for  performance  reasons  this  function  does NOT check that input
+      matrix  includes  only  finite  values. It is your responsibility to
+      make sure that there are no infinite or NAN values in the matrix.
+
+  -- ALGLIB routine --
+     16.01.2014
+     Bochkanov Sergey
+*************************************************************************/
+bool sparsecholeskyskyline(const sparsematrix &a, const ae_int_t n, const bool isupper, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Sparse Cholesky decomposition for a matrix  stored  in  any sparse storage,
+without rows/cols permutation.
+
+This function is the most convenient (less parameters to specify), although
+less efficient, version of sparse Cholesky.
+
+Internally it:
+* calls SparseCholeskyAnalyze()  function  to  perform  symbolic  analysis
+  phase with no permutation being configured.
+* calls SparseCholeskyFactorize() function to perform numerical  phase  of
+  the factorization
+
+Following alternatives may result in better performance:
+* using SparseCholeskyP(), which selects best  pivoting  available,  which
+  almost always results in improved sparsity and cache locality
+* using  SparseCholeskyAnalyze() and SparseCholeskyFactorize()   functions
+  directly,  which  may  improve  performance of repetitive factorizations
+  with same sparsity patterns.
+
+The latter also allows one to perform  LDLT  factorization  of  indefinite
+matrix (one with strictly diagonal D, which is known  to  be  stable  only
+in few special cases, like quasi-definite matrices).
+
+INPUT PARAMETERS:
+    A       -   a square NxN sparse matrix, stored in any storage format.
+    IsUpper -   if IsUpper=True, then factorization is performed on  upper
+                triangle.  Another triangle is ignored on  input,  dropped
+                on output. Similarly, if IsUpper=False, the lower triangle
+                is processed.
+
+OUTPUT PARAMETERS:
+    A       -   the result of factorization, stored in CRS format:
+                * if IsUpper=True, then the upper triangle contains matrix
+                  U such  that  A = U^T*U and the lower triangle is empty.
+                * similarly, if IsUpper=False, then lower triangular L  is
+                  returned and we have A = L*(L^T).
+                Note that THIS function does not  perform  permutation  of
+                the rows to reduce fill-in.
+
+RESULT:
+    If  the  matrix  is  positive-definite,  the  function  returns  True.
+    Otherwise, the function returns False.  Contents  of  A  is  undefined
+    in such case.
+
+NOTE: for  performance  reasons  this  function  does NOT check that input
+      matrix  includes  only  finite  values. It is your responsibility to
+      make sure that there are no infinite or NAN values in the matrix.
+
+  -- ALGLIB routine --
+     16.09.2020
+     Bochkanov Sergey
+*************************************************************************/
+bool sparsecholesky(const sparsematrix &a, const bool isupper, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Sparse Cholesky decomposition for a matrix  stored  in  any sparse storage
+format, with performance-enhancing permutation of rows/cols.
+
+Present version is configured  to  perform  supernodal  permutation  which
+sparsity reducing ordering.
+
+This function is a wrapper around generic sparse  decomposition  functions
+that internally:
+* calls SparseCholeskyAnalyze()  function  to  perform  symbolic  analysis
+  phase with best available permutation being configured.
+* calls SparseCholeskyFactorize() function to perform numerical  phase  of
+  the factorization.
+
+NOTE: using  SparseCholeskyAnalyze() and SparseCholeskyFactorize() directly
+      may improve  performance  of  repetitive  factorizations  with  same
+      sparsity patterns. It also allows one to perform  LDLT factorization
+      of  indefinite  matrix  -  a factorization with strictly diagonal D,
+      which  is  known to be stable only in few special cases, like quasi-
+      definite matrices.
+
+INPUT PARAMETERS:
+    A       -   a square NxN sparse matrix, stored in any storage format.
+    IsUpper -   if IsUpper=True, then factorization is performed on  upper
+                triangle.  Another triangle is ignored on  input,  dropped
+                on output. Similarly, if IsUpper=False, the lower triangle
+                is processed.
+
+OUTPUT PARAMETERS:
+    A       -   the result of factorization, stored in CRS format:
+                * if IsUpper=True, then the upper triangle contains matrix
+                  U such  that  A = U^T*U and the lower triangle is empty.
+                * similarly, if IsUpper=False, then lower triangular L  is
+                  returned and we have A = L*(L^T).
+    P       -   a row/column permutation, a product of P0*P1*...*Pk, k=N-1,
+                with Pi being permutation of rows/cols I and P[I]
+
+RESULT:
+    If  the  matrix  is  positive-definite,  the  function  returns  True.
+    Otherwise, the function returns False.  Contents  of  A  is  undefined
+    in such case.
+
+NOTE: for  performance  reasons  this  function  does NOT check that input
+      matrix  includes  only  finite  values. It is your responsibility to
+      make sure that there are no infinite or NAN values in the matrix.
+
+  -- ALGLIB routine --
+     16.09.2020
+     Bochkanov Sergey
+*************************************************************************/
+bool sparsecholeskyp(const sparsematrix &a, const bool isupper, integer_1d_array &p, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Sparse Cholesky/LDLT decomposition: symbolic analysis phase.
+
+This function is a part of the 'expert' sparse Cholesky API:
+* SparseCholeskyAnalyze(), that performs symbolic analysis phase and loads
+  matrix to be factorized into internal storage
+* SparseCholeskySetModType(), that allows to  use  modified  Cholesky/LDLT
+  with lower bounds on pivot magnitudes and additional overflow safeguards
+* SparseCholeskyFactorize(),  that performs  numeric  factorization  using
+  precomputed symbolic analysis and internally stored matrix - and outputs
+  result
+* SparseCholeskyReload(), that reloads one more matrix with same  sparsity
+  pattern into internal storage so  one  may  reuse  previously  allocated
+  temporaries and previously performed symbolic analysis
+
+This specific function performs preliminary analysis of the  Cholesky/LDLT
+factorization. It allows to choose  different  permutation  types  and  to
+choose between classic Cholesky and  indefinite  LDLT  factorization  (the
+latter is computed with strictly diagonal D, i.e.  without  Bunch-Kauffman
+pivoting).
+
+NOTE: L*D*LT family of factorization may be used to  factorize  indefinite
+      matrices. However, numerical stability is guaranteed ONLY for a class
+      of quasi-definite matrices.
+
+NOTE: all internal processing is performed with lower triangular  matrices
+      stored  in  CRS  format.  Any  other  storage  formats  and/or upper
+      triangular storage means  that  one  format  conversion  and/or  one
+      transposition will be performed  internally  for  the  analysis  and
+      factorization phases. Thus, highest  performance  is  achieved  when
+      input is a lower triangular CRS matrix.
+
+INPUT PARAMETERS:
+    A           -   sparse square matrix in any sparse storage format.
+    IsUpper     -   whether upper or lower  triangle  is  decomposed  (the
+                    other one is ignored).
+    FactType    -   factorization type:
+                    * 0 for traditional Cholesky of SPD matrix
+                    * 1 for LDLT decomposition with strictly  diagonal  D,
+                        which may have non-positive entries.
+    PermType    -   permutation type:
+                    *-1 for absence of permutation
+                    * 0 for best fill-in reducing  permutation  available,
+                        which is 3 in the current version
+                    * 1 for supernodal ordering (improves locality and
+                      performance, does NOT change fill-in factor)
+                    * 2 for original AMD ordering
+                    * 3 for  improved  AMD  (approximate  minimum  degree)
+                        ordering with better  handling  of  matrices  with
+                        dense rows/columns
+
+OUTPUT PARAMETERS:
+    Analysis    -   contains:
+                    * symbolic analysis of the matrix structure which will
+                      be used later to guide numerical factorization.
+                    * specific numeric values loaded into internal  memory
+                      waiting for the factorization to be performed
+
+This function fails if and only if the matrix A is symbolically degenerate
+i.e. has diagonal element which is exactly zero. In  such  case  False  is
+returned, contents of Analysis object is undefined.
+
+  -- ALGLIB routine --
+     20.09.2020
+     Bochkanov Sergey
+*************************************************************************/
+bool sparsecholeskyanalyze(const sparsematrix &a, const bool isupper, const ae_int_t facttype, const ae_int_t permtype, sparsedecompositionanalysis &analysis, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Sparse Cholesky decomposition: numerical analysis phase.
+
+This function is a part of the 'expert' sparse Cholesky API:
+* SparseCholeskyAnalyze(), that performs symbolic analysis phase and loads
+  matrix to be factorized into internal storage
+* SparseCholeskySetModType(), that allows to  use  modified  Cholesky/LDLT
+  with lower bounds on pivot magnitudes and additional overflow safeguards
+* SparseCholeskyFactorize(),  that performs  numeric  factorization  using
+  precomputed symbolic analysis and internally stored matrix - and outputs
+  result
+* SparseCholeskyReload(), that reloads one more matrix with same  sparsity
+  pattern into internal storage so  one  may  reuse  previously  allocated
+  temporaries and previously performed symbolic analysis
+
+Depending on settings specified during SparseCholeskyAnalyze() call it may
+produce classic Cholesky or L*D*LT  decomposition  (with strictly diagonal
+D), without permutation or with performance-enhancing permutation P.
+
+NOTE: all internal processing is performed with lower triangular  matrices
+      stored  in  CRS  format.  Any  other  storage  formats  and/or upper
+      triangular storage means  that  one  format  conversion  and/or  one
+      transposition will be performed  internally  for  the  analysis  and
+      factorization phases. Thus, highest  performance  is  achieved  when
+      input is a lower triangular CRS matrix, and lower triangular  output
+      is requested.
+
+NOTE: L*D*LT family of factorization may be used to  factorize  indefinite
+      matrices. However, numerical stability is guaranteed ONLY for a class
+      of quasi-definite matrices.
+
+INPUT PARAMETERS:
+    Analysis    -   prior analysis with internally stored matrix which will
+                    be factorized
+    NeedUpper   -   whether upper triangular or lower triangular output is
+                    needed
+
+OUTPUT PARAMETERS:
+    A           -   Cholesky decomposition of A stored in lower triangular
+                    CRS format, i.e. A=L*L' (or upper triangular CRS, with
+                    A=U'*U, depending on NeedUpper parameter).
+    D           -   array[N], diagonal factor. If no diagonal  factor  was
+                    required during analysis  phase,  still  returned  but
+                    filled with 1's
+    P           -   array[N], pivots. Permutation matrix P is a product of
+                    P(0)*P(1)*...*P(N-1), where P(i) is a  permutation  of
+                    row/col I and P[I] (with P[I]>=I).
+                    If no permutation was requested during analysis phase,
+                    still returned but filled with identity permutation.
+
+The function returns True  when  factorization  resulted  in nondegenerate
+matrix. False is returned when factorization fails (Cholesky factorization
+of indefinite matrix) or LDLT factorization has exactly zero  elements  at
+the diagonal. In the latter case contents of A, D and P is undefined.
+
+The analysis object is not changed during  the  factorization.  Subsequent
+calls to SparseCholeskyFactorize() will result in same factorization being
+performed one more time.
+
+  -- ALGLIB routine --
+     20.09.2020
+     Bochkanov Sergey
+*************************************************************************/
+bool sparsecholeskyfactorize(const sparsedecompositionanalysis &analysis, const bool needupper, sparsematrix &a, real_1d_array &d, integer_1d_array &p, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Sparse  Cholesky  decomposition:  update  internally  stored  matrix  with
+another one with exactly same sparsity pattern.
+
+This function is a part of the 'expert' sparse Cholesky API:
+* SparseCholeskyAnalyze(), that performs symbolic analysis phase and loads
+  matrix to be factorized into internal storage
+* SparseCholeskySetModType(), that allows to  use  modified  Cholesky/LDLT
+  with lower bounds on pivot magnitudes and additional overflow safeguards
+* SparseCholeskyFactorize(),  that performs  numeric  factorization  using
+  precomputed symbolic analysis and internally stored matrix - and outputs
+  result
+* SparseCholeskyReload(), that reloads one more matrix with same  sparsity
+  pattern into internal storage so  one  may  reuse  previously  allocated
+  temporaries and previously performed symbolic analysis
+
+This specific function replaces internally stored  numerical  values  with
+ones from another sparse matrix (but having exactly same sparsity  pattern
+as one that was used for initial SparseCholeskyAnalyze() call).
+
+NOTE: all internal processing is performed with lower triangular  matrices
+      stored  in  CRS  format.  Any  other  storage  formats  and/or upper
+      triangular storage means  that  one  format  conversion  and/or  one
+      transposition will be performed  internally  for  the  analysis  and
+      factorization phases. Thus, highest  performance  is  achieved  when
+      input is a lower triangular CRS matrix.
+
+INPUT PARAMETERS:
+    Analysis    -   analysis object
+    A           -   sparse square matrix in any sparse storage format.  It
+                    MUST have exactly same sparsity pattern as that of the
+                    matrix that was passed to SparseCholeskyAnalyze().
+                    Any difference (missing elements or additional elements)
+                    may result in unpredictable and undefined  behavior  -
+                    an algorithm may fail due to memory access violation.
+    IsUpper     -   whether upper or lower  triangle  is  decomposed  (the
+                    other one is ignored).
+
+OUTPUT PARAMETERS:
+    Analysis    -   contains:
+                    * symbolic analysis of the matrix structure which will
+                      be used later to guide numerical factorization.
+                    * specific numeric values loaded into internal  memory
+                      waiting for the factorization to be performed
+
+  -- ALGLIB routine --
+     20.09.2020
+     Bochkanov Sergey
+*************************************************************************/
+void sparsecholeskyreload(const sparsedecompositionanalysis &analysis, const sparsematrix &a, const bool isupper, const xparams _xparams = alglib::xdefault);
+#endif
+
+#if defined(AE_COMPILE_BDSVD) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+Singular value decomposition of a bidiagonal matrix (extended algorithm)
+
+COMMERCIAL EDITION OF ALGLIB:
+
+  ! Commercial version of ALGLIB includes one  important  improvement   of
+  ! this function, which can be used from C++ and C#:
+  ! * Intel MKL support (lightweight Intel MKL is shipped with ALGLIB)
+  !
+  ! Intel MKL gives approximately constant  (with  respect  to  number  of
+  ! worker threads) acceleration factor which depends on CPU  being  used,
+  ! problem  size  and  "baseline"  ALGLIB  edition  which  is  used   for
+  ! comparison.
+  !
+  ! Generally, commercial ALGLIB is several times faster than  open-source
+  ! generic C edition, and many times faster than open-source C# edition.
+  !
+  ! Multithreaded acceleration is NOT supported for this function.
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+The algorithm performs the singular value decomposition  of  a  bidiagonal
+matrix B (upper or lower) representing it as B = Q*S*P^T, where Q and  P -
+orthogonal matrices, S - diagonal matrix with non-negative elements on the
+main diagonal, in descending order.
+
+The  algorithm  finds  singular  values.  In  addition,  the algorithm can
+calculate  matrices  Q  and P (more precisely, not the matrices, but their
+product  with  given  matrices U and VT - U*Q and (P^T)*VT)).  Of  course,
+matrices U and VT can be of any type, including identity. Furthermore, the
+algorithm can calculate Q'*C (this product is calculated more  effectively
+than U*Q,  because  this calculation operates with rows instead  of matrix
+columns).
+
+The feature of the algorithm is its ability to find  all  singular  values
+including those which are arbitrarily close to 0  with  relative  accuracy
+close to  machine precision. If the parameter IsFractionalAccuracyRequired
+is set to True, all singular values will have high relative accuracy close
+to machine precision. If the parameter is set to False, only  the  biggest
+singular value will have relative accuracy  close  to  machine  precision.
+The absolute error of other singular values is equal to the absolute error
+of the biggest singular value.
+
+Input parameters:
+    D       -   main diagonal of matrix B.
+                Array whose index ranges within [0..N-1].
+    E       -   superdiagonal (or subdiagonal) of matrix B.
+                Array whose index ranges within [0..N-2].
+    N       -   size of matrix B.
+    IsUpper -   True, if the matrix is upper bidiagonal.
+    IsFractionalAccuracyRequired -
+                THIS PARAMETER IS IGNORED SINCE ALGLIB 3.5.0
+                SINGULAR VALUES ARE ALWAYS SEARCHED WITH HIGH ACCURACY.
+    U       -   matrix to be multiplied by Q.
+                Array whose indexes range within [0..NRU-1, 0..N-1].
+                The matrix can be bigger, in that case only the  submatrix
+                [0..NRU-1, 0..N-1] will be multiplied by Q.
+    NRU     -   number of rows in matrix U.
+    C       -   matrix to be multiplied by Q'.
+                Array whose indexes range within [0..N-1, 0..NCC-1].
+                The matrix can be bigger, in that case only the  submatrix
+                [0..N-1, 0..NCC-1] will be multiplied by Q'.
+    NCC     -   number of columns in matrix C.
+    VT      -   matrix to be multiplied by P^T.
+                Array whose indexes range within [0..N-1, 0..NCVT-1].
+                The matrix can be bigger, in that case only the  submatrix
+                [0..N-1, 0..NCVT-1] will be multiplied by P^T.
+    NCVT    -   number of columns in matrix VT.
+
+Output parameters:
+    D       -   singular values of matrix B in descending order.
+    U       -   if NRU>0, contains matrix U*Q.
+    VT      -   if NCVT>0, contains matrix (P^T)*VT.
+    C       -   if NCC>0, contains matrix Q'*C.
+
+Result:
+    True, if the algorithm has converged.
+    False, if the algorithm hasn't converged (rare case).
+
+NOTE: multiplication U*Q is performed by means of transposition to internal
+      buffer, multiplication and backward transposition. It helps to avoid
+      costly columnwise operations and speed-up algorithm.
+
+Additional information:
+    The type of convergence is controlled by the internal  parameter  TOL.
+    If the parameter is greater than 0, the singular values will have
+    relative accuracy TOL. If TOL<0, the singular values will have
+    absolute accuracy ABS(TOL)*norm(B).
+    By default, |TOL| falls within the range of 10*Epsilon and 100*Epsilon,
+    where Epsilon is the machine precision. It is not  recommended  to  use
+    TOL less than 10*Epsilon since this will  considerably  slow  down  the
+    algorithm and may not lead to error decreasing.
+
+History:
+    * 31 March, 2007.
+        changed MAXITR from 6 to 12.
+
+  -- LAPACK routine (version 3.0) --
+     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+     Courant Institute, Argonne National Lab, and Rice University
+     October 31, 1999.
+*************************************************************************/
+bool rmatrixbdsvd(real_1d_array &d, const real_1d_array &e, const ae_int_t n, const bool isupper, const bool isfractionalaccuracyrequired, real_2d_array &u, const ae_int_t nru, real_2d_array &c, const ae_int_t ncc, real_2d_array &vt, const ae_int_t ncvt, const xparams _xparams = alglib::xdefault);
+#endif
+
+#if defined(AE_COMPILE_SVD) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+Singular value decomposition of a rectangular matrix.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+The algorithm calculates the singular value decomposition of a matrix of
+size MxN: A = U * S * V^T
+
+The algorithm finds the singular values and, optionally, matrices U and V^T.
+The algorithm can find both first min(M,N) columns of matrix U and rows of
+matrix V^T (singular vectors), and matrices U and V^T wholly (of sizes MxM
+and NxN respectively).
+
+Take into account that the subroutine does not return matrix V but V^T.
+
+Input parameters:
+    A           -   matrix to be decomposed.
+                    Array whose indexes range within [0..M-1, 0..N-1].
+    M           -   number of rows in matrix A.
+    N           -   number of columns in matrix A.
+    UNeeded     -   0, 1 or 2. See the description of the parameter U.
+    VTNeeded    -   0, 1 or 2. See the description of the parameter VT.
+    AdditionalMemory -
+                    If the parameter:
+                     * equals 0, the algorithm doesn't use additional
+                       memory (lower requirements, lower performance).
+                     * equals 1, the algorithm uses additional
+                       memory of size min(M,N)*min(M,N) of real numbers.
+                       It often speeds up the algorithm.
+                     * equals 2, the algorithm uses additional
+                       memory of size M*min(M,N) of real numbers.
+                       It allows to get a maximum performance.
+                    The recommended value of the parameter is 2.
+
+Output parameters:
+    W           -   contains singular values in descending order.
+    U           -   if UNeeded=0, U isn't changed, the left singular vectors
+                    are not calculated.
+                    if Uneeded=1, U contains left singular vectors (first
+                    min(M,N) columns of matrix U). Array whose indexes range
+                    within [0..M-1, 0..Min(M,N)-1].
+                    if UNeeded=2, U contains matrix U wholly. Array whose
+                    indexes range within [0..M-1, 0..M-1].
+    VT          -   if VTNeeded=0, VT isn't changed, the right singular vectors
+                    are not calculated.
+                    if VTNeeded=1, VT contains right singular vectors (first
+                    min(M,N) rows of matrix V^T). Array whose indexes range
+                    within [0..min(M,N)-1, 0..N-1].
+                    if VTNeeded=2, VT contains matrix V^T wholly. Array whose
+                    indexes range within [0..N-1, 0..N-1].
+
+  -- ALGLIB --
+     Copyright 2005 by Bochkanov Sergey
+*************************************************************************/
+bool rmatrixsvd(const real_2d_array &a, const ae_int_t m, const ae_int_t n, const ae_int_t uneeded, const ae_int_t vtneeded, const ae_int_t additionalmemory, real_1d_array &w, real_2d_array &u, real_2d_array &vt, const xparams _xparams = alglib::xdefault);
+#endif
+
+#if defined(AE_COMPILE_RCOND) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+Estimate of a matrix condition number (1-norm)
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    A   -   matrix. Array whose indexes range within [0..N-1, 0..N-1].
+    N   -   size of matrix A.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
+*************************************************************************/
+double rmatrixrcond1(const real_2d_array &a, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Estimate of a matrix condition number (infinity-norm).
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    A   -   matrix. Array whose indexes range within [0..N-1, 0..N-1].
+    N   -   size of matrix A.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
+*************************************************************************/
+double rmatrixrcondinf(const real_2d_array &a, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Condition number estimate of a symmetric positive definite matrix.
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+It should be noted that 1-norm and inf-norm of condition numbers of symmetric
+matrices are equal, so the algorithm doesn't take into account the
+differences between these types of norms.
+
+Input parameters:
+    A       -   symmetric positive definite matrix which is given by its
+                upper or lower triangle depending on the value of
+                IsUpper. Array with elements [0..N-1, 0..N-1].
+    N       -   size of matrix A.
+    IsUpper -   storage format.
+
+Result:
+    1/LowerBound(cond(A)), if matrix A is positive definite,
+   -1, if matrix A is not positive definite, and its condition number
+    could not be found by this algorithm.
+
+NOTE:
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
+*************************************************************************/
+double spdmatrixrcond(const real_2d_array &a, const ae_int_t n, const bool isupper, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Triangular matrix: estimate of a condition number (1-norm)
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    A       -   matrix. Array[0..N-1, 0..N-1].
+    N       -   size of A.
+    IsUpper -   True, if the matrix is upper triangular.
+    IsUnit  -   True, if the matrix has a unit diagonal.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
+*************************************************************************/
+double rmatrixtrrcond1(const real_2d_array &a, const ae_int_t n, const bool isupper, const bool isunit, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Triangular matrix: estimate of a matrix condition number (infinity-norm).
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    A   -   matrix. Array whose indexes range within [0..N-1, 0..N-1].
+    N   -   size of matrix A.
+    IsUpper -   True, if the matrix is upper triangular.
+    IsUnit  -   True, if the matrix has a unit diagonal.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
+*************************************************************************/
+double rmatrixtrrcondinf(const real_2d_array &a, const ae_int_t n, const bool isupper, const bool isunit, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Condition number estimate of a Hermitian positive definite matrix.
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+It should be noted that 1-norm and inf-norm of condition numbers of symmetric
+matrices are equal, so the algorithm doesn't take into account the
+differences between these types of norms.
+
+Input parameters:
+    A       -   Hermitian positive definite matrix which is given by its
+                upper or lower triangle depending on the value of
+                IsUpper. Array with elements [0..N-1, 0..N-1].
+    N       -   size of matrix A.
+    IsUpper -   storage format.
+
+Result:
+    1/LowerBound(cond(A)), if matrix A is positive definite,
+   -1, if matrix A is not positive definite, and its condition number
+    could not be found by this algorithm.
+
+NOTE:
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
+*************************************************************************/
+double hpdmatrixrcond(const complex_2d_array &a, const ae_int_t n, const bool isupper, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Estimate of a matrix condition number (1-norm)
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    A   -   matrix. Array whose indexes range within [0..N-1, 0..N-1].
+    N   -   size of matrix A.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
+*************************************************************************/
+double cmatrixrcond1(const complex_2d_array &a, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Estimate of a matrix condition number (infinity-norm).
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    A   -   matrix. Array whose indexes range within [0..N-1, 0..N-1].
+    N   -   size of matrix A.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
+*************************************************************************/
+double cmatrixrcondinf(const complex_2d_array &a, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Estimate of the condition number of a matrix given by its LU decomposition (1-norm)
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    LUA         -   LU decomposition of a matrix in compact form. Output of
+                    the RMatrixLU subroutine.
+    N           -   size of matrix A.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
+*************************************************************************/
+double rmatrixlurcond1(const real_2d_array &lua, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Estimate of the condition number of a matrix given by its LU decomposition
+(infinity norm).
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    LUA     -   LU decomposition of a matrix in compact form. Output of
+                the RMatrixLU subroutine.
+    N       -   size of matrix A.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
+*************************************************************************/
+double rmatrixlurcondinf(const real_2d_array &lua, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Condition number estimate of a symmetric positive definite matrix given by
+Cholesky decomposition.
+
+The algorithm calculates a lower bound of the condition number. In this
+case, the algorithm does not return a lower bound of the condition number,
+but an inverse number (to avoid an overflow in case of a singular matrix).
+
+It should be noted that 1-norm and inf-norm condition numbers of symmetric
+matrices are equal, so the algorithm doesn't take into account the
+differences between these types of norms.
+
+Input parameters:
+    CD  - Cholesky decomposition of matrix A,
+          output of SMatrixCholesky subroutine.
+    N   - size of matrix A.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
+*************************************************************************/
+double spdmatrixcholeskyrcond(const real_2d_array &a, const ae_int_t n, const bool isupper, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Condition number estimate of a Hermitian positive definite matrix given by
+Cholesky decomposition.
+
+The algorithm calculates a lower bound of the condition number. In this
+case, the algorithm does not return a lower bound of the condition number,
+but an inverse number (to avoid an overflow in case of a singular matrix).
+
+It should be noted that 1-norm and inf-norm condition numbers of symmetric
+matrices are equal, so the algorithm doesn't take into account the
+differences between these types of norms.
+
+Input parameters:
+    CD  - Cholesky decomposition of matrix A,
+          output of SMatrixCholesky subroutine.
+    N   - size of matrix A.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
+*************************************************************************/
+double hpdmatrixcholeskyrcond(const complex_2d_array &a, const ae_int_t n, const bool isupper, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Estimate of the condition number of a matrix given by its LU decomposition (1-norm)
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    LUA         -   LU decomposition of a matrix in compact form. Output of
+                    the CMatrixLU subroutine.
+    N           -   size of matrix A.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
+*************************************************************************/
+double cmatrixlurcond1(const complex_2d_array &lua, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Estimate of the condition number of a matrix given by its LU decomposition
+(infinity norm).
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    LUA     -   LU decomposition of a matrix in compact form. Output of
+                the CMatrixLU subroutine.
+    N       -   size of matrix A.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
+*************************************************************************/
+double cmatrixlurcondinf(const complex_2d_array &lua, const ae_int_t n, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Triangular matrix: estimate of a condition number (1-norm)
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    A       -   matrix. Array[0..N-1, 0..N-1].
+    N       -   size of A.
+    IsUpper -   True, if the matrix is upper triangular.
+    IsUnit  -   True, if the matrix has a unit diagonal.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
+*************************************************************************/
+double cmatrixtrrcond1(const complex_2d_array &a, const ae_int_t n, const bool isupper, const bool isunit, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Triangular matrix: estimate of a matrix condition number (infinity-norm).
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    A   -   matrix. Array whose indexes range within [0..N-1, 0..N-1].
+    N   -   size of matrix A.
+    IsUpper -   True, if the matrix is upper triangular.
+    IsUnit  -   True, if the matrix has a unit diagonal.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
+*************************************************************************/
+double cmatrixtrrcondinf(const complex_2d_array &a, const ae_int_t n, const bool isupper, const bool isunit, const xparams _xparams = alglib::xdefault);
+#endif
+
+#if defined(AE_COMPILE_FBLS) || !defined(AE_PARTIAL_BUILD)
+
+#endif
+
+#if defined(AE_COMPILE_NORMESTIMATOR) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+This procedure initializes matrix norm estimator.
+
+USAGE:
+1. User initializes algorithm state with NormEstimatorCreate() call
+2. User calls NormEstimatorEstimateSparse() (or NormEstimatorIteration())
+3. User calls NormEstimatorResults() to get solution.
+
+INPUT PARAMETERS:
+    M       -   number of rows in the matrix being estimated, M>0
+    N       -   number of columns in the matrix being estimated, N>0
+    NStart  -   number of random starting vectors
+                recommended value - at least 5.
+    NIts    -   number of iterations to do with best starting vector
+                recommended value - at least 5.
+
+OUTPUT PARAMETERS:
+    State   -   structure which stores algorithm state
+
+
+NOTE: this algorithm is effectively deterministic, i.e. it always  returns
+same result when repeatedly called for the same matrix. In fact, algorithm
+uses randomized starting vectors, but internal  random  numbers  generator
+always generates same sequence of the random values (it is a  feature, not
+bug).
+
+Algorithm can be made non-deterministic with NormEstimatorSetSeed(0) call.
+
+  -- ALGLIB --
+     Copyright 06.12.2011 by Bochkanov Sergey
+*************************************************************************/
+void normestimatorcreate(const ae_int_t m, const ae_int_t n, const ae_int_t nstart, const ae_int_t nits, normestimatorstate &state, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function changes seed value used by algorithm. In some cases we  need
+deterministic processing, i.e. subsequent calls must return equal results,
+in other cases we need non-deterministic algorithm which returns different
+results for the same matrix on every pass.
+
+Setting zero seed will lead to non-deterministic algorithm, while non-zero
+value will make our algorithm deterministic.
+
+INPUT PARAMETERS:
+    State       -   norm estimator state, must be initialized with a  call
+                    to NormEstimatorCreate()
+    SeedVal     -   seed value, >=0. Zero value = non-deterministic algo.
+
+  -- ALGLIB --
+     Copyright 06.12.2011 by Bochkanov Sergey
+*************************************************************************/
+void normestimatorsetseed(const normestimatorstate &state, const ae_int_t seedval, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+This function estimates norm of the sparse M*N matrix A.
+
+INPUT PARAMETERS:
+    State       -   norm estimator state, must be initialized with a  call
+                    to NormEstimatorCreate()
+    A           -   sparse M*N matrix, must be converted to CRS format
+                    prior to calling this function.
+
+After this function  is  over  you can call NormEstimatorResults() to get
+estimate of the norm(A).
+
+  -- ALGLIB --
+     Copyright 06.12.2011 by Bochkanov Sergey
+*************************************************************************/
+void normestimatorestimatesparse(const normestimatorstate &state, const sparsematrix &a, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Matrix norm estimation results
+
+INPUT PARAMETERS:
+    State   -   algorithm state
+
+OUTPUT PARAMETERS:
+    Nrm     -   estimate of the matrix norm, Nrm>=0
+
+  -- ALGLIB --
+     Copyright 06.12.2011 by Bochkanov Sergey
+*************************************************************************/
+void normestimatorresults(const normestimatorstate &state, double &nrm, const xparams _xparams = alglib::xdefault);
+#endif
+
+#if defined(AE_COMPILE_MATINV) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+Inversion of a matrix given by its LU decomposition.
+
+INPUT PARAMETERS:
+    A       -   LU decomposition of the matrix
+                (output of RMatrixLU subroutine).
+    Pivots  -   table of permutations
+                (the output of RMatrixLU subroutine).
+    N       -   size of matrix A (optional) :
+                * if given, only principal NxN submatrix is processed  and
+                  overwritten. other elements are unchanged.
+                * if not given,  size  is  automatically  determined  from
+                  matrix size (A must be square matrix)
+
+OUTPUT PARAMETERS:
+    Info    -   return code:
+                * -3    A is singular, or VERY close to singular.
+                        it is filled by zeros in such cases.
+                *  1    task is solved (but matrix A may be ill-conditioned,
+                        check R1/RInf parameters for condition numbers).
+    Rep     -   solver report, see below for more info
+    A       -   inverse of matrix A.
+                Array whose indexes range within [0..N-1, 0..N-1].
+
+SOLVER REPORT
+
+Subroutine sets following fields of the Rep structure:
+* R1        reciprocal of condition number: 1/cond(A), 1-norm.
+* RInf      reciprocal of condition number: 1/cond(A), inf-norm.
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     05.02.2010
+     Bochkanov Sergey
+*************************************************************************/
+void rmatrixluinverse(real_2d_array &a, const integer_1d_array &pivots, const ae_int_t n, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
+void rmatrixluinverse(real_2d_array &a, const integer_1d_array &pivots, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Inversion of a general matrix.
+
+Input parameters:
+    A       -   matrix.
+    N       -   size of matrix A (optional) :
+                * if given, only principal NxN submatrix is processed  and
+                  overwritten. other elements are unchanged.
+                * if not given,  size  is  automatically  determined  from
+                  matrix size (A must be square matrix)
+
+Output parameters:
+    Info    -   return code, same as in RMatrixLUInverse
+    Rep     -   solver report, same as in RMatrixLUInverse
+    A       -   inverse of matrix A, same as in RMatrixLUInverse
+
+Result:
+    True, if the matrix is not singular.
+    False, if the matrix is singular.
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB --
+     Copyright 2005-2010 by Bochkanov Sergey
+*************************************************************************/
+void rmatrixinverse(real_2d_array &a, const ae_int_t n, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
+void rmatrixinverse(real_2d_array &a, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Inversion of a matrix given by its LU decomposition.
+
+INPUT PARAMETERS:
+    A       -   LU decomposition of the matrix
+                (output of CMatrixLU subroutine).
+    Pivots  -   table of permutations
+                (the output of CMatrixLU subroutine).
+    N       -   size of matrix A (optional) :
+                * if given, only principal NxN submatrix is processed  and
+                  overwritten. other elements are unchanged.
+                * if not given,  size  is  automatically  determined  from
+                  matrix size (A must be square matrix)
+
+OUTPUT PARAMETERS:
+    Info    -   return code, same as in RMatrixLUInverse
+    Rep     -   solver report, same as in RMatrixLUInverse
+    A       -   inverse of matrix A, same as in RMatrixLUInverse
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     05.02.2010
+     Bochkanov Sergey
+*************************************************************************/
+void cmatrixluinverse(complex_2d_array &a, const integer_1d_array &pivots, const ae_int_t n, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
+void cmatrixluinverse(complex_2d_array &a, const integer_1d_array &pivots, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Inversion of a general matrix.
+
+Input parameters:
+    A       -   matrix
+    N       -   size of matrix A (optional) :
+                * if given, only principal NxN submatrix is processed  and
+                  overwritten. other elements are unchanged.
+                * if not given,  size  is  automatically  determined  from
+                  matrix size (A must be square matrix)
+
+Output parameters:
+    Info    -   return code, same as in RMatrixLUInverse
+    Rep     -   solver report, same as in RMatrixLUInverse
+    A       -   inverse of matrix A, same as in RMatrixLUInverse
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB --
+     Copyright 2005 by Bochkanov Sergey
+*************************************************************************/
+void cmatrixinverse(complex_2d_array &a, const ae_int_t n, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
+void cmatrixinverse(complex_2d_array &a, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Inversion of a symmetric positive definite matrix which is given
+by Cholesky decomposition.
+
+Input parameters:
+    A       -   Cholesky decomposition of the matrix to be inverted:
+                A=U'*U or A = L*L'.
+                Output of  SPDMatrixCholesky subroutine.
+    N       -   size of matrix A (optional) :
+                * if given, only principal NxN submatrix is processed  and
+                  overwritten. other elements are unchanged.
+                * if not given,  size  is  automatically  determined  from
+                  matrix size (A must be square matrix)
+    IsUpper -   storage type (optional):
+                * if True, symmetric  matrix  A  is  given  by  its  upper
+                  triangle, and the lower triangle isn't  used/changed  by
+                  function
+                * if False,  symmetric matrix  A  is  given  by  its lower
+                  triangle, and the  upper triangle isn't used/changed  by
+                  function
+                * if not given, lower half is used.
+
+Output parameters:
+    Info    -   return code, same as in RMatrixLUInverse
+    Rep     -   solver report, same as in RMatrixLUInverse
+    A       -   inverse of matrix A, same as in RMatrixLUInverse
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     10.02.2010
+     Bochkanov Sergey
+*************************************************************************/
+void spdmatrixcholeskyinverse(real_2d_array &a, const ae_int_t n, const bool isupper, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
+void spdmatrixcholeskyinverse(real_2d_array &a, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Inversion of a symmetric positive definite matrix.
+
+Given an upper or lower triangle of a symmetric positive definite matrix,
+the algorithm generates matrix A^-1 and saves the upper or lower triangle
+depending on the input.
+
+Input parameters:
+    A       -   matrix to be inverted (upper or lower triangle).
+                Array with elements [0..N-1,0..N-1].
+    N       -   size of matrix A (optional) :
+                * if given, only principal NxN submatrix is processed  and
+                  overwritten. other elements are unchanged.
+                * if not given,  size  is  automatically  determined  from
+                  matrix size (A must be square matrix)
+    IsUpper -   storage type (optional):
+                * if True, symmetric  matrix  A  is  given  by  its  upper
+                  triangle, and the lower triangle isn't  used/changed  by
+                  function
+                * if False,  symmetric matrix  A  is  given  by  its lower
+                  triangle, and the  upper triangle isn't used/changed  by
+                  function
+                * if not given,  both lower and upper  triangles  must  be
+                  filled.
+
+Output parameters:
+    Info    -   return code, same as in RMatrixLUInverse
+    Rep     -   solver report, same as in RMatrixLUInverse
+    A       -   inverse of matrix A, same as in RMatrixLUInverse
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     10.02.2010
+     Bochkanov Sergey
+*************************************************************************/
+void spdmatrixinverse(real_2d_array &a, const ae_int_t n, const bool isupper, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
+void spdmatrixinverse(real_2d_array &a, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Inversion of a Hermitian positive definite matrix which is given
+by Cholesky decomposition.
+
+Input parameters:
+    A       -   Cholesky decomposition of the matrix to be inverted:
+                A=U'*U or A = L*L'.
+                Output of  HPDMatrixCholesky subroutine.
+    N       -   size of matrix A (optional) :
+                * if given, only principal NxN submatrix is processed  and
+                  overwritten. other elements are unchanged.
+                * if not given,  size  is  automatically  determined  from
+                  matrix size (A must be square matrix)
+    IsUpper -   storage type (optional):
+                * if True, symmetric  matrix  A  is  given  by  its  upper
+                  triangle, and the lower triangle isn't  used/changed  by
+                  function
+                * if False,  symmetric matrix  A  is  given  by  its lower
+                  triangle, and the  upper triangle isn't used/changed  by
+                  function
+                * if not given, lower half is used.
+
+Output parameters:
+    Info    -   return code, same as in RMatrixLUInverse
+    Rep     -   solver report, same as in RMatrixLUInverse
+    A       -   inverse of matrix A, same as in RMatrixLUInverse
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     10.02.2010
+     Bochkanov Sergey
+*************************************************************************/
+void hpdmatrixcholeskyinverse(complex_2d_array &a, const ae_int_t n, const bool isupper, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
+void hpdmatrixcholeskyinverse(complex_2d_array &a, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Inversion of a Hermitian positive definite matrix.
+
+Given an upper or lower triangle of a Hermitian positive definite matrix,
+the algorithm generates matrix A^-1 and saves the upper or lower triangle
+depending on the input.
+
+Input parameters:
+    A       -   matrix to be inverted (upper or lower triangle).
+                Array with elements [0..N-1,0..N-1].
+    N       -   size of matrix A (optional) :
+                * if given, only principal NxN submatrix is processed  and
+                  overwritten. other elements are unchanged.
+                * if not given,  size  is  automatically  determined  from
+                  matrix size (A must be square matrix)
+    IsUpper -   storage type (optional):
+                * if True, symmetric  matrix  A  is  given  by  its  upper
+                  triangle, and the lower triangle isn't  used/changed  by
+                  function
+                * if False,  symmetric matrix  A  is  given  by  its lower
+                  triangle, and the  upper triangle isn't used/changed  by
+                  function
+                * if not given,  both lower and upper  triangles  must  be
+                  filled.
+
+Output parameters:
+    Info    -   return code, same as in RMatrixLUInverse
+    Rep     -   solver report, same as in RMatrixLUInverse
+    A       -   inverse of matrix A, same as in RMatrixLUInverse
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB routine --
+     10.02.2010
+     Bochkanov Sergey
+*************************************************************************/
+void hpdmatrixinverse(complex_2d_array &a, const ae_int_t n, const bool isupper, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
+void hpdmatrixinverse(complex_2d_array &a, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Triangular matrix inverse (real)
+
+The subroutine inverts the following types of matrices:
+    * upper triangular
+    * upper triangular with unit diagonal
+    * lower triangular
+    * lower triangular with unit diagonal
+
+In case of an upper (lower) triangular matrix,  the  inverse  matrix  will
+also be upper (lower) triangular, and after the end of the algorithm,  the
+inverse matrix replaces the source matrix. The elements  below (above) the
+main diagonal are not changed by the algorithm.
+
+If  the matrix  has a unit diagonal, the inverse matrix also  has  a  unit
+diagonal, and the diagonal elements are not passed to the algorithm.
+
+Input parameters:
+    A       -   matrix, array[0..N-1, 0..N-1].
+    N       -   size of matrix A (optional) :
+                * if given, only principal NxN submatrix is processed  and
+                  overwritten. other elements are unchanged.
+                * if not given,  size  is  automatically  determined  from
+                  matrix size (A must be square matrix)
+    IsUpper -   True, if the matrix is upper triangular.
+    IsUnit  -   diagonal type (optional):
+                * if True, matrix has unit diagonal (a[i,i] are NOT used)
+                * if False, matrix diagonal is arbitrary
+                * if not given, False is assumed
+
+Output parameters:
+    Info    -   same as for RMatrixLUInverse
+    Rep     -   same as for RMatrixLUInverse
+    A       -   same as for RMatrixLUInverse.
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB --
+     Copyright 05.02.2010 by Bochkanov Sergey
+*************************************************************************/
+void rmatrixtrinverse(real_2d_array &a, const ae_int_t n, const bool isupper, const bool isunit, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
+void rmatrixtrinverse(real_2d_array &a, const bool isupper, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Triangular matrix inverse (complex)
+
+The subroutine inverts the following types of matrices:
+    * upper triangular
+    * upper triangular with unit diagonal
+    * lower triangular
+    * lower triangular with unit diagonal
+
+In case of an upper (lower) triangular matrix,  the  inverse  matrix  will
+also be upper (lower) triangular, and after the end of the algorithm,  the
+inverse matrix replaces the source matrix. The elements  below (above) the
+main diagonal are not changed by the algorithm.
+
+If  the matrix  has a unit diagonal, the inverse matrix also  has  a  unit
+diagonal, and the diagonal elements are not passed to the algorithm.
+
+Input parameters:
+    A       -   matrix, array[0..N-1, 0..N-1].
+    N       -   size of matrix A (optional) :
+                * if given, only principal NxN submatrix is processed  and
+                  overwritten. other elements are unchanged.
+                * if not given,  size  is  automatically  determined  from
+                  matrix size (A must be square matrix)
+    IsUpper -   True, if the matrix is upper triangular.
+    IsUnit  -   diagonal type (optional):
+                * if True, matrix has unit diagonal (a[i,i] are NOT used)
+                * if False, matrix diagonal is arbitrary
+                * if not given, False is assumed
+
+Output parameters:
+    Info    -   same as for RMatrixLUInverse
+    Rep     -   same as for RMatrixLUInverse
+    A       -   same as for RMatrixLUInverse.
+
+  ! FREE EDITION OF ALGLIB:
+  !
+  ! Free Edition of ALGLIB supports following important features for  this
+  ! function:
+  ! * C++ version: x64 SIMD support using C++ intrinsics
+  ! * C#  version: x64 SIMD support using NET5/NetCore hardware intrinsics
+  !
+  ! We  recommend  you  to  read  'Compiling ALGLIB' section of the ALGLIB
+  ! Reference Manual in order  to  find  out  how to activate SIMD support
+  ! in ALGLIB.
+
+  ! COMMERCIAL EDITION OF ALGLIB:
+  !
+  ! Commercial Edition of ALGLIB includes following important improvements
+  ! of this function:
+  ! * high-performance native backend with same C# interface (C# version)
+  ! * multithreading support (C++ and C# versions)
+  ! * hardware vendor (Intel) implementations of linear algebra primitives
+  !   (C++ and C# versions, x86/x64 platform)
+  !
+  ! We recommend you to read 'Working with commercial version' section  of
+  ! ALGLIB Reference Manual in order to find out how to  use  performance-
+  ! related features provided by commercial edition of ALGLIB.
+
+  -- ALGLIB --
+     Copyright 05.02.2010 by Bochkanov Sergey
+*************************************************************************/
+void cmatrixtrinverse(complex_2d_array &a, const ae_int_t n, const bool isupper, const bool isunit, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
+void cmatrixtrinverse(complex_2d_array &a, const bool isupper, ae_int_t &info, matinvreport &rep, const xparams _xparams = alglib::xdefault);
+#endif
+
+#if defined(AE_COMPILE_INVERSEUPDATE) || !defined(AE_PARTIAL_BUILD)
+/*************************************************************************
+Inverse matrix update by the Sherman-Morrison formula
+
+The algorithm updates matrix A^-1 when adding a number to an element
+of matrix A.
+
+Input parameters:
+    InvA    -   inverse of matrix A.
+                Array whose indexes range within [0..N-1, 0..N-1].
+    N       -   size of matrix A.
+    UpdRow  -   row where the element to be updated is stored.
+    UpdColumn - column where the element to be updated is stored.
+    UpdVal  -   a number to be added to the element.
+
+
+Output parameters:
+    InvA    -   inverse of modified matrix A.
+
+  -- ALGLIB --
+     Copyright 2005 by Bochkanov Sergey
+*************************************************************************/
+void rmatrixinvupdatesimple(real_2d_array &inva, const ae_int_t n, const ae_int_t updrow, const ae_int_t updcolumn, const double updval, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Inverse matrix update by the Sherman-Morrison formula
+
+The algorithm updates matrix A^-1 when adding a vector to a row
+of matrix A.
+
+Input parameters:
+    InvA    -   inverse of matrix A.
+                Array whose indexes range within [0..N-1, 0..N-1].
+    N       -   size of matrix A.
+    UpdRow  -   the row of A whose vector V was added.
+                0 <= Row <= N-1
+    V       -   the vector to be added to a row.
+                Array whose index ranges within [0..N-1].
+
+Output parameters:
+    InvA    -   inverse of modified matrix A.
+
+  -- ALGLIB --
+     Copyright 2005 by Bochkanov Sergey
+*************************************************************************/
+void rmatrixinvupdaterow(real_2d_array &inva, const ae_int_t n, const ae_int_t updrow, const real_1d_array &v, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Inverse matrix update by the Sherman-Morrison formula
+
+The algorithm updates matrix A^-1 when adding a vector to a column
+of matrix A.
+
+Input parameters:
+    InvA        -   inverse of matrix A.
+                    Array whose indexes range within [0..N-1, 0..N-1].
+    N           -   size of matrix A.
+    UpdColumn   -   the column of A whose vector U was added.
+                    0 <= UpdColumn <= N-1
+    U           -   the vector to be added to a column.
+                    Array whose index ranges within [0..N-1].
+
+Output parameters:
+    InvA        -   inverse of modified matrix A.
+
+  -- ALGLIB --
+     Copyright 2005 by Bochkanov Sergey
+*************************************************************************/
+void rmatrixinvupdatecolumn(real_2d_array &inva, const ae_int_t n, const ae_int_t updcolumn, const real_1d_array &u, const xparams _xparams = alglib::xdefault);
+
+
+/*************************************************************************
+Inverse matrix update by the Sherman-Morrison formula
+
+The algorithm computes the inverse of matrix A+u*v' by using the given matrix
+A^-1 and the vectors u and v.
+
+Input parameters:
+    InvA    -   inverse of matrix A.
+                Array whose indexes range within [0..N-1, 0..N-1].
+    N       -   size of matrix A.
+    U       -   the vector modifying the matrix.
+                Array whose index ranges within [0..N-1].
+    V       -   the vector modifying the matrix.
+                Array whose index ranges within [0..N-1].
+
+Output parameters:
+    InvA - inverse of matrix A + u*v'.
+
+  -- ALGLIB --
+     Copyright 2005 by Bochkanov Sergey
+*************************************************************************/
+void rmatrixinvupdateuv(real_2d_array &inva, const ae_int_t n, const real_1d_array &u, const real_1d_array &v, const xparams _xparams = alglib::xdefault);
+#endif
+
 #if defined(AE_COMPILE_SCHUR) || !defined(AE_PARTIAL_BUILD)
 /*************************************************************************
 Subroutine performing the Schur decomposition of a general matrix by using
@@ -7158,103 +7669,6 @@ Result:
 bool smatrixgevdreduce(real_2d_array &a, const ae_int_t n, const bool isuppera, const real_2d_array &b, const bool isupperb, const ae_int_t problemtype, real_2d_array &r, bool &isupperr, const xparams _xparams = alglib::xdefault);
 #endif
 
-#if defined(AE_COMPILE_INVERSEUPDATE) || !defined(AE_PARTIAL_BUILD)
-/*************************************************************************
-Inverse matrix update by the Sherman-Morrison formula
-
-The algorithm updates matrix A^-1 when adding a number to an element
-of matrix A.
-
-Input parameters:
-    InvA    -   inverse of matrix A.
-                Array whose indexes range within [0..N-1, 0..N-1].
-    N       -   size of matrix A.
-    UpdRow  -   row where the element to be updated is stored.
-    UpdColumn - column where the element to be updated is stored.
-    UpdVal  -   a number to be added to the element.
-
-
-Output parameters:
-    InvA    -   inverse of modified matrix A.
-
-  -- ALGLIB --
-     Copyright 2005 by Bochkanov Sergey
-*************************************************************************/
-void rmatrixinvupdatesimple(real_2d_array &inva, const ae_int_t n, const ae_int_t updrow, const ae_int_t updcolumn, const double updval, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Inverse matrix update by the Sherman-Morrison formula
-
-The algorithm updates matrix A^-1 when adding a vector to a row
-of matrix A.
-
-Input parameters:
-    InvA    -   inverse of matrix A.
-                Array whose indexes range within [0..N-1, 0..N-1].
-    N       -   size of matrix A.
-    UpdRow  -   the row of A whose vector V was added.
-                0 <= Row <= N-1
-    V       -   the vector to be added to a row.
-                Array whose index ranges within [0..N-1].
-
-Output parameters:
-    InvA    -   inverse of modified matrix A.
-
-  -- ALGLIB --
-     Copyright 2005 by Bochkanov Sergey
-*************************************************************************/
-void rmatrixinvupdaterow(real_2d_array &inva, const ae_int_t n, const ae_int_t updrow, const real_1d_array &v, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Inverse matrix update by the Sherman-Morrison formula
-
-The algorithm updates matrix A^-1 when adding a vector to a column
-of matrix A.
-
-Input parameters:
-    InvA        -   inverse of matrix A.
-                    Array whose indexes range within [0..N-1, 0..N-1].
-    N           -   size of matrix A.
-    UpdColumn   -   the column of A whose vector U was added.
-                    0 <= UpdColumn <= N-1
-    U           -   the vector to be added to a column.
-                    Array whose index ranges within [0..N-1].
-
-Output parameters:
-    InvA        -   inverse of modified matrix A.
-
-  -- ALGLIB --
-     Copyright 2005 by Bochkanov Sergey
-*************************************************************************/
-void rmatrixinvupdatecolumn(real_2d_array &inva, const ae_int_t n, const ae_int_t updcolumn, const real_1d_array &u, const xparams _xparams = alglib::xdefault);
-
-
-/*************************************************************************
-Inverse matrix update by the Sherman-Morrison formula
-
-The algorithm computes the inverse of matrix A+u*v' by using the given matrix
-A^-1 and the vectors u and v.
-
-Input parameters:
-    InvA    -   inverse of matrix A.
-                Array whose indexes range within [0..N-1, 0..N-1].
-    N       -   size of matrix A.
-    U       -   the vector modifying the matrix.
-                Array whose index ranges within [0..N-1].
-    V       -   the vector modifying the matrix.
-                Array whose index ranges within [0..N-1].
-
-Output parameters:
-    InvA - inverse of matrix A + u*v'.
-
-  -- ALGLIB --
-     Copyright 2005 by Bochkanov Sergey
-*************************************************************************/
-void rmatrixinvupdateuv(real_2d_array &inva, const ae_int_t n, const real_1d_array &u, const real_1d_array &v, const xparams _xparams = alglib::xdefault);
-#endif
-
 #if defined(AE_COMPILE_MATDET) || !defined(AE_PARTIAL_BUILD)
 /*************************************************************************
 Determinant calculation of the matrix given by its LU decomposition.
@@ -7409,221 +7823,6 @@ double spdmatrixdet(const real_2d_array &a, const xparams _xparams = alglib::xde
 /////////////////////////////////////////////////////////////////////////
 namespace alglib_impl
 {
-#if defined(AE_COMPILE_SPARSE) || !defined(AE_PARTIAL_BUILD)
-void sparsecreate(ae_int_t m,
-     ae_int_t n,
-     ae_int_t k,
-     sparsematrix* s,
-     ae_state *_state);
-void sparsecreatebuf(ae_int_t m,
-     ae_int_t n,
-     ae_int_t k,
-     sparsematrix* s,
-     ae_state *_state);
-void sparsecreatecrs(ae_int_t m,
-     ae_int_t n,
-     /* Integer */ ae_vector* ner,
-     sparsematrix* s,
-     ae_state *_state);
-void sparsecreatecrsbuf(ae_int_t m,
-     ae_int_t n,
-     /* Integer */ ae_vector* ner,
-     sparsematrix* s,
-     ae_state *_state);
-void sparsecreatesks(ae_int_t m,
-     ae_int_t n,
-     /* Integer */ ae_vector* d,
-     /* Integer */ ae_vector* u,
-     sparsematrix* s,
-     ae_state *_state);
-void sparsecreatesksbuf(ae_int_t m,
-     ae_int_t n,
-     /* Integer */ ae_vector* d,
-     /* Integer */ ae_vector* u,
-     sparsematrix* s,
-     ae_state *_state);
-void sparsecreatesksband(ae_int_t m,
-     ae_int_t n,
-     ae_int_t bw,
-     sparsematrix* s,
-     ae_state *_state);
-void sparsecreatesksbandbuf(ae_int_t m,
-     ae_int_t n,
-     ae_int_t bw,
-     sparsematrix* s,
-     ae_state *_state);
-void sparsecopy(sparsematrix* s0, sparsematrix* s1, ae_state *_state);
-void sparsecopybuf(sparsematrix* s0, sparsematrix* s1, ae_state *_state);
-void sparseswap(sparsematrix* s0, sparsematrix* s1, ae_state *_state);
-void sparseadd(sparsematrix* s,
-     ae_int_t i,
-     ae_int_t j,
-     double v,
-     ae_state *_state);
-void sparseset(sparsematrix* s,
-     ae_int_t i,
-     ae_int_t j,
-     double v,
-     ae_state *_state);
-double sparseget(sparsematrix* s,
-     ae_int_t i,
-     ae_int_t j,
-     ae_state *_state);
-ae_bool sparseexists(sparsematrix* s,
-     ae_int_t i,
-     ae_int_t j,
-     ae_state *_state);
-double sparsegetdiagonal(sparsematrix* s, ae_int_t i, ae_state *_state);
-void sparsemv(sparsematrix* s,
-     /* Real    */ ae_vector* x,
-     /* Real    */ ae_vector* y,
-     ae_state *_state);
-void sparsemtv(sparsematrix* s,
-     /* Real    */ ae_vector* x,
-     /* Real    */ ae_vector* y,
-     ae_state *_state);
-void sparsegemv(sparsematrix* s,
-     double alpha,
-     ae_int_t ops,
-     /* Real    */ ae_vector* x,
-     ae_int_t ix,
-     double beta,
-     /* Real    */ ae_vector* y,
-     ae_int_t iy,
-     ae_state *_state);
-void sparsemv2(sparsematrix* s,
-     /* Real    */ ae_vector* x,
-     /* Real    */ ae_vector* y0,
-     /* Real    */ ae_vector* y1,
-     ae_state *_state);
-void sparsesmv(sparsematrix* s,
-     ae_bool isupper,
-     /* Real    */ ae_vector* x,
-     /* Real    */ ae_vector* y,
-     ae_state *_state);
-double sparsevsmv(sparsematrix* s,
-     ae_bool isupper,
-     /* Real    */ ae_vector* x,
-     ae_state *_state);
-void sparsemm(sparsematrix* s,
-     /* Real    */ ae_matrix* a,
-     ae_int_t k,
-     /* Real    */ ae_matrix* b,
-     ae_state *_state);
-void sparsemtm(sparsematrix* s,
-     /* Real    */ ae_matrix* a,
-     ae_int_t k,
-     /* Real    */ ae_matrix* b,
-     ae_state *_state);
-void sparsemm2(sparsematrix* s,
-     /* Real    */ ae_matrix* a,
-     ae_int_t k,
-     /* Real    */ ae_matrix* b0,
-     /* Real    */ ae_matrix* b1,
-     ae_state *_state);
-void sparsesmm(sparsematrix* s,
-     ae_bool isupper,
-     /* Real    */ ae_matrix* a,
-     ae_int_t k,
-     /* Real    */ ae_matrix* b,
-     ae_state *_state);
-void sparsetrmv(sparsematrix* s,
-     ae_bool isupper,
-     ae_bool isunit,
-     ae_int_t optype,
-     /* Real    */ ae_vector* x,
-     /* Real    */ ae_vector* y,
-     ae_state *_state);
-void sparsetrsv(sparsematrix* s,
-     ae_bool isupper,
-     ae_bool isunit,
-     ae_int_t optype,
-     /* Real    */ ae_vector* x,
-     ae_state *_state);
-void sparsesymmpermtbl(sparsematrix* a,
-     ae_bool isupper,
-     /* Integer */ ae_vector* p,
-     sparsematrix* b,
-     ae_state *_state);
-void sparsesymmpermtblbuf(sparsematrix* a,
-     ae_bool isupper,
-     /* Integer */ ae_vector* p,
-     sparsematrix* b,
-     ae_state *_state);
-void sparseresizematrix(sparsematrix* s, ae_state *_state);
-void sparseinitduidx(sparsematrix* s, ae_state *_state);
-double sparsegetaveragelengthofchain(sparsematrix* s, ae_state *_state);
-ae_bool sparseenumerate(sparsematrix* s,
-     ae_int_t* t0,
-     ae_int_t* t1,
-     ae_int_t* i,
-     ae_int_t* j,
-     double* v,
-     ae_state *_state);
-ae_bool sparserewriteexisting(sparsematrix* s,
-     ae_int_t i,
-     ae_int_t j,
-     double v,
-     ae_state *_state);
-void sparsegetrow(sparsematrix* s,
-     ae_int_t i,
-     /* Real    */ ae_vector* irow,
-     ae_state *_state);
-void sparsegetcompressedrow(sparsematrix* s,
-     ae_int_t i,
-     /* Integer */ ae_vector* colidx,
-     /* Real    */ ae_vector* vals,
-     ae_int_t* nzcnt,
-     ae_state *_state);
-void sparsetransposesks(sparsematrix* s, ae_state *_state);
-void sparsetransposecrs(sparsematrix* s, ae_state *_state);
-void sparsecopytransposecrs(sparsematrix* s0,
-     sparsematrix* s1,
-     ae_state *_state);
-void sparsecopytransposecrsbuf(sparsematrix* s0,
-     sparsematrix* s1,
-     ae_state *_state);
-void sparseconvertto(sparsematrix* s0, ae_int_t fmt, ae_state *_state);
-void sparsecopytobuf(sparsematrix* s0,
-     ae_int_t fmt,
-     sparsematrix* s1,
-     ae_state *_state);
-void sparseconverttohash(sparsematrix* s, ae_state *_state);
-void sparsecopytohash(sparsematrix* s0,
-     sparsematrix* s1,
-     ae_state *_state);
-void sparsecopytohashbuf(sparsematrix* s0,
-     sparsematrix* s1,
-     ae_state *_state);
-void sparseconverttocrs(sparsematrix* s, ae_state *_state);
-void sparsecopytocrs(sparsematrix* s0, sparsematrix* s1, ae_state *_state);
-void sparsecopytocrsbuf(sparsematrix* s0,
-     sparsematrix* s1,
-     ae_state *_state);
-void sparseconverttosks(sparsematrix* s, ae_state *_state);
-void sparsecopytosks(sparsematrix* s0, sparsematrix* s1, ae_state *_state);
-void sparsecopytosksbuf(sparsematrix* s0,
-     sparsematrix* s1,
-     ae_state *_state);
-void sparsecreatecrsinplace(sparsematrix* s, ae_state *_state);
-ae_int_t sparsegetmatrixtype(sparsematrix* s, ae_state *_state);
-ae_bool sparseishash(sparsematrix* s, ae_state *_state);
-ae_bool sparseiscrs(sparsematrix* s, ae_state *_state);
-ae_bool sparseissks(sparsematrix* s, ae_state *_state);
-void sparsefree(sparsematrix* s, ae_state *_state);
-ae_int_t sparsegetnrows(sparsematrix* s, ae_state *_state);
-ae_int_t sparsegetncols(sparsematrix* s, ae_state *_state);
-ae_int_t sparsegetuppercount(sparsematrix* s, ae_state *_state);
-ae_int_t sparsegetlowercount(sparsematrix* s, ae_state *_state);
-void _sparsematrix_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _sparsematrix_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _sparsematrix_clear(void* _p);
-void _sparsematrix_destroy(void* _p);
-void _sparsebuffers_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _sparsebuffers_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _sparsebuffers_clear(void* _p);
-void _sparsebuffers_destroy(void* _p);
-#endif
 #if defined(AE_COMPILE_ABLAS) || !defined(AE_PARTIAL_BUILD)
 void ablassplitlength(/* Real    */ ae_matrix* a,
      ae_int_t n,
@@ -8045,418 +8244,6 @@ void rowwisegramschmidt(/* Real    */ ae_matrix* q,
      ae_bool needqx,
      ae_state *_state);
 #endif
-#if defined(AE_COMPILE_DLU) || !defined(AE_PARTIAL_BUILD)
-void cmatrixluprec(/* Complex */ ae_matrix* a,
-     ae_int_t offs,
-     ae_int_t m,
-     ae_int_t n,
-     /* Integer */ ae_vector* pivots,
-     /* Complex */ ae_vector* tmp,
-     ae_state *_state);
-void rmatrixluprec(/* Real    */ ae_matrix* a,
-     ae_int_t offs,
-     ae_int_t m,
-     ae_int_t n,
-     /* Integer */ ae_vector* pivots,
-     /* Real    */ ae_vector* tmp,
-     ae_state *_state);
-void cmatrixplurec(/* Complex */ ae_matrix* a,
-     ae_int_t offs,
-     ae_int_t m,
-     ae_int_t n,
-     /* Integer */ ae_vector* pivots,
-     /* Complex */ ae_vector* tmp,
-     ae_state *_state);
-void rmatrixplurec(/* Real    */ ae_matrix* a,
-     ae_int_t offs,
-     ae_int_t m,
-     ae_int_t n,
-     /* Integer */ ae_vector* pivots,
-     /* Real    */ ae_vector* tmp,
-     ae_state *_state);
-#endif
-#if defined(AE_COMPILE_SPTRF) || !defined(AE_PARTIAL_BUILD)
-ae_bool sptrflu(sparsematrix* a,
-     ae_int_t pivottype,
-     /* Integer */ ae_vector* pr,
-     /* Integer */ ae_vector* pc,
-     sluv2buffer* buf,
-     ae_state *_state);
-void _sluv2list1matrix_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _sluv2list1matrix_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _sluv2list1matrix_clear(void* _p);
-void _sluv2list1matrix_destroy(void* _p);
-void _sluv2sparsetrail_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _sluv2sparsetrail_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _sluv2sparsetrail_clear(void* _p);
-void _sluv2sparsetrail_destroy(void* _p);
-void _sluv2densetrail_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _sluv2densetrail_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _sluv2densetrail_clear(void* _p);
-void _sluv2densetrail_destroy(void* _p);
-void _sluv2buffer_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _sluv2buffer_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _sluv2buffer_clear(void* _p);
-void _sluv2buffer_destroy(void* _p);
-#endif
-#if defined(AE_COMPILE_AMDORDERING) || !defined(AE_PARTIAL_BUILD)
-void generateamdpermutation(sparsematrix* a,
-     ae_int_t n,
-     /* Integer */ ae_vector* perm,
-     /* Integer */ ae_vector* invperm,
-     amdbuffer* buf,
-     ae_state *_state);
-void _amdnset_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _amdnset_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _amdnset_clear(void* _p);
-void _amdnset_destroy(void* _p);
-void _amdknset_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _amdknset_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _amdknset_clear(void* _p);
-void _amdknset_destroy(void* _p);
-void _amdvertexset_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _amdvertexset_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _amdvertexset_clear(void* _p);
-void _amdvertexset_destroy(void* _p);
-void _amdllmatrix_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _amdllmatrix_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _amdllmatrix_clear(void* _p);
-void _amdllmatrix_destroy(void* _p);
-void _amdbuffer_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _amdbuffer_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _amdbuffer_clear(void* _p);
-void _amdbuffer_destroy(void* _p);
-#endif
-#if defined(AE_COMPILE_SPCHOL) || !defined(AE_PARTIAL_BUILD)
-ae_int_t spsymmgetmaxfastkernel(ae_state *_state);
-ae_bool spsymmanalyze(sparsematrix* a,
-     ae_int_t facttype,
-     ae_int_t permtype,
-     spcholanalysis* analysis,
-     ae_state *_state);
-void spsymmsetmodificationstrategy(spcholanalysis* analysis,
-     ae_int_t modstrategy,
-     double p0,
-     double p1,
-     double p2,
-     double p3,
-     ae_state *_state);
-void spsymmreload(spcholanalysis* analysis,
-     sparsematrix* a,
-     ae_state *_state);
-ae_bool spsymmfactorize(spcholanalysis* analysis,
-     sparsematrix* a,
-     /* Real    */ ae_vector* d,
-     /* Integer */ ae_vector* p,
-     ae_state *_state);
-void _spcholanalysis_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _spcholanalysis_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _spcholanalysis_clear(void* _p);
-void _spcholanalysis_destroy(void* _p);
-#endif
-#if defined(AE_COMPILE_MATGEN) || !defined(AE_PARTIAL_BUILD)
-void rmatrixrndorthogonal(ae_int_t n,
-     /* Real    */ ae_matrix* a,
-     ae_state *_state);
-void rmatrixrndcond(ae_int_t n,
-     double c,
-     /* Real    */ ae_matrix* a,
-     ae_state *_state);
-void cmatrixrndorthogonal(ae_int_t n,
-     /* Complex */ ae_matrix* a,
-     ae_state *_state);
-void cmatrixrndcond(ae_int_t n,
-     double c,
-     /* Complex */ ae_matrix* a,
-     ae_state *_state);
-void smatrixrndcond(ae_int_t n,
-     double c,
-     /* Real    */ ae_matrix* a,
-     ae_state *_state);
-void spdmatrixrndcond(ae_int_t n,
-     double c,
-     /* Real    */ ae_matrix* a,
-     ae_state *_state);
-void hmatrixrndcond(ae_int_t n,
-     double c,
-     /* Complex */ ae_matrix* a,
-     ae_state *_state);
-void hpdmatrixrndcond(ae_int_t n,
-     double c,
-     /* Complex */ ae_matrix* a,
-     ae_state *_state);
-void rmatrixrndorthogonalfromtheright(/* Real    */ ae_matrix* a,
-     ae_int_t m,
-     ae_int_t n,
-     ae_state *_state);
-void rmatrixrndorthogonalfromtheleft(/* Real    */ ae_matrix* a,
-     ae_int_t m,
-     ae_int_t n,
-     ae_state *_state);
-void cmatrixrndorthogonalfromtheright(/* Complex */ ae_matrix* a,
-     ae_int_t m,
-     ae_int_t n,
-     ae_state *_state);
-void cmatrixrndorthogonalfromtheleft(/* Complex */ ae_matrix* a,
-     ae_int_t m,
-     ae_int_t n,
-     ae_state *_state);
-void smatrixrndmultiply(/* Real    */ ae_matrix* a,
-     ae_int_t n,
-     ae_state *_state);
-void hmatrixrndmultiply(/* Complex */ ae_matrix* a,
-     ae_int_t n,
-     ae_state *_state);
-#endif
-#if defined(AE_COMPILE_TRFAC) || !defined(AE_PARTIAL_BUILD)
-void rmatrixlu(/* Real    */ ae_matrix* a,
-     ae_int_t m,
-     ae_int_t n,
-     /* Integer */ ae_vector* pivots,
-     ae_state *_state);
-void cmatrixlu(/* Complex */ ae_matrix* a,
-     ae_int_t m,
-     ae_int_t n,
-     /* Integer */ ae_vector* pivots,
-     ae_state *_state);
-ae_bool hpdmatrixcholesky(/* Complex */ ae_matrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     ae_state *_state);
-ae_bool spdmatrixcholesky(/* Real    */ ae_matrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     ae_state *_state);
-void spdmatrixcholeskyupdateadd1(/* Real    */ ae_matrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     /* Real    */ ae_vector* u,
-     ae_state *_state);
-void spdmatrixcholeskyupdatefix(/* Real    */ ae_matrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     /* Boolean */ ae_vector* fix,
-     ae_state *_state);
-void spdmatrixcholeskyupdateadd1buf(/* Real    */ ae_matrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     /* Real    */ ae_vector* u,
-     /* Real    */ ae_vector* bufr,
-     ae_state *_state);
-void spdmatrixcholeskyupdatefixbuf(/* Real    */ ae_matrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     /* Boolean */ ae_vector* fix,
-     /* Real    */ ae_vector* bufr,
-     ae_state *_state);
-ae_bool sparselu(sparsematrix* a,
-     ae_int_t pivottype,
-     /* Integer */ ae_vector* p,
-     /* Integer */ ae_vector* q,
-     ae_state *_state);
-ae_bool sparsecholeskyskyline(sparsematrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     ae_state *_state);
-ae_bool sparsecholesky(sparsematrix* a, ae_bool isupper, ae_state *_state);
-ae_bool sparsecholeskyp(sparsematrix* a,
-     ae_bool isupper,
-     /* Integer */ ae_vector* p,
-     ae_state *_state);
-ae_bool sparsecholeskyanalyze(sparsematrix* a,
-     ae_bool isupper,
-     ae_int_t facttype,
-     ae_int_t permtype,
-     sparsedecompositionanalysis* analysis,
-     ae_state *_state);
-void sparsecholeskysetmodtype(sparsedecompositionanalysis* analysis,
-     ae_int_t modstrategy,
-     double p0,
-     double p1,
-     double p2,
-     double p3,
-     ae_state *_state);
-ae_bool sparsecholeskyfactorize(sparsedecompositionanalysis* analysis,
-     ae_bool needupper,
-     sparsematrix* a,
-     /* Real    */ ae_vector* d,
-     /* Integer */ ae_vector* p,
-     ae_state *_state);
-void sparsecholeskyreload(sparsedecompositionanalysis* analysis,
-     sparsematrix* a,
-     ae_bool isupper,
-     ae_state *_state);
-void rmatrixlup(/* Real    */ ae_matrix* a,
-     ae_int_t m,
-     ae_int_t n,
-     /* Integer */ ae_vector* pivots,
-     ae_state *_state);
-void cmatrixlup(/* Complex */ ae_matrix* a,
-     ae_int_t m,
-     ae_int_t n,
-     /* Integer */ ae_vector* pivots,
-     ae_state *_state);
-void rmatrixplu(/* Real    */ ae_matrix* a,
-     ae_int_t m,
-     ae_int_t n,
-     /* Integer */ ae_vector* pivots,
-     ae_state *_state);
-void cmatrixplu(/* Complex */ ae_matrix* a,
-     ae_int_t m,
-     ae_int_t n,
-     /* Integer */ ae_vector* pivots,
-     ae_state *_state);
-ae_bool spdmatrixcholeskyrec(/* Real    */ ae_matrix* a,
-     ae_int_t offs,
-     ae_int_t n,
-     ae_bool isupper,
-     /* Real    */ ae_vector* tmp,
-     ae_state *_state);
-void _sparsedecompositionanalysis_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _sparsedecompositionanalysis_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _sparsedecompositionanalysis_clear(void* _p);
-void _sparsedecompositionanalysis_destroy(void* _p);
-#endif
-#if defined(AE_COMPILE_RCOND) || !defined(AE_PARTIAL_BUILD)
-double rmatrixrcond1(/* Real    */ ae_matrix* a,
-     ae_int_t n,
-     ae_state *_state);
-double rmatrixrcondinf(/* Real    */ ae_matrix* a,
-     ae_int_t n,
-     ae_state *_state);
-double spdmatrixrcond(/* Real    */ ae_matrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     ae_state *_state);
-double rmatrixtrrcond1(/* Real    */ ae_matrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     ae_bool isunit,
-     ae_state *_state);
-double rmatrixtrrcondinf(/* Real    */ ae_matrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     ae_bool isunit,
-     ae_state *_state);
-double hpdmatrixrcond(/* Complex */ ae_matrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     ae_state *_state);
-double cmatrixrcond1(/* Complex */ ae_matrix* a,
-     ae_int_t n,
-     ae_state *_state);
-double cmatrixrcondinf(/* Complex */ ae_matrix* a,
-     ae_int_t n,
-     ae_state *_state);
-double rmatrixlurcond1(/* Real    */ ae_matrix* lua,
-     ae_int_t n,
-     ae_state *_state);
-double rmatrixlurcondinf(/* Real    */ ae_matrix* lua,
-     ae_int_t n,
-     ae_state *_state);
-double spdmatrixcholeskyrcond(/* Real    */ ae_matrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     ae_state *_state);
-double hpdmatrixcholeskyrcond(/* Complex */ ae_matrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     ae_state *_state);
-double cmatrixlurcond1(/* Complex */ ae_matrix* lua,
-     ae_int_t n,
-     ae_state *_state);
-double cmatrixlurcondinf(/* Complex */ ae_matrix* lua,
-     ae_int_t n,
-     ae_state *_state);
-double cmatrixtrrcond1(/* Complex */ ae_matrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     ae_bool isunit,
-     ae_state *_state);
-double cmatrixtrrcondinf(/* Complex */ ae_matrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     ae_bool isunit,
-     ae_state *_state);
-double rcondthreshold(ae_state *_state);
-#endif
-#if defined(AE_COMPILE_MATINV) || !defined(AE_PARTIAL_BUILD)
-void rmatrixluinverse(/* Real    */ ae_matrix* a,
-     /* Integer */ ae_vector* pivots,
-     ae_int_t n,
-     ae_int_t* info,
-     matinvreport* rep,
-     ae_state *_state);
-void rmatrixinverse(/* Real    */ ae_matrix* a,
-     ae_int_t n,
-     ae_int_t* info,
-     matinvreport* rep,
-     ae_state *_state);
-void cmatrixluinverse(/* Complex */ ae_matrix* a,
-     /* Integer */ ae_vector* pivots,
-     ae_int_t n,
-     ae_int_t* info,
-     matinvreport* rep,
-     ae_state *_state);
-void cmatrixinverse(/* Complex */ ae_matrix* a,
-     ae_int_t n,
-     ae_int_t* info,
-     matinvreport* rep,
-     ae_state *_state);
-void spdmatrixcholeskyinverse(/* Real    */ ae_matrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     ae_int_t* info,
-     matinvreport* rep,
-     ae_state *_state);
-void spdmatrixinverse(/* Real    */ ae_matrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     ae_int_t* info,
-     matinvreport* rep,
-     ae_state *_state);
-void hpdmatrixcholeskyinverse(/* Complex */ ae_matrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     ae_int_t* info,
-     matinvreport* rep,
-     ae_state *_state);
-void hpdmatrixinverse(/* Complex */ ae_matrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     ae_int_t* info,
-     matinvreport* rep,
-     ae_state *_state);
-void rmatrixtrinverse(/* Real    */ ae_matrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     ae_bool isunit,
-     ae_int_t* info,
-     matinvreport* rep,
-     ae_state *_state);
-void cmatrixtrinverse(/* Complex */ ae_matrix* a,
-     ae_int_t n,
-     ae_bool isupper,
-     ae_bool isunit,
-     ae_int_t* info,
-     matinvreport* rep,
-     ae_state *_state);
-void spdmatrixcholeskyinverserec(/* Real    */ ae_matrix* a,
-     ae_int_t offs,
-     ae_int_t n,
-     ae_bool isupper,
-     /* Real    */ ae_vector* tmp,
-     ae_state *_state);
-ae_bool _trypexec_spdmatrixcholeskyinverserec(/* Real    */ ae_matrix* a,
-    ae_int_t offs,
-    ae_int_t n,
-    ae_bool isupper,
-    /* Real    */ ae_vector* tmp, ae_state *_state);
-void _matinvreport_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _matinvreport_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _matinvreport_clear(void* _p);
-void _matinvreport_destroy(void* _p);
-#endif
 #if defined(AE_COMPILE_ORTFAC) || !defined(AE_PARTIAL_BUILD)
 void rmatrixqr(/* Real    */ ae_matrix* a,
      ae_int_t m,
@@ -8627,112 +8414,279 @@ void hmatrixtdunpackq(/* Complex */ ae_matrix* a,
      /* Complex */ ae_matrix* q,
      ae_state *_state);
 #endif
-#if defined(AE_COMPILE_FBLS) || !defined(AE_PARTIAL_BUILD)
-void fblscholeskysolve(/* Real    */ ae_matrix* cha,
-     double sqrtscalea,
-     ae_int_t n,
-     ae_bool isupper,
-     /* Real    */ ae_vector* xb,
-     /* Real    */ ae_vector* tmp,
+#if defined(AE_COMPILE_MATGEN) || !defined(AE_PARTIAL_BUILD)
+void rmatrixrndorthogonal(ae_int_t n,
+     /* Real    */ ae_matrix* a,
      ae_state *_state);
-void fblssolvecgx(/* Real    */ ae_matrix* a,
+void rmatrixrndcond(ae_int_t n,
+     double c,
+     /* Real    */ ae_matrix* a,
+     ae_state *_state);
+void cmatrixrndorthogonal(ae_int_t n,
+     /* Complex */ ae_matrix* a,
+     ae_state *_state);
+void cmatrixrndcond(ae_int_t n,
+     double c,
+     /* Complex */ ae_matrix* a,
+     ae_state *_state);
+void smatrixrndcond(ae_int_t n,
+     double c,
+     /* Real    */ ae_matrix* a,
+     ae_state *_state);
+void spdmatrixrndcond(ae_int_t n,
+     double c,
+     /* Real    */ ae_matrix* a,
+     ae_state *_state);
+void hmatrixrndcond(ae_int_t n,
+     double c,
+     /* Complex */ ae_matrix* a,
+     ae_state *_state);
+void hpdmatrixrndcond(ae_int_t n,
+     double c,
+     /* Complex */ ae_matrix* a,
+     ae_state *_state);
+void rmatrixrndorthogonalfromtheright(/* Real    */ ae_matrix* a,
      ae_int_t m,
      ae_int_t n,
-     double alpha,
-     /* Real    */ ae_vector* b,
-     /* Real    */ ae_vector* x,
-     /* Real    */ ae_vector* buf,
      ae_state *_state);
-void fblscgcreate(/* Real    */ ae_vector* x,
-     /* Real    */ ae_vector* b,
+void rmatrixrndorthogonalfromtheleft(/* Real    */ ae_matrix* a,
+     ae_int_t m,
      ae_int_t n,
-     fblslincgstate* state,
      ae_state *_state);
-ae_bool fblscgiteration(fblslincgstate* state, ae_state *_state);
-void fblsgmrescreate(/* Real    */ ae_vector* b,
+void cmatrixrndorthogonalfromtheright(/* Complex */ ae_matrix* a,
+     ae_int_t m,
+     ae_int_t n,
+     ae_state *_state);
+void cmatrixrndorthogonalfromtheleft(/* Complex */ ae_matrix* a,
+     ae_int_t m,
+     ae_int_t n,
+     ae_state *_state);
+void smatrixrndmultiply(/* Real    */ ae_matrix* a,
+     ae_int_t n,
+     ae_state *_state);
+void hmatrixrndmultiply(/* Complex */ ae_matrix* a,
+     ae_int_t n,
+     ae_state *_state);
+#endif
+#if defined(AE_COMPILE_SPARSE) || !defined(AE_PARTIAL_BUILD)
+void sparsecreate(ae_int_t m,
      ae_int_t n,
      ae_int_t k,
-     fblsgmresstate* state,
+     sparsematrix* s,
      ae_state *_state);
-ae_bool fblsgmresiteration(fblsgmresstate* state, ae_state *_state);
-void fblssolvels(/* Real    */ ae_matrix* a,
-     /* Real    */ ae_vector* b,
-     ae_int_t m,
+void sparsecreatebuf(ae_int_t m,
      ae_int_t n,
-     /* Real    */ ae_vector* tmp0,
-     /* Real    */ ae_vector* tmp1,
-     /* Real    */ ae_vector* tmp2,
+     ae_int_t k,
+     sparsematrix* s,
      ae_state *_state);
-void _fblslincgstate_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _fblslincgstate_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _fblslincgstate_clear(void* _p);
-void _fblslincgstate_destroy(void* _p);
-void _fblsgmresstate_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _fblsgmresstate_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _fblsgmresstate_clear(void* _p);
-void _fblsgmresstate_destroy(void* _p);
-#endif
-#if defined(AE_COMPILE_BDSVD) || !defined(AE_PARTIAL_BUILD)
-ae_bool rmatrixbdsvd(/* Real    */ ae_vector* d,
-     /* Real    */ ae_vector* e,
+void sparsecreatecrs(ae_int_t m,
      ae_int_t n,
+     /* Integer */ ae_vector* ner,
+     sparsematrix* s,
+     ae_state *_state);
+void sparsecreatecrsbuf(ae_int_t m,
+     ae_int_t n,
+     /* Integer */ ae_vector* ner,
+     sparsematrix* s,
+     ae_state *_state);
+void sparsecreatesks(ae_int_t m,
+     ae_int_t n,
+     /* Integer */ ae_vector* d,
+     /* Integer */ ae_vector* u,
+     sparsematrix* s,
+     ae_state *_state);
+void sparsecreatesksbuf(ae_int_t m,
+     ae_int_t n,
+     /* Integer */ ae_vector* d,
+     /* Integer */ ae_vector* u,
+     sparsematrix* s,
+     ae_state *_state);
+void sparsecreatesksband(ae_int_t m,
+     ae_int_t n,
+     ae_int_t bw,
+     sparsematrix* s,
+     ae_state *_state);
+void sparsecreatesksbandbuf(ae_int_t m,
+     ae_int_t n,
+     ae_int_t bw,
+     sparsematrix* s,
+     ae_state *_state);
+void sparsecopy(sparsematrix* s0, sparsematrix* s1, ae_state *_state);
+void sparsecopybuf(sparsematrix* s0, sparsematrix* s1, ae_state *_state);
+void sparseswap(sparsematrix* s0, sparsematrix* s1, ae_state *_state);
+void sparseadd(sparsematrix* s,
+     ae_int_t i,
+     ae_int_t j,
+     double v,
+     ae_state *_state);
+void sparseset(sparsematrix* s,
+     ae_int_t i,
+     ae_int_t j,
+     double v,
+     ae_state *_state);
+double sparseget(sparsematrix* s,
+     ae_int_t i,
+     ae_int_t j,
+     ae_state *_state);
+ae_bool sparseexists(sparsematrix* s,
+     ae_int_t i,
+     ae_int_t j,
+     ae_state *_state);
+double sparsegetdiagonal(sparsematrix* s, ae_int_t i, ae_state *_state);
+void sparsemv(sparsematrix* s,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_state *_state);
+void sparsemtv(sparsematrix* s,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_state *_state);
+void sparsegemv(sparsematrix* s,
+     double alpha,
+     ae_int_t ops,
+     /* Real    */ ae_vector* x,
+     ae_int_t ix,
+     double beta,
+     /* Real    */ ae_vector* y,
+     ae_int_t iy,
+     ae_state *_state);
+void sparsemv2(sparsematrix* s,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y0,
+     /* Real    */ ae_vector* y1,
+     ae_state *_state);
+void sparsesmv(sparsematrix* s,
      ae_bool isupper,
-     ae_bool isfractionalaccuracyrequired,
-     /* Real    */ ae_matrix* u,
-     ae_int_t nru,
-     /* Real    */ ae_matrix* c,
-     ae_int_t ncc,
-     /* Real    */ ae_matrix* vt,
-     ae_int_t ncvt,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
      ae_state *_state);
-ae_bool bidiagonalsvddecomposition(/* Real    */ ae_vector* d,
-     /* Real    */ ae_vector* e,
-     ae_int_t n,
+double sparsevsmv(sparsematrix* s,
      ae_bool isupper,
-     ae_bool isfractionalaccuracyrequired,
-     /* Real    */ ae_matrix* u,
-     ae_int_t nru,
-     /* Real    */ ae_matrix* c,
-     ae_int_t ncc,
-     /* Real    */ ae_matrix* vt,
-     ae_int_t ncvt,
+     /* Real    */ ae_vector* x,
      ae_state *_state);
-#endif
-#if defined(AE_COMPILE_SVD) || !defined(AE_PARTIAL_BUILD)
-ae_bool rmatrixsvd(/* Real    */ ae_matrix* a,
-     ae_int_t m,
-     ae_int_t n,
-     ae_int_t uneeded,
-     ae_int_t vtneeded,
-     ae_int_t additionalmemory,
-     /* Real    */ ae_vector* w,
-     /* Real    */ ae_matrix* u,
-     /* Real    */ ae_matrix* vt,
+void sparsemm(sparsematrix* s,
+     /* Real    */ ae_matrix* a,
+     ae_int_t k,
+     /* Real    */ ae_matrix* b,
      ae_state *_state);
-#endif
-#if defined(AE_COMPILE_NORMESTIMATOR) || !defined(AE_PARTIAL_BUILD)
-void normestimatorcreate(ae_int_t m,
-     ae_int_t n,
-     ae_int_t nstart,
-     ae_int_t nits,
-     normestimatorstate* state,
+void sparsemtm(sparsematrix* s,
+     /* Real    */ ae_matrix* a,
+     ae_int_t k,
+     /* Real    */ ae_matrix* b,
      ae_state *_state);
-void normestimatorsetseed(normestimatorstate* state,
-     ae_int_t seedval,
+void sparsemm2(sparsematrix* s,
+     /* Real    */ ae_matrix* a,
+     ae_int_t k,
+     /* Real    */ ae_matrix* b0,
+     /* Real    */ ae_matrix* b1,
      ae_state *_state);
-ae_bool normestimatoriteration(normestimatorstate* state,
+void sparsesmm(sparsematrix* s,
+     ae_bool isupper,
+     /* Real    */ ae_matrix* a,
+     ae_int_t k,
+     /* Real    */ ae_matrix* b,
      ae_state *_state);
-void normestimatorestimatesparse(normestimatorstate* state,
+void sparsetrmv(sparsematrix* s,
+     ae_bool isupper,
+     ae_bool isunit,
+     ae_int_t optype,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* y,
+     ae_state *_state);
+void sparsetrsv(sparsematrix* s,
+     ae_bool isupper,
+     ae_bool isunit,
+     ae_int_t optype,
+     /* Real    */ ae_vector* x,
+     ae_state *_state);
+void sparsesymmpermtbl(sparsematrix* a,
+     ae_bool isupper,
+     /* Integer */ ae_vector* p,
+     sparsematrix* b,
+     ae_state *_state);
+void sparsesymmpermtblbuf(sparsematrix* a,
+     ae_bool isupper,
+     /* Integer */ ae_vector* p,
+     sparsematrix* b,
+     ae_state *_state);
+void sparseresizematrix(sparsematrix* s, ae_state *_state);
+void sparseinitduidx(sparsematrix* s, ae_state *_state);
+double sparsegetaveragelengthofchain(sparsematrix* s, ae_state *_state);
+ae_bool sparseenumerate(sparsematrix* s,
+     ae_int_t* t0,
+     ae_int_t* t1,
+     ae_int_t* i,
+     ae_int_t* j,
+     double* v,
+     ae_state *_state);
+ae_bool sparserewriteexisting(sparsematrix* s,
+     ae_int_t i,
+     ae_int_t j,
+     double v,
+     ae_state *_state);
+void sparsegetrow(sparsematrix* s,
+     ae_int_t i,
+     /* Real    */ ae_vector* irow,
+     ae_state *_state);
+void sparsegetcompressedrow(sparsematrix* s,
+     ae_int_t i,
+     /* Integer */ ae_vector* colidx,
+     /* Real    */ ae_vector* vals,
+     ae_int_t* nzcnt,
+     ae_state *_state);
+void sparsetransposesks(sparsematrix* s, ae_state *_state);
+void sparsetransposecrs(sparsematrix* s, ae_state *_state);
+void sparsecopytransposecrs(sparsematrix* s0,
+     sparsematrix* s1,
+     ae_state *_state);
+void sparsecopytransposecrsbuf(sparsematrix* s0,
+     sparsematrix* s1,
+     ae_state *_state);
+void sparseconvertto(sparsematrix* s0, ae_int_t fmt, ae_state *_state);
+void sparsecopytobuf(sparsematrix* s0,
+     ae_int_t fmt,
+     sparsematrix* s1,
+     ae_state *_state);
+void sparseconverttohash(sparsematrix* s, ae_state *_state);
+void sparsecopytohash(sparsematrix* s0,
+     sparsematrix* s1,
+     ae_state *_state);
+void sparsecopytohashbuf(sparsematrix* s0,
+     sparsematrix* s1,
+     ae_state *_state);
+void sparseconverttocrs(sparsematrix* s, ae_state *_state);
+void sparsecopytocrs(sparsematrix* s0, sparsematrix* s1, ae_state *_state);
+void sparsecopytocrsbuf(sparsematrix* s0,
+     sparsematrix* s1,
+     ae_state *_state);
+void sparseconverttosks(sparsematrix* s, ae_state *_state);
+void sparsecopytosks(sparsematrix* s0, sparsematrix* s1, ae_state *_state);
+void sparsecopytosksbuf(sparsematrix* s0,
+     sparsematrix* s1,
+     ae_state *_state);
+void sparsecreatecrsinplace(sparsematrix* s, ae_state *_state);
+ae_int_t sparsegetmatrixtype(sparsematrix* s, ae_state *_state);
+ae_bool sparseishash(sparsematrix* s, ae_state *_state);
+ae_bool sparseiscrs(sparsematrix* s, ae_state *_state);
+ae_bool sparseissks(sparsematrix* s, ae_state *_state);
+void sparsefree(sparsematrix* s, ae_state *_state);
+ae_int_t sparsegetnrows(sparsematrix* s, ae_state *_state);
+ae_int_t sparsegetncols(sparsematrix* s, ae_state *_state);
+ae_int_t sparsegetuppercount(sparsematrix* s, ae_state *_state);
+ae_int_t sparsegetlowercount(sparsematrix* s, ae_state *_state);
+void sparsealloc(ae_serializer* s, sparsematrix* a, ae_state *_state);
+void sparseserialize(ae_serializer* s, sparsematrix* a, ae_state *_state);
+void sparseunserialize(ae_serializer* s,
      sparsematrix* a,
      ae_state *_state);
-void normestimatorresults(normestimatorstate* state,
-     double* nrm,
-     ae_state *_state);
-void normestimatorrestart(normestimatorstate* state, ae_state *_state);
-void _normestimatorstate_init(void* _p, ae_state *_state, ae_bool make_automatic);
-void _normestimatorstate_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
-void _normestimatorstate_clear(void* _p);
-void _normestimatorstate_destroy(void* _p);
+void _sparsematrix_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _sparsematrix_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _sparsematrix_clear(void* _p);
+void _sparsematrix_destroy(void* _p);
+void _sparsebuffers_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _sparsebuffers_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _sparsebuffers_clear(void* _p);
+void _sparsebuffers_destroy(void* _p);
 #endif
 #if defined(AE_COMPILE_HSSCHUR) || !defined(AE_PARTIAL_BUILD)
 void rmatrixinternalschurdecomposition(/* Real    */ ae_matrix* h,
@@ -8900,6 +8854,514 @@ void _eigsubspacereport_init_copy(void* _dst, void* _src, ae_state *_state, ae_b
 void _eigsubspacereport_clear(void* _p);
 void _eigsubspacereport_destroy(void* _p);
 #endif
+#if defined(AE_COMPILE_DLU) || !defined(AE_PARTIAL_BUILD)
+void cmatrixluprec(/* Complex */ ae_matrix* a,
+     ae_int_t offs,
+     ae_int_t m,
+     ae_int_t n,
+     /* Integer */ ae_vector* pivots,
+     /* Complex */ ae_vector* tmp,
+     ae_state *_state);
+void rmatrixluprec(/* Real    */ ae_matrix* a,
+     ae_int_t offs,
+     ae_int_t m,
+     ae_int_t n,
+     /* Integer */ ae_vector* pivots,
+     /* Real    */ ae_vector* tmp,
+     ae_state *_state);
+void cmatrixplurec(/* Complex */ ae_matrix* a,
+     ae_int_t offs,
+     ae_int_t m,
+     ae_int_t n,
+     /* Integer */ ae_vector* pivots,
+     /* Complex */ ae_vector* tmp,
+     ae_state *_state);
+void rmatrixplurec(/* Real    */ ae_matrix* a,
+     ae_int_t offs,
+     ae_int_t m,
+     ae_int_t n,
+     /* Integer */ ae_vector* pivots,
+     /* Real    */ ae_vector* tmp,
+     ae_state *_state);
+#endif
+#if defined(AE_COMPILE_SPTRF) || !defined(AE_PARTIAL_BUILD)
+ae_bool sptrflu(sparsematrix* a,
+     ae_int_t pivottype,
+     /* Integer */ ae_vector* pr,
+     /* Integer */ ae_vector* pc,
+     sluv2buffer* buf,
+     ae_state *_state);
+void _sluv2list1matrix_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _sluv2list1matrix_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _sluv2list1matrix_clear(void* _p);
+void _sluv2list1matrix_destroy(void* _p);
+void _sluv2sparsetrail_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _sluv2sparsetrail_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _sluv2sparsetrail_clear(void* _p);
+void _sluv2sparsetrail_destroy(void* _p);
+void _sluv2densetrail_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _sluv2densetrail_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _sluv2densetrail_clear(void* _p);
+void _sluv2densetrail_destroy(void* _p);
+void _sluv2buffer_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _sluv2buffer_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _sluv2buffer_clear(void* _p);
+void _sluv2buffer_destroy(void* _p);
+#endif
+#if defined(AE_COMPILE_AMDORDERING) || !defined(AE_PARTIAL_BUILD)
+void generateamdpermutation(sparsematrix* a,
+     ae_int_t n,
+     /* Integer */ ae_vector* perm,
+     /* Integer */ ae_vector* invperm,
+     amdbuffer* buf,
+     ae_state *_state);
+ae_int_t generateamdpermutationx(sparsematrix* a,
+     /* Boolean */ ae_vector* eligible,
+     ae_int_t n,
+     /* Integer */ ae_vector* perm,
+     /* Integer */ ae_vector* invperm,
+     ae_int_t amdtype,
+     amdbuffer* buf,
+     ae_state *_state);
+void _amdnset_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _amdnset_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _amdnset_clear(void* _p);
+void _amdnset_destroy(void* _p);
+void _amdknset_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _amdknset_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _amdknset_clear(void* _p);
+void _amdknset_destroy(void* _p);
+void _amdvertexset_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _amdvertexset_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _amdvertexset_clear(void* _p);
+void _amdvertexset_destroy(void* _p);
+void _amdllmatrix_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _amdllmatrix_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _amdllmatrix_clear(void* _p);
+void _amdllmatrix_destroy(void* _p);
+void _amdbuffer_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _amdbuffer_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _amdbuffer_clear(void* _p);
+void _amdbuffer_destroy(void* _p);
+#endif
+#if defined(AE_COMPILE_SPCHOL) || !defined(AE_PARTIAL_BUILD)
+ae_int_t spsymmgetmaxfastkernel(ae_state *_state);
+ae_bool spsymmanalyze(sparsematrix* a,
+     /* Integer */ ae_vector* priorities,
+     ae_int_t facttype,
+     ae_int_t permtype,
+     spcholanalysis* analysis,
+     ae_state *_state);
+void spsymmsetmodificationstrategy(spcholanalysis* analysis,
+     ae_int_t modstrategy,
+     double p0,
+     double p1,
+     double p2,
+     double p3,
+     ae_state *_state);
+void spsymmreload(spcholanalysis* analysis,
+     sparsematrix* a,
+     ae_state *_state);
+void spsymmreloaddiagonal(spcholanalysis* analysis,
+     /* Real    */ ae_vector* d,
+     ae_state *_state);
+ae_bool spsymmfactorize(spcholanalysis* analysis, ae_state *_state);
+void spsymmextract(spcholanalysis* analysis,
+     sparsematrix* a,
+     /* Real    */ ae_vector* d,
+     /* Integer */ ae_vector* p,
+     ae_state *_state);
+void spsymmsolve(spcholanalysis* analysis,
+     /* Real    */ ae_vector* b,
+     ae_state *_state);
+void spsymmdiagerr(spcholanalysis* analysis,
+     double* sumsq,
+     double* errsq,
+     ae_state *_state);
+void _spcholanalysis_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _spcholanalysis_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _spcholanalysis_clear(void* _p);
+void _spcholanalysis_destroy(void* _p);
+#endif
+#if defined(AE_COMPILE_TRFAC) || !defined(AE_PARTIAL_BUILD)
+void rmatrixlu(/* Real    */ ae_matrix* a,
+     ae_int_t m,
+     ae_int_t n,
+     /* Integer */ ae_vector* pivots,
+     ae_state *_state);
+void cmatrixlu(/* Complex */ ae_matrix* a,
+     ae_int_t m,
+     ae_int_t n,
+     /* Integer */ ae_vector* pivots,
+     ae_state *_state);
+ae_bool hpdmatrixcholesky(/* Complex */ ae_matrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     ae_state *_state);
+ae_bool spdmatrixcholesky(/* Real    */ ae_matrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     ae_state *_state);
+void spdmatrixcholeskyupdateadd1(/* Real    */ ae_matrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     /* Real    */ ae_vector* u,
+     ae_state *_state);
+void spdmatrixcholeskyupdatefix(/* Real    */ ae_matrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     /* Boolean */ ae_vector* fix,
+     ae_state *_state);
+void spdmatrixcholeskyupdateadd1buf(/* Real    */ ae_matrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     /* Real    */ ae_vector* u,
+     /* Real    */ ae_vector* bufr,
+     ae_state *_state);
+void spdmatrixcholeskyupdatefixbuf(/* Real    */ ae_matrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     /* Boolean */ ae_vector* fix,
+     /* Real    */ ae_vector* bufr,
+     ae_state *_state);
+ae_bool sparselu(sparsematrix* a,
+     ae_int_t pivottype,
+     /* Integer */ ae_vector* p,
+     /* Integer */ ae_vector* q,
+     ae_state *_state);
+ae_bool sparsecholeskyskyline(sparsematrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     ae_state *_state);
+ae_bool sparsecholesky(sparsematrix* a, ae_bool isupper, ae_state *_state);
+ae_bool sparsecholeskyp(sparsematrix* a,
+     ae_bool isupper,
+     /* Integer */ ae_vector* p,
+     ae_state *_state);
+ae_bool sparsecholeskyanalyze(sparsematrix* a,
+     ae_bool isupper,
+     ae_int_t facttype,
+     ae_int_t permtype,
+     sparsedecompositionanalysis* analysis,
+     ae_state *_state);
+void sparsecholeskysetmodtype(sparsedecompositionanalysis* analysis,
+     ae_int_t modstrategy,
+     double p0,
+     double p1,
+     double p2,
+     double p3,
+     ae_state *_state);
+ae_bool sparsecholeskyfactorize(sparsedecompositionanalysis* analysis,
+     ae_bool needupper,
+     sparsematrix* a,
+     /* Real    */ ae_vector* d,
+     /* Integer */ ae_vector* p,
+     ae_state *_state);
+void sparsecholeskyreload(sparsedecompositionanalysis* analysis,
+     sparsematrix* a,
+     ae_bool isupper,
+     ae_state *_state);
+void rmatrixlup(/* Real    */ ae_matrix* a,
+     ae_int_t m,
+     ae_int_t n,
+     /* Integer */ ae_vector* pivots,
+     ae_state *_state);
+void cmatrixlup(/* Complex */ ae_matrix* a,
+     ae_int_t m,
+     ae_int_t n,
+     /* Integer */ ae_vector* pivots,
+     ae_state *_state);
+void rmatrixplu(/* Real    */ ae_matrix* a,
+     ae_int_t m,
+     ae_int_t n,
+     /* Integer */ ae_vector* pivots,
+     ae_state *_state);
+void cmatrixplu(/* Complex */ ae_matrix* a,
+     ae_int_t m,
+     ae_int_t n,
+     /* Integer */ ae_vector* pivots,
+     ae_state *_state);
+ae_bool spdmatrixcholeskyrec(/* Real    */ ae_matrix* a,
+     ae_int_t offs,
+     ae_int_t n,
+     ae_bool isupper,
+     /* Real    */ ae_vector* tmp,
+     ae_state *_state);
+void _sparsedecompositionanalysis_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _sparsedecompositionanalysis_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _sparsedecompositionanalysis_clear(void* _p);
+void _sparsedecompositionanalysis_destroy(void* _p);
+#endif
+#if defined(AE_COMPILE_BDSVD) || !defined(AE_PARTIAL_BUILD)
+ae_bool rmatrixbdsvd(/* Real    */ ae_vector* d,
+     /* Real    */ ae_vector* e,
+     ae_int_t n,
+     ae_bool isupper,
+     ae_bool isfractionalaccuracyrequired,
+     /* Real    */ ae_matrix* u,
+     ae_int_t nru,
+     /* Real    */ ae_matrix* c,
+     ae_int_t ncc,
+     /* Real    */ ae_matrix* vt,
+     ae_int_t ncvt,
+     ae_state *_state);
+ae_bool bidiagonalsvddecomposition(/* Real    */ ae_vector* d,
+     /* Real    */ ae_vector* e,
+     ae_int_t n,
+     ae_bool isupper,
+     ae_bool isfractionalaccuracyrequired,
+     /* Real    */ ae_matrix* u,
+     ae_int_t nru,
+     /* Real    */ ae_matrix* c,
+     ae_int_t ncc,
+     /* Real    */ ae_matrix* vt,
+     ae_int_t ncvt,
+     ae_state *_state);
+#endif
+#if defined(AE_COMPILE_SVD) || !defined(AE_PARTIAL_BUILD)
+ae_bool rmatrixsvd(/* Real    */ ae_matrix* a,
+     ae_int_t m,
+     ae_int_t n,
+     ae_int_t uneeded,
+     ae_int_t vtneeded,
+     ae_int_t additionalmemory,
+     /* Real    */ ae_vector* w,
+     /* Real    */ ae_matrix* u,
+     /* Real    */ ae_matrix* vt,
+     ae_state *_state);
+#endif
+#if defined(AE_COMPILE_RCOND) || !defined(AE_PARTIAL_BUILD)
+double rmatrixrcond1(/* Real    */ ae_matrix* a,
+     ae_int_t n,
+     ae_state *_state);
+double rmatrixrcondinf(/* Real    */ ae_matrix* a,
+     ae_int_t n,
+     ae_state *_state);
+double spdmatrixrcond(/* Real    */ ae_matrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     ae_state *_state);
+double rmatrixtrrcond1(/* Real    */ ae_matrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     ae_bool isunit,
+     ae_state *_state);
+double rmatrixtrrcondinf(/* Real    */ ae_matrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     ae_bool isunit,
+     ae_state *_state);
+double hpdmatrixrcond(/* Complex */ ae_matrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     ae_state *_state);
+double cmatrixrcond1(/* Complex */ ae_matrix* a,
+     ae_int_t n,
+     ae_state *_state);
+double cmatrixrcondinf(/* Complex */ ae_matrix* a,
+     ae_int_t n,
+     ae_state *_state);
+double rmatrixlurcond1(/* Real    */ ae_matrix* lua,
+     ae_int_t n,
+     ae_state *_state);
+double rmatrixlurcondinf(/* Real    */ ae_matrix* lua,
+     ae_int_t n,
+     ae_state *_state);
+double spdmatrixcholeskyrcond(/* Real    */ ae_matrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     ae_state *_state);
+double hpdmatrixcholeskyrcond(/* Complex */ ae_matrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     ae_state *_state);
+double cmatrixlurcond1(/* Complex */ ae_matrix* lua,
+     ae_int_t n,
+     ae_state *_state);
+double cmatrixlurcondinf(/* Complex */ ae_matrix* lua,
+     ae_int_t n,
+     ae_state *_state);
+double cmatrixtrrcond1(/* Complex */ ae_matrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     ae_bool isunit,
+     ae_state *_state);
+double cmatrixtrrcondinf(/* Complex */ ae_matrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     ae_bool isunit,
+     ae_state *_state);
+double rcondthreshold(ae_state *_state);
+#endif
+#if defined(AE_COMPILE_FBLS) || !defined(AE_PARTIAL_BUILD)
+void fblscholeskysolve(/* Real    */ ae_matrix* cha,
+     double sqrtscalea,
+     ae_int_t n,
+     ae_bool isupper,
+     /* Real    */ ae_vector* xb,
+     /* Real    */ ae_vector* tmp,
+     ae_state *_state);
+void fblssolvecgx(/* Real    */ ae_matrix* a,
+     ae_int_t m,
+     ae_int_t n,
+     double alpha,
+     /* Real    */ ae_vector* b,
+     /* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* buf,
+     ae_state *_state);
+void fblscgcreate(/* Real    */ ae_vector* x,
+     /* Real    */ ae_vector* b,
+     ae_int_t n,
+     fblslincgstate* state,
+     ae_state *_state);
+ae_bool fblscgiteration(fblslincgstate* state, ae_state *_state);
+void fblsgmrescreate(/* Real    */ ae_vector* b,
+     ae_int_t n,
+     ae_int_t k,
+     fblsgmresstate* state,
+     ae_state *_state);
+ae_bool fblsgmresiteration(fblsgmresstate* state, ae_state *_state);
+void fblssolvels(/* Real    */ ae_matrix* a,
+     /* Real    */ ae_vector* b,
+     ae_int_t m,
+     ae_int_t n,
+     /* Real    */ ae_vector* tmp0,
+     /* Real    */ ae_vector* tmp1,
+     /* Real    */ ae_vector* tmp2,
+     ae_state *_state);
+void _fblslincgstate_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _fblslincgstate_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _fblslincgstate_clear(void* _p);
+void _fblslincgstate_destroy(void* _p);
+void _fblsgmresstate_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _fblsgmresstate_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _fblsgmresstate_clear(void* _p);
+void _fblsgmresstate_destroy(void* _p);
+#endif
+#if defined(AE_COMPILE_NORMESTIMATOR) || !defined(AE_PARTIAL_BUILD)
+void normestimatorcreate(ae_int_t m,
+     ae_int_t n,
+     ae_int_t nstart,
+     ae_int_t nits,
+     normestimatorstate* state,
+     ae_state *_state);
+void normestimatorsetseed(normestimatorstate* state,
+     ae_int_t seedval,
+     ae_state *_state);
+ae_bool normestimatoriteration(normestimatorstate* state,
+     ae_state *_state);
+void normestimatorestimatesparse(normestimatorstate* state,
+     sparsematrix* a,
+     ae_state *_state);
+void normestimatorresults(normestimatorstate* state,
+     double* nrm,
+     ae_state *_state);
+void normestimatorrestart(normestimatorstate* state, ae_state *_state);
+void _normestimatorstate_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _normestimatorstate_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _normestimatorstate_clear(void* _p);
+void _normestimatorstate_destroy(void* _p);
+#endif
+#if defined(AE_COMPILE_MATINV) || !defined(AE_PARTIAL_BUILD)
+void rmatrixluinverse(/* Real    */ ae_matrix* a,
+     /* Integer */ ae_vector* pivots,
+     ae_int_t n,
+     ae_int_t* info,
+     matinvreport* rep,
+     ae_state *_state);
+void rmatrixinverse(/* Real    */ ae_matrix* a,
+     ae_int_t n,
+     ae_int_t* info,
+     matinvreport* rep,
+     ae_state *_state);
+void cmatrixluinverse(/* Complex */ ae_matrix* a,
+     /* Integer */ ae_vector* pivots,
+     ae_int_t n,
+     ae_int_t* info,
+     matinvreport* rep,
+     ae_state *_state);
+void cmatrixinverse(/* Complex */ ae_matrix* a,
+     ae_int_t n,
+     ae_int_t* info,
+     matinvreport* rep,
+     ae_state *_state);
+void spdmatrixcholeskyinverse(/* Real    */ ae_matrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     ae_int_t* info,
+     matinvreport* rep,
+     ae_state *_state);
+void spdmatrixinverse(/* Real    */ ae_matrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     ae_int_t* info,
+     matinvreport* rep,
+     ae_state *_state);
+void hpdmatrixcholeskyinverse(/* Complex */ ae_matrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     ae_int_t* info,
+     matinvreport* rep,
+     ae_state *_state);
+void hpdmatrixinverse(/* Complex */ ae_matrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     ae_int_t* info,
+     matinvreport* rep,
+     ae_state *_state);
+void rmatrixtrinverse(/* Real    */ ae_matrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     ae_bool isunit,
+     ae_int_t* info,
+     matinvreport* rep,
+     ae_state *_state);
+void cmatrixtrinverse(/* Complex */ ae_matrix* a,
+     ae_int_t n,
+     ae_bool isupper,
+     ae_bool isunit,
+     ae_int_t* info,
+     matinvreport* rep,
+     ae_state *_state);
+void spdmatrixcholeskyinverserec(/* Real    */ ae_matrix* a,
+     ae_int_t offs,
+     ae_int_t n,
+     ae_bool isupper,
+     /* Real    */ ae_vector* tmp,
+     ae_state *_state);
+ae_bool _trypexec_spdmatrixcholeskyinverserec(/* Real    */ ae_matrix* a,
+    ae_int_t offs,
+    ae_int_t n,
+    ae_bool isupper,
+    /* Real    */ ae_vector* tmp, ae_state *_state);
+void _matinvreport_init(void* _p, ae_state *_state, ae_bool make_automatic);
+void _matinvreport_init_copy(void* _dst, void* _src, ae_state *_state, ae_bool make_automatic);
+void _matinvreport_clear(void* _p);
+void _matinvreport_destroy(void* _p);
+#endif
+#if defined(AE_COMPILE_INVERSEUPDATE) || !defined(AE_PARTIAL_BUILD)
+void rmatrixinvupdatesimple(/* Real    */ ae_matrix* inva,
+     ae_int_t n,
+     ae_int_t updrow,
+     ae_int_t updcolumn,
+     double updval,
+     ae_state *_state);
+void rmatrixinvupdaterow(/* Real    */ ae_matrix* inva,
+     ae_int_t n,
+     ae_int_t updrow,
+     /* Real    */ ae_vector* v,
+     ae_state *_state);
+void rmatrixinvupdatecolumn(/* Real    */ ae_matrix* inva,
+     ae_int_t n,
+     ae_int_t updcolumn,
+     /* Real    */ ae_vector* u,
+     ae_state *_state);
+void rmatrixinvupdateuv(/* Real    */ ae_matrix* inva,
+     ae_int_t n,
+     /* Real    */ ae_vector* u,
+     /* Real    */ ae_vector* v,
+     ae_state *_state);
+#endif
 #if defined(AE_COMPILE_SCHUR) || !defined(AE_PARTIAL_BUILD)
 ae_bool rmatrixschur(/* Real    */ ae_matrix* a,
      ae_int_t n,
@@ -8925,29 +9387,6 @@ ae_bool smatrixgevdreduce(/* Real    */ ae_matrix* a,
      ae_int_t problemtype,
      /* Real    */ ae_matrix* r,
      ae_bool* isupperr,
-     ae_state *_state);
-#endif
-#if defined(AE_COMPILE_INVERSEUPDATE) || !defined(AE_PARTIAL_BUILD)
-void rmatrixinvupdatesimple(/* Real    */ ae_matrix* inva,
-     ae_int_t n,
-     ae_int_t updrow,
-     ae_int_t updcolumn,
-     double updval,
-     ae_state *_state);
-void rmatrixinvupdaterow(/* Real    */ ae_matrix* inva,
-     ae_int_t n,
-     ae_int_t updrow,
-     /* Real    */ ae_vector* v,
-     ae_state *_state);
-void rmatrixinvupdatecolumn(/* Real    */ ae_matrix* inva,
-     ae_int_t n,
-     ae_int_t updcolumn,
-     /* Real    */ ae_vector* u,
-     ae_state *_state);
-void rmatrixinvupdateuv(/* Real    */ ae_matrix* inva,
-     ae_int_t n,
-     /* Real    */ ae_vector* u,
-     /* Real    */ ae_vector* v,
      ae_state *_state);
 #endif
 #if defined(AE_COMPILE_MATDET) || !defined(AE_PARTIAL_BUILD)
